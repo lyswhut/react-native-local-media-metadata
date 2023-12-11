@@ -5,7 +5,7 @@ Jaudiotagger library for React Native Android
 ## Installation
 
 ```sh
-npm install react-native-local-media-metadata
+npm install github:lyswhut/react-native-local-media-metadata
 ```
 
 ## Usage

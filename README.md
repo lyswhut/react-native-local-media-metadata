@@ -1,31 +1,37 @@
-# react-native-jaudiotagger
+# react-native-local-media-metadata
 
 Jaudiotagger library for React Native Android
 
 ## Installation
 
 ```sh
-npm install react-native-jaudiotagger
+npm install react-native-local-media-metadata
 ```
 
 ## Usage
 
 ```js
-import { multiply } from 'react-native-jaudiotagger';
+import { scanFiles, readMetadata, readPic, readLyric } from 'react-native-local-media-metadata';
 
 // ...
 
-const result = await multiply(3, 7);
+scanFiles('/storage/emulated/0/Pictures', ['mp3', 'flac']).then(paths => {
+  console.log(paths)
+  const path = paths[0]
+  if (path) {
+    readMetadata(path).then((metadata) => {
+      console.log(metadata)
+    })
+    readPic(path).then((pic) => {
+      console.log(pic)
+    })
+    readLyric(path).then((lrc) => {
+      console.log(lrc)
+    })
+  }
+});
 ```
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, ScrollView, Text, Image } from 'react-native';
 import { scanFiles, readMetadata, readPic, readLyric } from 'react-native-local-media-metadata';
+import { requestStoragePermission } from './utils';
 
 export default function App() {
   const [result, setResult] = React.useState<string[]>([]);
@@ -10,18 +11,21 @@ export default function App() {
   const [lyric, setLyric] = React.useState<string>('');
 
   React.useEffect(() => {
-    scanFiles('/storage/emulated/0/Pictures', ['mp3', 'flac']).then(paths => {
-      console.log(paths)
-      setResult(paths)
-      const path = paths[0]
-      if (path) {
-        readMetadata(path).then((metadata) => {
-          setMetadata(JSON.stringify(metadata, null, 2))
-        })
-        readPic(path).then(setPic)
-        readLyric(path).then(setLyric)
-      }
-    });
+    requestStoragePermission().then((result) => {
+      console.log(result)
+      scanFiles('/storage/emulated/0/Pictures', ['mp3', 'flac']).then(paths => {
+        console.log(paths)
+        setResult(paths)
+        const path = paths[0]
+        if (path) {
+          readMetadata(path).then((metadata) => {
+            setMetadata(JSON.stringify(metadata, null, 2))
+          })
+          readPic(path).then(setPic)
+          readLyric(path).then(setLyric)
+        }
+      });
+    })
   }, []);
 
   return (

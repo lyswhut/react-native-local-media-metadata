@@ -9,7 +9,6 @@ import com.facebook.react.bridge.WritableArray;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Utils {

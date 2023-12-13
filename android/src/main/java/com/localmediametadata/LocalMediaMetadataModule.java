@@ -10,7 +10,6 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @ReactModule(name = LocalMediaMetadataModule.NAME)
 public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
@@ -31,44 +30,24 @@ public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void scanFiles(String dirPath, ReadableArray _extNames, Promise promise) {
-    TaskRunner taskRunner = new TaskRunner();
     ArrayList<String> extNames = new ArrayList<>();
     for (Object obj : _extNames.toArrayList()) extNames.add(String.valueOf(obj));
 
-    try {
-      taskRunner.executeAsync(new MetadataCallable.ScanAudioFiles(reactContext, dirPath, extNames), promise::resolve);
-    } catch (Exception err) {
-      promise.reject("-1", err.getMessage());
-    }
+    AsyncTask.runTask(new MetadataCallable.ScanFiles(reactContext, dirPath, extNames), promise);
   }
 
   @ReactMethod
   public void readMetadata(String filePath, Promise promise) {
-    TaskRunner taskRunner = new TaskRunner();
-    try {
-      taskRunner.executeAsync(new MetadataCallable.ReadMetadata(filePath), promise::resolve);
-    } catch (Exception err) {
-      promise.reject("-1", err.getMessage());
-    }
+    AsyncTask.runTask(new MetadataCallable.ReadMetadata(filePath), promise);
   }
 
   @ReactMethod
   public void readPic(String filePath, Promise promise) {
-    TaskRunner taskRunner = new TaskRunner();
-    try {
-      taskRunner.executeAsync(new MetadataCallable.ReadPic(filePath), promise::resolve);
-    } catch (Exception err) {
-      promise.reject("-1", err.getMessage());
-    }
+    AsyncTask.runTask(new MetadataCallable.ReadPic(filePath), promise);
   }
 
   @ReactMethod
   public void readLyric(String filePath, Promise promise) {
-    TaskRunner taskRunner = new TaskRunner();
-    try {
-      taskRunner.executeAsync(new MetadataCallable.ReadLyric(filePath), promise::resolve);
-    } catch (Exception err) {
-      promise.reject("-1", err.getMessage());
-    }
+    AsyncTask.runTask(new MetadataCallable.ReadLyric(filePath), promise);
   }
 }

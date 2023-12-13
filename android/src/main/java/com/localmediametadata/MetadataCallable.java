@@ -1,30 +1,16 @@
 package com.localmediametadata;
 
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
-import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.zip.GZIPInputStream;
 
 public class MetadataCallable {
-  static class ReadMetadata implements Callable<WritableMap> {
+  static class ReadMetadata implements Callable<Object> {
     private final String filePath;
     public ReadMetadata(String filePath) {
       this.filePath = filePath;
@@ -40,7 +26,7 @@ public class MetadataCallable {
     }
   }
 
-  static class ReadPic implements Callable<String> {
+  static class ReadPic implements Callable<Object> {
     private final String filePath;
     public ReadPic(String filePath) {
       this.filePath = filePath;
@@ -56,7 +42,7 @@ public class MetadataCallable {
     }
   }
 
-  static class ReadLyric implements Callable<String> {
+  static class ReadLyric implements Callable<Object> {
     private final String filePath;
     public ReadLyric(String filePath) {
       this.filePath = filePath;
@@ -72,11 +58,11 @@ public class MetadataCallable {
     }
   }
 
-  static class ScanAudioFiles implements Callable<WritableArray> {
+  static class ScanFiles implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String dirPath;
     private final ArrayList<String> extNames;
-    public ScanAudioFiles(ReactApplicationContext context, String dirPath, ArrayList<String> extNames) {
+    public ScanFiles(ReactApplicationContext context, String dirPath, ArrayList<String> extNames) {
       this.context = context;
       this.dirPath = dirPath;
       this.extNames = extNames;
@@ -84,11 +70,7 @@ public class MetadataCallable {
 
     @Override
     public WritableArray call() {
-      try {
-        return Utils.scanAudioFiles(this.context, this.dirPath, this.extNames);
-      } catch (Exception err) {
-        return Arguments.createArray();
-      }
+      return Utils.scanAudioFiles(this.context, this.dirPath, this.extNames);
     }
   }
 }

@@ -38,11 +38,20 @@ public class Metadata {
   }
   private static WritableMap buildMetadata(File file, AudioHeader audioHeader, Tag tag) {
     WritableMap params = Arguments.createMap();
-    String name = tag.getFirst(FieldKey.TITLE);
-    if ("".equals(name)) name = getFileName(file);
+    String name, singer, albumName;
+    if (tag == null) {
+      name = getFileName(file);
+      singer = "";
+      albumName = "";
+    } else {
+      name = tag.getFirst(FieldKey.TITLE);
+      if ("".equals(name)) name = getFileName(file);
+      singer = tag.getFirst(FieldKey.ARTIST).replaceAll("\\u0000", "、");
+      albumName = tag.getFirst(FieldKey.ALBUM);
+    }
     params.putString("name", name);
-    params.putString("singer", tag.getFirst(FieldKey.ARTIST).replaceAll("\\u0000", "、"));
-    params.putString("albumName", tag.getFirst(FieldKey.ALBUM));
+    params.putString("singer", singer);
+    params.putString("albumName", albumName);
     params.putDouble("interval", audioHeader.getTrackLength());
     params.putString("bitrate", audioHeader.getBitRate());
     params.putString("type", audioHeader.getEncodingType());

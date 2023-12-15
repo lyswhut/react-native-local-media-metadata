@@ -89,9 +89,8 @@ public class Metadata {
       ";base64," + encodeBase64(artwork.getBinaryData());
   }
 
-  public static void writeFlacPic(AudioFile audioFile, String picPath) throws Exception {
+  public static void writeFlacPic(AudioFile audioFile, Artwork artwork) throws Exception {
     FlacTag tag = (FlacTag) audioFile.getTagOrCreateDefault();
-    Artwork artwork = ArtworkFactory.createArtworkFromFile(new File(picPath));
     tag.setField(tag.createArtworkField(artwork.getBinaryData(),
       artwork.getPictureType(),
       artwork.getMimeType(),
@@ -106,11 +105,17 @@ public class Metadata {
   public static void writePic(String filePath, String picPath) throws Exception {
     File file = new File(filePath);
     AudioFile audioFile = AudioFileIO.read(file);
+    if ("".equals(picPath)) {
+      audioFile.getTagOrCreateDefault().deleteArtworkField();
+      audioFile.commit();
+      return;
+    }
+    Artwork artwork = ArtworkFactory.createArtworkFromFile(new File(picPath));
     if ("flac".equalsIgnoreCase(getFileExtension(filePath))) {
-      writeFlacPic(audioFile, picPath);
+      writeFlacPic(audioFile, artwork);
     } else {
       Tag tag = audioFile.getTagOrCreateDefault();
-      tag.setField(ArtworkFactory.createArtworkFromFile(new File(picPath)));
+      tag.setField(artwork);
       audioFile.commit();
     }
   }

@@ -45,6 +45,9 @@ export default function App() {
             console.log('writeMetadata success')
           })
           if (picPath) {
+            await writePic(path, '').then(() => {
+              console.log('writePic success')
+            })
             await writePic(path, picPath).then(() => {
               console.log('writePic success')
             })

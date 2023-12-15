@@ -69,7 +69,7 @@ public class Metadata {
     if (isOverwrite) {
       tag = audioFile.createDefaultTag();
       audioFile.setTag(tag);
-    } else tag = audioFile.getTagOrCreateDefault();
+    } else tag = audioFile.getTagOrCreateAndSetDefault();
     tag.setField(FieldKey.TITLE, metadata.getString("name", ""));
     tag.setField(FieldKey.ARTIST, metadata.getString("singer", ""));
     tag.setField(FieldKey.ALBUM, metadata.getString("albumName", ""));
@@ -90,7 +90,7 @@ public class Metadata {
   }
 
   public static void writeFlacPic(AudioFile audioFile, Artwork artwork) throws Exception {
-    FlacTag tag = (FlacTag) audioFile.getTagOrCreateDefault();
+    FlacTag tag = (FlacTag) audioFile.getTagOrCreateAndSetDefault();
     tag.setField(tag.createArtworkField(artwork.getBinaryData(),
       artwork.getPictureType(),
       artwork.getMimeType(),
@@ -106,7 +106,7 @@ public class Metadata {
     File file = new File(filePath);
     AudioFile audioFile = AudioFileIO.read(file);
     if ("".equals(picPath)) {
-      audioFile.getTagOrCreateDefault().deleteArtworkField();
+      audioFile.getTagOrCreateAndSetDefault().deleteArtworkField();
       audioFile.commit();
       return;
     }
@@ -114,7 +114,7 @@ public class Metadata {
     if ("flac".equalsIgnoreCase(getFileExtension(filePath))) {
       writeFlacPic(audioFile, artwork);
     } else {
-      Tag tag = audioFile.getTagOrCreateDefault();
+      Tag tag = audioFile.getTagOrCreateAndSetDefault();
       tag.setField(artwork);
       audioFile.commit();
     }
@@ -163,7 +163,7 @@ public class Metadata {
   public static void writeLyric(String filePath, String lyric) throws Exception {
     File file = new File(filePath);
     AudioFile audioFile = AudioFileIO.read(file);
-    Tag tag = audioFile.getTagOrCreateDefault();
+    Tag tag = audioFile.getTagOrCreateAndSetDefault();
     tag.setField(FieldKey.LYRICS, lyric);
     audioFile.commit();
   }

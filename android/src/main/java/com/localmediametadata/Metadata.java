@@ -1,5 +1,6 @@
 package com.localmediametadata;
 
+import android.os.Bundle;
 import android.util.Base64;
 
 import com.facebook.react.bridge.Arguments;
@@ -10,7 +11,9 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.images.ArtworkFactory;
 import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.ByteArrayOutputStream;
@@ -38,20 +41,11 @@ public class Metadata {
   }
   private static WritableMap buildMetadata(File file, AudioHeader audioHeader, Tag tag) {
     WritableMap params = Arguments.createMap();
-    String name, singer, albumName;
-    if (tag == null) {
-      name = getFileName(file);
-      singer = "";
-      albumName = "";
-    } else {
-      name = tag.getFirst(FieldKey.TITLE);
-      if ("".equals(name)) name = getFileName(file);
-      singer = tag.getFirst(FieldKey.ARTIST).replaceAll("\\u0000", "、");
-      albumName = tag.getFirst(FieldKey.ALBUM);
-    }
+    String name = tag.getFirst(FieldKey.TITLE);
+    if ("".equals(name)) name = getFileName(file);
     params.putString("name", name);
-    params.putString("singer", singer);
-    params.putString("albumName", albumName);
+    params.putString("singer", tag.getFirst(FieldKey.ARTIST).replaceAll("\\u0000", "、"));
+    params.putString("albumName", tag.getFirst(FieldKey.ALBUM));
     params.putDouble("interval", audioHeader.getTrackLength());
     params.putString("bitrate", audioHeader.getBitRate());
     params.putString("type", audioHeader.getEncodingType());
@@ -64,7 +58,22 @@ public class Metadata {
   static public WritableMap readMetadata(String filePath) throws Exception {
     File file = new File(filePath);
     AudioFile audioFile = AudioFileIO.read(file);
-    return buildMetadata(file, audioFile.getAudioHeader(), audioFile.getTag());
+    return buildMetadata(file, audioFile.getAudioHeader(), audioFile.getTagOrCreateDefault());
+  }
+
+  static public void writeMetadata(String filePath, Bundle metadata, boolean isOverwrite) throws Exception {
+    File file = new File(filePath);
+    AudioFile audioFile = AudioFileIO.read(file);
+
+    Tag tag;
+    if (isOverwrite) {
+      tag = audioFile.createDefaultTag();
+      audioFile.setTag(tag);
+    } else tag = audioFile.getTagOrCreateDefault();
+    tag.setField(FieldKey.TITLE, metadata.getString("name", ""));
+    tag.setField(FieldKey.ARTIST, metadata.getString("singer", ""));
+    tag.setField(FieldKey.ALBUM, metadata.getString("albumName", ""));
+    audioFile.commit();
   }
 
   private static String encodeBase64(byte[] data) {
@@ -73,11 +82,37 @@ public class Metadata {
   public static String readPic(String filePath) throws Exception {
     File file = new File(filePath);
     AudioFile audioFile = AudioFileIO.read(file);
-    Artwork artwork = audioFile.getTag().getFirstArtwork();
+    Artwork artwork = audioFile.getTagOrCreateDefault().getFirstArtwork();
+    if (artwork == null) return "";
     if (artwork.isLinked()) return artwork.getImageUrl();
-
     return "data:" + artwork.getMimeType() +
       ";base64," + encodeBase64(artwork.getBinaryData());
+  }
+
+  public static void writeFlacPic(AudioFile audioFile, String picPath) throws Exception {
+    FlacTag tag = (FlacTag) audioFile.getTagOrCreateDefault();
+    Artwork artwork = ArtworkFactory.createArtworkFromFile(new File(picPath));
+    tag.setField(tag.createArtworkField(artwork.getBinaryData(),
+      artwork.getPictureType(),
+      artwork.getMimeType(),
+      artwork.getDescription(),
+      artwork.getWidth(),
+      artwork.getHeight(),
+      0,
+      "image/jpeg".equals(artwork.getMimeType()) ? 24 : 32
+    ));
+    audioFile.commit();
+  }
+  public static void writePic(String filePath, String picPath) throws Exception {
+    File file = new File(filePath);
+    AudioFile audioFile = AudioFileIO.read(file);
+    if ("flac".equalsIgnoreCase(getFileExtension(filePath))) {
+      writeFlacPic(audioFile, picPath);
+    } else {
+      Tag tag = audioFile.getTagOrCreateDefault();
+      tag.setField(ArtworkFactory.createArtworkFromFile(new File(picPath)));
+      audioFile.commit();
+    }
   }
 
   public static String decodeString(byte[] data) {
@@ -116,8 +151,16 @@ public class Metadata {
     }
 
     AudioFile audioFile = AudioFileIO.read(file);
-    Tag tag = audioFile.getTag();
+    Tag tag = audioFile.getTagOrCreateDefault();
     return tag.getFirst(FieldKey.LYRICS);
+  }
+
+  public static void writeLyric(String filePath, String lyric) throws Exception {
+    File file = new File(filePath);
+    AudioFile audioFile = AudioFileIO.read(file);
+    Tag tag = audioFile.getTagOrCreateDefault();
+    tag.setField(FieldKey.LYRICS, lyric);
+    audioFile.commit();
   }
 
 }

@@ -27,6 +27,12 @@ export const scanFiles = async(dirPath: string, extNames: string[]): Promise<str
 }
 
 export interface MusicMetadata {
+  albumName: string
+  singer: string
+  name: string
+}
+
+export interface MusicMetadataFull {
   type: 'mp3' | 'flac' | 'ogg' | 'wav'
   bitrate: string
   interval: number
@@ -42,8 +48,18 @@ export interface MusicMetadata {
  * @param filePath
  * @returns
  */
-export const readMetadata = async(filePath: string): Promise<MusicMetadata | null> => {
+export const readMetadata = async(filePath: string): Promise<MusicMetadataFull | null> => {
   return LocalMediaMetadata.readMetadata(filePath)
+}
+/**
+ * Write Metadata
+ * @param filePath
+ * @param metadata
+ * @param isOverwrite
+ * @returns
+ */
+export const writeMetadata = async(filePath: string, metadata: MusicMetadata, isOverwrite = false): Promise<void> => {
+  return LocalMediaMetadata.writeMetadata(filePath, metadata, isOverwrite)
 }
 
 /**
@@ -54,6 +70,15 @@ export const readMetadata = async(filePath: string): Promise<MusicMetadata | nul
 export const readPic = async(filePath: string): Promise<string> => {
   return LocalMediaMetadata.readPic(filePath)
 }
+/**
+ * Write Pic
+ * @param filePath
+ * @param picPath
+ * @returns
+ */
+export const writePic = async(filePath: string, picPath: string): Promise<void> => {
+  return LocalMediaMetadata.writePic(filePath, picPath)
+}
 
 /**
  * Read Lyric
@@ -62,5 +87,14 @@ export const readPic = async(filePath: string): Promise<string> => {
  */
 export const readLyric = async(filePath: string): Promise<string> => {
   return LocalMediaMetadata.readLyric(filePath)
+}
+/**
+ * Write Lyric
+ * @param filePath
+ * @param lyric
+ * @returns
+ */
+export const writeLyric = async(filePath: string, lyric: string): Promise<void> => {
+  return LocalMediaMetadata.writeLyric(filePath, lyric)
 }
 

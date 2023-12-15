@@ -27,7 +27,8 @@ public class AsyncTask {
           handler.post(() -> callback.onComplete(result));
         } catch (Exception e) {
           handler.post(() -> callback.onComplete((Object) e));
-          Log.e("TaskRunner", "execute error: " + e.getMessage());
+          Log.e("TaskRunner", "execute error:");
+          e.printStackTrace();
         }
       });
     }

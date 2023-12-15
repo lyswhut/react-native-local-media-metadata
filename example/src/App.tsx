@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 import { StyleSheet, ScrollView, Text, Image } from 'react-native';
-import { scanFiles, readMetadata, readPic, readLyric } from 'react-native-local-media-metadata';
+import { scanFiles, readMetadata, readPic, readLyric, writeMetadata, writePic, writeLyric } from 'react-native-local-media-metadata';
+import { writeFile } from 'react-native-fs';
 import { requestStoragePermission } from './utils';
 
 export default function App() {
@@ -13,16 +14,46 @@ export default function App() {
   React.useEffect(() => {
     requestStoragePermission().then((result) => {
       console.log(result)
-      scanFiles('/storage/emulated/0/Pictures', ['mp3', 'flac']).then(paths => {
-        console.log(paths)
+      scanFiles('/storage/emulated/0/Pictures', ['mp3', 'flac']).then(async paths => {
+        // console.log(paths)
         setResult(paths)
         const path = paths[0]
-        if (path) {
+        if (!path) return
+        console.log(path)
+        let picPath = ''
+        let lyric = ''
+        const [metadata] = await Promise.all([
           readMetadata(path).then((metadata) => {
             setMetadata(JSON.stringify(metadata, null, 2))
+            return metadata
+          }),
+          readPic(path).then(async(pic) => {
+            setPic(pic)
+            if (!pic) return
+            picPath = path.substring(0, path.lastIndexOf('.') + 1) + pic.split(';')[0]?.split('/')[1]
+            await writeFile(picPath, pic.split(',')[1]!, 'base64')
+            return pic
+          }),
+          readLyric(path).then(_lyric => {
+            setLyric(_lyric)
+            lyric = _lyric
           })
-          readPic(path).then(setPic)
-          readLyric(path).then(setLyric)
+        ])
+        console.log(picPath)
+        if (metadata) {
+          await writeMetadata(path, metadata, true).then(() => {
+            console.log('writeMetadata success')
+          })
+          if (picPath) {
+            await writePic(path, picPath).then(() => {
+              console.log('writePic success')
+            })
+          }
+          if (lyric) {
+            await writeLyric(path, lyric).then(() => {
+              console.log('writeLyric success')
+            })
+          }
         }
       });
     })

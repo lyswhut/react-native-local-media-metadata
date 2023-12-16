@@ -92,9 +92,9 @@ public class Metadata {
     File dir = new File(picDir);
     if (!dir.exists() && !dir.mkdirs()) throw new Exception("Directory does not exist");
     File picFile = new File(picDir, getFileName(file) + "." + ImageFormats.getFormatForMimeType(artwork.getMimeType()).toLowerCase());
-    FileOutputStream fos = new FileOutputStream(picFile);
-    fos.write(artwork.getBinaryData());
-    fos.close();
+    try (FileOutputStream fos = new FileOutputStream(picFile)) {
+      fos.write(artwork.getBinaryData());
+    }
     return picFile.getPath();
   }
 

@@ -12,6 +12,7 @@ import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.flac.FlacTag;
+import org.jaudiotagger.tag.id3.valuepair.ImageFormats;
 import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.ArtworkFactory;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -19,7 +20,9 @@ import org.mozilla.universalchardet.UniversalDetector;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class Metadata {
   private static String getFileName(File file) {
@@ -79,14 +82,20 @@ public class Metadata {
   private static String encodeBase64(byte[] data) {
     return new String(Base64.encode(data, Base64.NO_WRAP), StandardCharsets.UTF_8);
   }
-  public static String readPic(String filePath) throws Exception {
+  public static String readPic(String filePath, String picDir) throws Exception {
     File file = new File(filePath);
     AudioFile audioFile = AudioFileIO.read(file);
     Artwork artwork = audioFile.getTagOrCreateDefault().getFirstArtwork();
     if (artwork == null) return "";
     if (artwork.isLinked()) return artwork.getImageUrl();
-    return "data:" + artwork.getMimeType() +
-      ";base64," + encodeBase64(artwork.getBinaryData());
+
+    File dir = new File(picDir);
+    if (!dir.exists() && !dir.mkdirs()) throw new Exception("Directory does not exist");
+    File picFile = new File(picDir, getFileName(file) + "." + ImageFormats.getFormatForMimeType(artwork.getMimeType()).toLowerCase());
+    FileOutputStream fos = new FileOutputStream(picFile);
+    fos.write(artwork.getBinaryData());
+    fos.close();
+    return picFile.getPath();
   }
 
   public static void writeFlacPic(AudioFile audioFile, Artwork artwork) throws Exception {
@@ -149,7 +158,7 @@ public class Metadata {
   }
   public static String readLyric(String filePath) throws Exception {
     File file = new File(filePath);
-    File lrcFile = new File(file.getParent() + "/" + getFileName(file) + ".lrc");
+    File lrcFile = new File(file.getParent(), getFileName(file) + ".lrc");
     if (lrcFile.exists()) {
       String lrc = readLyricFile(lrcFile);
       if (!"".equals(lrc)) return lrc;

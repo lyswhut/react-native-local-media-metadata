@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, ScrollView, Text, Image } from 'react-native';
 import { scanFiles, readMetadata, readPic, readLyric, writeMetadata, writePic, writeLyric } from 'react-native-local-media-metadata';
-import { writeFile } from 'react-native-fs';
+import { CachesDirectoryPath } from 'react-native-fs';
 import { requestStoragePermission } from './utils';
 
 export default function App() {
@@ -20,19 +20,15 @@ export default function App() {
         const path = paths[0]
         if (!path) return
         console.log(path)
-        let picPath = ''
         let lyric = ''
-        const [metadata] = await Promise.all([
+        const [metadata, picPath] = await Promise.all([
           readMetadata(path).then((metadata) => {
             setMetadata(JSON.stringify(metadata, null, 2))
             return metadata
           }),
-          readPic(path).then(async(pic) => {
-            setPic(pic)
-            if (!pic) return
-            picPath = path.substring(0, path.lastIndexOf('.') + 1) + pic.split(';')[0]?.split('/')[1]
-            await writeFile(picPath, pic.split(',')[1]!, 'base64')
-            return pic
+          readPic(path, CachesDirectoryPath + '/local-media-pic').then(async(picPath) => {
+            setPic('file://' + picPath)
+            return picPath
           }),
           readLyric(path).then(_lyric => {
             setLyric(_lyric)

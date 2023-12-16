@@ -44,13 +44,15 @@ public class MetadataCallable {
 
   static class ReadPic implements Callable<Object> {
     private final String filePath;
-    public ReadPic(String filePath) {
+    private final String picDir;
+    public ReadPic(String filePath, String picDir) {
       this.filePath = filePath;
+      this.picDir = picDir;
     }
     @Override
     public String call() {
       try {
-        return Metadata.readPic(this.filePath);
+        return Metadata.readPic(this.filePath, this.picDir);
       } catch (Exception err) {
         Log.e("ReadMetadata", "Read Pic Error: " + err.getMessage());
         return "";

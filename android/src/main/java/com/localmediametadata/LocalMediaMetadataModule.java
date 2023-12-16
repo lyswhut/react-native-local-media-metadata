@@ -11,6 +11,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
 
+import java.io.File;
 import java.util.ArrayList;
 
 @ReactModule(name = LocalMediaMetadataModule.NAME)
@@ -48,8 +49,8 @@ public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void readPic(String filePath, Promise promise) {
-    AsyncTask.runTask(new MetadataCallable.ReadPic(filePath), promise);
+  public void readPic(String filePath, String picDir, Promise promise) {
+    AsyncTask.runTask(new MetadataCallable.ReadPic(filePath, picDir), promise);
   }
   @ReactMethod
   public void writePic(String filePath, String picPath, Promise promise) {

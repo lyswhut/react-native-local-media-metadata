@@ -65,10 +65,11 @@ export const writeMetadata = async(filePath: string, metadata: MusicMetadata, is
 /**
  * Read Pic
  * @param filePath
- * @returns
+ * @param picDir
+ * @returns filePath
  */
-export const readPic = async(filePath: string): Promise<string> => {
-  return LocalMediaMetadata.readPic(filePath)
+export const readPic = async(filePath: string, picDir: string): Promise<string> => {
+  return LocalMediaMetadata.readPic(filePath, picDir)
 }
 /**
  * Write Pic

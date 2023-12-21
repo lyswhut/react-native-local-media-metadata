@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class Metadata {
-  private static WritableMap buildMetadata(File file, AudioHeader audioHeader, Tag tag) {
+  private static WritableMap buildMetadata(MediaFile file, AudioHeader audioHeader, Tag tag) {
     WritableMap params = Arguments.createMap();
     String name = tag.getFirst(FieldKey.TITLE);
     if ("".equals(name)) name = Utils.getName(file.getName());
@@ -35,7 +35,7 @@ public class Metadata {
     params.putString("bitrate", audioHeader.getBitRate());
     params.putString("type", audioHeader.getEncodingType());
     params.putString("ext", Utils.getFileExtension(file.getName()));
-    params.putDouble("size", file.length());
+    params.putDouble("size", file.size());
 
     return params;
   }
@@ -45,7 +45,7 @@ public class Metadata {
     File file = mediaFile.getFile(false);
     try {
       AudioFile audioFile = AudioFileIO.read(file);
-      return buildMetadata(file, audioFile.getAudioHeader(), audioFile.getTagOrCreateDefault());
+      return buildMetadata(mediaFile, audioFile.getAudioHeader(), audioFile.getTagOrCreateDefault());
     } finally {
       mediaFile.closeFile();
     }

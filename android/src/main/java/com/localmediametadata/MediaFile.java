@@ -103,4 +103,14 @@ public class MediaFile {
       ? this.dFile.exists()
       : this.file.exists();
   }
+  public String getName() {
+    return isDocFile()
+      ? this.dFile.getName()
+      : this.file.getName();
+  }
+  public long size() {
+    return isDocFile()
+      ? this.dFile.length()
+      : this.file.length();
+  }
 }

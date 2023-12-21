@@ -16,15 +16,6 @@ const LocalMediaMetadata = NativeModules.LocalMediaMetadata
       }
     );
 
-/**
- * Read dir files
- * @param dirPath
- * @param extNames
- * @returns
- */
-export const scanFiles = async(dirPath: string, extNames: string[]): Promise<string[]> => {
-  return LocalMediaMetadata.scanFiles(dirPath, extNames)
-}
 
 export interface MusicMetadata {
   albumName: string
@@ -43,6 +34,22 @@ export interface MusicMetadataFull {
   name: string
 }
 
+const writeQueue = new Map<string, { promise: Promise<void>, num: number }>()
+const waitQueuePromise = async(key: string, run: () => Promise<void>): Promise<void> => {
+  let task = writeQueue.get(key)
+  if (!task) task = { promise: Promise.resolve(), num: 0 }
+  task.num++
+  task.promise = task.promise.finally(run).finally(() => {
+    let task = writeQueue.get(key)
+    if (!task) return
+    task.num--
+    if (task.num > 0) writeQueue.set(key, task)
+    else writeQueue.delete(key)
+  })
+  writeQueue.set(key, task)
+  return task.promise
+}
+
 /**
  * Read Metadata
  * @param filePath
@@ -59,7 +66,9 @@ export const readMetadata = async(filePath: string): Promise<MusicMetadataFull |
  * @returns
  */
 export const writeMetadata = async(filePath: string, metadata: MusicMetadata, isOverwrite = false): Promise<void> => {
-  return LocalMediaMetadata.writeMetadata(filePath, metadata, isOverwrite)
+  return waitQueuePromise(filePath, () => {
+    return LocalMediaMetadata.writeMetadata(filePath, metadata, isOverwrite)
+  })
 }
 
 /**
@@ -78,7 +87,9 @@ export const readPic = async(filePath: string, picDir: string): Promise<string> 
  * @returns
  */
 export const writePic = async(filePath: string, picPath: string): Promise<void> => {
-  return LocalMediaMetadata.writePic(filePath, picPath)
+  return waitQueuePromise(filePath, () => {
+    return LocalMediaMetadata.writePic(filePath, picPath)
+  })
 }
 
 /**
@@ -96,6 +107,8 @@ export const readLyric = async(filePath: string): Promise<string> => {
  * @returns
  */
 export const writeLyric = async(filePath: string, lyric: string): Promise<void> => {
-  return LocalMediaMetadata.writeLyric(filePath, lyric)
+  return waitQueuePromise(filePath, () => {
+    return LocalMediaMetadata.writeLyric(filePath, lyric)
+  })
 }
 

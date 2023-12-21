@@ -12,7 +12,7 @@
   "dependencies": {
     "react": "18.2.0",
     "react-native": "0.73.0",
-    "react-native-fs": "^2.20.0"
+    "react-native-file-system": "https://github.com/lyswhut/react-native-file-system.git#9440d49ef0dc4224f21a67392ba7ad3695ffae8f"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

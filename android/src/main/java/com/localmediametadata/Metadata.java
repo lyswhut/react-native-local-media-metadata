@@ -1,6 +1,7 @@
 package com.localmediametadata;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -133,9 +134,11 @@ public class Metadata {
     detector.dataEnd();
     String detectedCharset = detector.getDetectedCharset();
     detector.reset();
+    if (detectedCharset == null) detectedCharset = "UTF-8";
     try {
       return new String(data, detectedCharset);
     } catch (Exception e) {
+      e.printStackTrace();
       return "";
     }
   }
@@ -151,17 +154,17 @@ public class Metadata {
       fileInputStream.close();
       return decodeString(byteArrayOutputStream.toByteArray());
     } catch (Exception e) {
+      e.printStackTrace();
       return "";
     }
   }
-  public static String readLyric(ReactApplicationContext context, String filePath) throws Exception {
+  public static String readLyric(ReactApplicationContext context, String filePath, boolean isReadLrcFile) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
-    MediaFile lrcMediaFile = new MediaFile(context, mediaFile.getParent() + "/" + mediaFile.getName() + ".lrc");
+    MediaFile lrcMediaFile = isReadLrcFile ? new MediaFile(context, filePath.substring(0, filePath.lastIndexOf(".")) + ".lrc") : null;
     File file = mediaFile.getFile(false);
     try {
-      File lrcFile = lrcMediaFile.getFile(false);
-      if (lrcFile.exists()) {
-        String lrc = readLyricFile(lrcFile);
+      if (isReadLrcFile && lrcMediaFile.exists()) {
+        String lrc = readLyricFile(lrcMediaFile.getFile(false));
         if (!"".equals(lrc)) return lrc;
       }
 

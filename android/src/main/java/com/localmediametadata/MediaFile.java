@@ -46,6 +46,7 @@ public class MediaFile {
   }
 
   private File createFileFromDocumentFile(boolean isWrite) throws IOException {
+    if (!dFile.exists()) return null;
     this.isWrite = isWrite;
     String name = dFile.getName();
     try {
@@ -97,15 +98,9 @@ public class MediaFile {
     }
   }
 
-  public String getParent() {
+  public boolean exists() {
     return isDocFile()
-      ? dFile.getParentFile().getUri().toString()
-      : file.getParent();
-  }
-
-  public String getName() {
-    return Utils.getName(isDocFile()
-      ? dFile.getName()
-      : file.getName());
+      ? this.dFile.exists()
+      : this.file.exists();
   }
 }

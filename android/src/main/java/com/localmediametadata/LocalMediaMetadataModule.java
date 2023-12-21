@@ -54,8 +54,8 @@ public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void readLyric(String filePath, Promise promise) {
-    AsyncTask.runTask(new MetadataCallable.ReadLyric(reactContext, filePath), promise);
+  public void readLyric(String filePath, boolean isReadLrcFile, Promise promise) {
+    AsyncTask.runTask(new MetadataCallable.ReadLyric(reactContext, filePath, isReadLrcFile), promise);
   }
   @ReactMethod
   public void writeLyric(String filePath, String lyric, Promise promise) {

@@ -95,10 +95,11 @@ export const writePic = async(filePath: string, picPath: string): Promise<void> 
 /**
  * Read Lyric
  * @param filePath
+ * @param isReadLrcFile
  * @returns
  */
-export const readLyric = async(filePath: string): Promise<string> => {
-  return LocalMediaMetadata.readLyric(filePath)
+export const readLyric = async(filePath: string, isReadLrcFile: boolean = true): Promise<string> => {
+  return LocalMediaMetadata.readLyric(filePath, isReadLrcFile)
 }
 /**
  * Write Lyric

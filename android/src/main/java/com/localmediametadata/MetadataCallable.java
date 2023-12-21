@@ -23,7 +23,8 @@ public class MetadataCallable {
       try {
         return Metadata.readMetadata(this.context, this.filePath);
       } catch (Exception err) {
-        Log.e("ReadMetadata", "Read Metadata Error: " + err.getMessage());
+        Log.e("ReadMetadata", "Read Metadata Error:");
+        err.printStackTrace();
         return null;
       }
     }
@@ -60,7 +61,8 @@ public class MetadataCallable {
       try {
         return Metadata.readPic(this.context, this.filePath, this.picDir);
       } catch (Exception err) {
-        Log.e("ReadMetadata", "Read Pic Error: " + err.getMessage());
+        Log.e("ReadMetadata", "Read Pic Error:");
+        err.printStackTrace();
         return "";
       }
     }
@@ -84,16 +86,19 @@ public class MetadataCallable {
   static class ReadLyric implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
-    public ReadLyric(ReactApplicationContext context, String filePath) {
+    private final boolean isReadLrcFile;
+    public ReadLyric(ReactApplicationContext context, String filePath, boolean isReadLrcFile) {
       this.context = context;
       this.filePath = filePath;
+      this.isReadLrcFile = isReadLrcFile;
     }
     @Override
     public String call() {
       try {
-        return Metadata.readLyric(this.context, this.filePath);
+        return Metadata.readLyric(this.context, this.filePath, this.isReadLrcFile);
       } catch (Exception err) {
-        Log.e("ReadMetadata", "Read Lyric Error: " + err.getMessage());
+        Log.e("ReadMetadata", "Read Lyric Error: ");
+        err.printStackTrace();
         return "";
       }
     }

@@ -182,7 +182,8 @@ public class Metadata {
     try {
       AudioFile audioFile = AudioFileIO.read(file);
       Tag tag = audioFile.getTagOrCreateAndSetDefault();
-      tag.setField(FieldKey.LYRICS, lyric);
+      if ("".equals(lyric)) tag.deleteField(FieldKey.LYRICS);
+      else tag.setField(FieldKey.LYRICS, lyric);
       audioFile.commit();
     } finally {
       mediaFile.closeFile();

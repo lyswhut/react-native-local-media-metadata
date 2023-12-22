@@ -12,6 +12,7 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.id3.valuepair.ImageFormats;
 import org.jaudiotagger.tag.images.Artwork;
@@ -22,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Objects;
 
 public class Metadata {
   private static WritableMap buildMetadata(MediaFile file, AudioHeader audioHeader, Tag tag) {
@@ -94,7 +96,7 @@ public class Metadata {
 
   public static void writeFlacPic(AudioFile audioFile, Artwork artwork) throws Exception {
     FlacTag tag = (FlacTag) audioFile.getTagOrCreateAndSetDefault();
-    tag.setField(tag.createArtworkField(artwork.getBinaryData(),
+    TagField tagField = tag.createArtworkField(artwork.getBinaryData(),
       artwork.getPictureType(),
       artwork.getMimeType(),
       artwork.getDescription(),
@@ -102,8 +104,18 @@ public class Metadata {
       artwork.getHeight(),
       0,
       "image/jpeg".equals(artwork.getMimeType()) ? 24 : 32
-    ));
-    audioFile.commit();
+    );
+    tag.setField(tagField);
+    try {
+      audioFile.commit();
+    } catch (Exception e) {
+      if (e.getMessage().contains("permissions")) {
+        tag.deleteArtworkField();
+        audioFile.commit();
+        tag.setField(tagField);
+        audioFile.commit();
+      } else throw e;
+    }
   }
   public static void writePic(ReactApplicationContext context, String filePath, String picPath) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
@@ -121,7 +133,16 @@ public class Metadata {
       } else {
         Tag tag = audioFile.getTagOrCreateAndSetDefault();
         tag.setField(artwork);
-        audioFile.commit();
+        try {
+          audioFile.commit();
+        } catch (Exception e) {
+          if (e.getMessage().contains("permissions")) {
+            tag.deleteArtworkField();
+            audioFile.commit();
+            tag.setField(artwork);
+            audioFile.commit();
+          } else throw e;
+        }
       }
     } finally {
       mediaFile.closeFile();

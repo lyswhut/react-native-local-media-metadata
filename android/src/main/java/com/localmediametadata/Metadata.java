@@ -44,8 +44,8 @@ public class Metadata {
 
   static public WritableMap readMetadata(ReactApplicationContext context, String filePath) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
-    File file = mediaFile.getFile(false);
     try {
+      File file = mediaFile.getFile(false);
       AudioFile audioFile = AudioFileIO.read(file);
       return buildMetadata(mediaFile, audioFile.getAudioHeader(), audioFile.getTagOrCreateDefault());
     } finally {
@@ -53,21 +53,28 @@ public class Metadata {
     }
   }
 
+  static public void writeMetadata(File file, Bundle metadata, boolean isOverwrite) throws Exception {
+    AudioFile audioFile = AudioFileIO.read(file);
+    Tag tag;
+    if (isOverwrite) {
+      tag = audioFile.createDefaultTag();
+      audioFile.setTag(tag);
+    } else tag = audioFile.getTagOrCreateAndSetDefault();
+    tag.setField(FieldKey.TITLE, metadata.getString("name", ""));
+    tag.setField(FieldKey.ARTIST, metadata.getString("singer", ""));
+    tag.setField(FieldKey.ALBUM, metadata.getString("albumName", ""));
+    audioFile.commit();
+  }
   static public void writeMetadata(ReactApplicationContext context, String filePath, Bundle metadata, boolean isOverwrite) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
-    File file = mediaFile.getFile(true);
-
     try {
-      AudioFile audioFile = AudioFileIO.read(file);
-      Tag tag;
-      if (isOverwrite) {
-        tag = audioFile.createDefaultTag();
-        audioFile.setTag(tag);
-      } else tag = audioFile.getTagOrCreateAndSetDefault();
-      tag.setField(FieldKey.TITLE, metadata.getString("name", ""));
-      tag.setField(FieldKey.ARTIST, metadata.getString("singer", ""));
-      tag.setField(FieldKey.ALBUM, metadata.getString("albumName", ""));
-      audioFile.commit();
+      try {
+        File file = mediaFile.getFile(true);
+        writeMetadata(file, metadata, isOverwrite);
+      } catch (Exception e) {
+        mediaFile.closeFile();
+        writeMetadata(mediaFile.getTempFile(), metadata, isOverwrite);
+      }
     } finally {
       mediaFile.closeFile();
     }
@@ -75,8 +82,8 @@ public class Metadata {
 
   public static String readPic(ReactApplicationContext context, String filePath, String picDir) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
-    File file = mediaFile.getFile(false);
     try {
+      File file = mediaFile.getFile(false);
       AudioFile audioFile = AudioFileIO.read(file);
       Artwork artwork = audioFile.getTagOrCreateDefault().getFirstArtwork();
       if (artwork == null) return "";
@@ -117,32 +124,40 @@ public class Metadata {
       } else throw e;
     }
   }
+  private static void writePic(File file, String picPath) throws Exception {
+    AudioFile audioFile = AudioFileIO.read(file);
+    if ("".equals(picPath)) {
+      audioFile.getTagOrCreateAndSetDefault().deleteArtworkField();
+      audioFile.commit();
+      return;
+    }
+    Artwork artwork = ArtworkFactory.createArtworkFromFile(new File(picPath));
+    if ("flac".equalsIgnoreCase(Utils.getFileExtension(file.getName()))) {
+      writeFlacPic(audioFile, artwork);
+    } else {
+      Tag tag = audioFile.getTagOrCreateAndSetDefault();
+      tag.setField(artwork);
+      try {
+        audioFile.commit();
+      } catch (Exception e) {
+        if (e.getMessage().contains("permissions")) {
+          tag.deleteArtworkField();
+          audioFile.commit();
+          tag.setField(artwork);
+          audioFile.commit();
+        } else throw e;
+      }
+    }
+  }
   public static void writePic(ReactApplicationContext context, String filePath, String picPath) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
-    File file = mediaFile.getFile(true);
     try {
-      AudioFile audioFile = AudioFileIO.read(file);
-      if ("".equals(picPath)) {
-        audioFile.getTagOrCreateAndSetDefault().deleteArtworkField();
-        audioFile.commit();
-        return;
-      }
-      Artwork artwork = ArtworkFactory.createArtworkFromFile(new File(picPath));
-      if ("flac".equalsIgnoreCase(Utils.getFileExtension(filePath))) {
-        writeFlacPic(audioFile, artwork);
-      } else {
-        Tag tag = audioFile.getTagOrCreateAndSetDefault();
-        tag.setField(artwork);
-        try {
-          audioFile.commit();
-        } catch (Exception e) {
-          if (e.getMessage().contains("permissions")) {
-            tag.deleteArtworkField();
-            audioFile.commit();
-            tag.setField(artwork);
-            audioFile.commit();
-          } else throw e;
-        }
+      try {
+        File file = mediaFile.getFile(true);
+        writePic(file, picPath);
+      } catch (Exception e) {
+        mediaFile.closeFile();
+        writePic(mediaFile.getTempFile(), picPath);
       }
     } finally {
       mediaFile.closeFile();
@@ -182,8 +197,8 @@ public class Metadata {
   public static String readLyric(ReactApplicationContext context, String filePath, boolean isReadLrcFile) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
     MediaFile lrcMediaFile = isReadLrcFile ? new MediaFile(context, filePath.substring(0, filePath.lastIndexOf(".")) + ".lrc") : null;
-    File file = mediaFile.getFile(false);
     try {
+      File file = mediaFile.getFile(false);
       if (isReadLrcFile && lrcMediaFile.exists()) {
         String lrc = readLyricFile(lrcMediaFile.getFile(false));
         if (!"".equals(lrc)) return lrc;
@@ -197,15 +212,36 @@ public class Metadata {
     }
   }
 
+  public static void writeLyric(File file, String lyric) throws Exception {
+    AudioFile audioFile = AudioFileIO.read(file);
+    Tag tag = audioFile.getTagOrCreateAndSetDefault();
+    if ("".equals(lyric)) {
+      tag.deleteField(FieldKey.LYRICS);
+      audioFile.commit();
+      return;
+    }
+    tag.setField(FieldKey.LYRICS, lyric);
+    try {
+      audioFile.commit();
+    } catch (Exception e) {
+      if (e.getMessage().contains("permissions")) {
+        tag.deleteField(FieldKey.LYRICS);
+        audioFile.commit();
+        tag.setField(FieldKey.LYRICS, lyric);
+        audioFile.commit();
+      } else throw e;
+    }
+  }
   public static void writeLyric(ReactApplicationContext context, String filePath, String lyric) throws Exception {
     MediaFile mediaFile = new MediaFile(context, filePath);
-    File file = mediaFile.getFile(true);
     try {
-      AudioFile audioFile = AudioFileIO.read(file);
-      Tag tag = audioFile.getTagOrCreateAndSetDefault();
-      if ("".equals(lyric)) tag.deleteField(FieldKey.LYRICS);
-      else tag.setField(FieldKey.LYRICS, lyric);
-      audioFile.commit();
+      try {
+        File file = mediaFile.getFile(true);
+        writeLyric(file, lyric);
+      } catch (Exception e) {
+        mediaFile.closeFile();
+        writeLyric(mediaFile.getTempFile(), lyric);
+      }
     } finally {
       mediaFile.closeFile();
     }

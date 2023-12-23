@@ -12,7 +12,6 @@ npm install github:lyswhut/react-native-local-media-metadata
 
 ```js
 import {
-  scanFiles,
   readMetadata,
   readPic,
   readLyric,
@@ -34,13 +33,13 @@ await readLyric(path).then((lrc) => {
   console.log(lrc)
 })
 
-await writeMetadata(path, metadata, true).then(() => {
+await writeMetadata(path, metadata, false).then(() => {
   console.log('writeMetadata success')
 })
 await writePic(path, picPath).then(() => {
   console.log('writePic success')
 })
-await writeLyric(path, lyric).then(() => {
+await writeLyric(path, lyric, true).then(() => {
   console.log('writeLyric success')
 })
 ```

@@ -45,19 +45,10 @@ public class MediaFile {
     return context.getCacheDir().getAbsolutePath() + "/local-media-metadata-temp-file/" + UUID.randomUUID() + "." + Utils.getFileExtension(name);
   }
 
-  private File createFileFromDocumentFile(boolean isWrite) throws IOException {
-    if (!dFile.exists()) return null;
-    this.isWrite = isWrite;
-    String name = dFile.getName();
-    try {
-      ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(dFile.getUri(), isWrite ? "rw" : "r");
-      String linkFileName = "/proc/self/fd/" + parcelFileDescriptor.getFd();
-      File file = new DescriptorFile(linkFileName, name);
-      if (file.canRead() && (!isWrite || file.canWrite())) return file;
-    } catch (Exception ignored) { closeFile(); }
-    this.tempFile = new File(createPath(name));
+  private File createTempFile() throws IOException {
+    this.tempFile = new File(createPath(isDocFile() ? dFile.getName() : file.getName()));
     Log.d("MediaFile", "creating temp file: " + tempFile.getAbsolutePath());
-    try (InputStream inputStream = Utils.createInputStream(context, dFile);
+    try (InputStream inputStream = isDocFile() ? Utils.createInputStream(context, dFile) : Utils.createInputStream(file);
          OutputStream outputStream = Utils.createOutputStream(tempFile)) {
       byte[] buffer = new byte[1024];
       int length;
@@ -67,10 +58,29 @@ public class MediaFile {
     }
     return tempFile;
   }
+  private File createFileFromDocumentFile(boolean isWrite) throws IOException {
+    if (!dFile.exists()) return null;
+    String name = dFile.getName();
+    try {
+      ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(dFile.getUri(), isWrite ? "rw" : "r");
+      String linkFileName = "/proc/self/fd/" + parcelFileDescriptor.getFd();
+      File file = new DescriptorFile(linkFileName, name);
+      if (file.canRead() && (!isWrite || file.canWrite())) return file;
+    } catch (Exception ignored) { closeFile(); }
+    return createTempFile();
+  }
+  private File createFile(boolean isWrite) throws IOException {
+    if (!isWrite || file.canWrite()) return file;
+    return createTempFile();
+  }
   public File getFile(boolean isWrite) throws IOException {
+    this.isWrite = isWrite;
     return isDocFile()
       ? this.createFileFromDocumentFile(isWrite)
-      : this.file;
+      : this.createFile(isWrite);
+  }
+  public File getTempFile() throws IOException {
+    return createTempFile();
   }
   public void closeFile() throws IOException {
     if (parcelFileDescriptor != null) {
@@ -83,7 +93,9 @@ public class MediaFile {
       Log.d("MediaFile", "closeFile");
       if (isWrite) {
         try (InputStream inputStream = Utils.createInputStream(tempFile);
-             OutputStream outputStream = Utils.createOutputStream(context, this.dFile.getUri())) {
+             OutputStream outputStream = isDocFile()
+               ? Utils.createOutputStream(context, this.dFile.getUri())
+               : Utils.createOutputStream(this.file)) {
           byte[] buffer = new byte[1024];
           int length;
           while ((length = inputStream.read(buffer)) > 0) {

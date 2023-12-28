@@ -1,7 +1,6 @@
 package com.localmediametadata;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -17,13 +16,11 @@ import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.id3.valuepair.ImageFormats;
 import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.ArtworkFactory;
-import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Objects;
 
 public class Metadata {
   private static WritableMap buildMetadata(MediaFile file, AudioHeader audioHeader, Tag tag) {
@@ -164,20 +161,6 @@ public class Metadata {
     }
   }
 
-  public static String decodeString(byte[] data) {
-    UniversalDetector detector = new UniversalDetector(null);
-    detector.handleData(data, 0, data.length);
-    detector.dataEnd();
-    String detectedCharset = detector.getDetectedCharset();
-    detector.reset();
-    if (detectedCharset == null) detectedCharset = "UTF-8";
-    try {
-      return new String(data, detectedCharset);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return "";
-    }
-  }
   public static String readLyricFile(File lrcFile) {
     try {
       FileInputStream fileInputStream = new FileInputStream(lrcFile);
@@ -188,7 +171,7 @@ public class Metadata {
         byteArrayOutputStream.write(buffer, 0, bytesRead);
       }
       fileInputStream.close();
-      return decodeString(byteArrayOutputStream.toByteArray());
+      return Utils.decodeString(byteArrayOutputStream.toByteArray());
     } catch (Exception e) {
       e.printStackTrace();
       return "";

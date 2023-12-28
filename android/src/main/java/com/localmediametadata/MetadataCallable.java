@@ -4,14 +4,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
-import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class MetadataCallable {
-  static class ReadMetadata implements Callable<Object> {
+  public static class ReadMetadata implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
     public ReadMetadata(ReactApplicationContext context, String filePath) {
@@ -29,7 +27,7 @@ public class MetadataCallable {
       }
     }
   }
-  static class WriteMetadata implements Callable<Object> {
+  public static class WriteMetadata implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
     private final Bundle metadata;
@@ -47,7 +45,7 @@ public class MetadataCallable {
     }
   }
 
-  static class ReadPic implements Callable<Object> {
+  public static class ReadPic implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
     private final String picDir;
@@ -67,7 +65,7 @@ public class MetadataCallable {
       }
     }
   }
-  static class WritePic implements Callable<Object> {
+  public static class WritePic implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
     private final String picPath;
@@ -83,7 +81,7 @@ public class MetadataCallable {
     }
   }
 
-  static class ReadLyric implements Callable<Object> {
+  public static class ReadLyric implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
     private final boolean isReadLrcFile;
@@ -103,7 +101,7 @@ public class MetadataCallable {
       }
     }
   }
-  static class WriteLyric implements Callable<Object> {
+  public static class WriteLyric implements Callable<Object> {
     private final ReactApplicationContext context;
     private final String filePath;
     private final String lyric;

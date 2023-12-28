@@ -7,6 +7,8 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
+import org.mozilla.universalchardet.UniversalDetector;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class Utils {
+  public static final String LOG = "Metadata";
 //  private static class MediaFileFilter implements FilenameFilter {
 //    final Pattern pattern;
 //    MediaFileFilter(ArrayList<String> extNames) {
@@ -103,6 +106,20 @@ public class Utils {
   }
   private static String encodeBase64(byte[] data) {
     return new String(Base64.encode(data, Base64.NO_WRAP), StandardCharsets.UTF_8);
+  }
+  public static String decodeString(byte[] data) {
+    UniversalDetector detector = new UniversalDetector(null);
+    detector.handleData(data, 0, data.length);
+    detector.dataEnd();
+    String detectedCharset = detector.getDetectedCharset();
+    detector.reset();
+    if (detectedCharset == null) detectedCharset = "UTF-8";
+    try {
+      return new String(data, detectedCharset);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "";
+    }
   }
 
 //  public static WritableArray scanAudioFiles(ReactApplicationContext context, String directoryPath, ArrayList<String> extNames) {

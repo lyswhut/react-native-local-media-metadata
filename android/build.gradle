@@ -86,5 +86,6 @@ dependencies {
   // https://mvnrepository.com/artifact/com.googlecode.juniversalchardet/juniversalchardet
   implementation group: 'com.googlecode.juniversalchardet', name: 'juniversalchardet', version: '1.0.3'
   implementation "androidx.documentfile:documentfile:1.0.1"
+  implementation "androidx.media3:media3-exoplayer:1.2.0"
 }
 

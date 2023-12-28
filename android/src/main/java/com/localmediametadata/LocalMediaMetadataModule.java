@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.localmediametadata.media3.MetadataMedia3;
 
 @ReactModule(name = LocalMediaMetadataModule.NAME)
 public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
@@ -44,9 +45,21 @@ public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
     AsyncTask.runTask(new MetadataCallable.WriteMetadata(reactContext, filePath, Arguments.toBundle(metadata), isOverwrite), promise);
   }
 
+  private static boolean isSupportMedia3Pic(String filePath) {
+    if (!filePath.startsWith("content://")) return false;
+    String ext = Utils.getFileExtension(filePath).toLowerCase();
+    return switch (ext) {
+      case "mp3", "flac" -> true;
+      default -> false;
+    };
+  }
   @ReactMethod
   public void readPic(String filePath, String picDir, Promise promise) {
-    AsyncTask.runTask(new MetadataCallable.ReadPic(reactContext, filePath, picDir), promise);
+    if (isSupportMedia3Pic(filePath)) {
+      MetadataMedia3.readPic(reactContext, filePath, picDir, promise);
+    } else {
+      AsyncTask.runTask(new MetadataCallable.ReadPic(reactContext, filePath, picDir), promise);
+    }
   }
   @ReactMethod
   public void writePic(String filePath, String picPath, Promise promise) {

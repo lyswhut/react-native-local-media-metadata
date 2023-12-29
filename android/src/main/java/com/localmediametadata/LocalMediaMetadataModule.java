@@ -48,10 +48,11 @@ public class LocalMediaMetadataModule extends ReactContextBaseJavaModule {
   private static boolean isSupportMedia3Pic(String filePath) {
     if (!filePath.startsWith("content://")) return false;
     String ext = Utils.getFileExtension(filePath).toLowerCase();
-    return switch (ext) {
-      case "mp3", "flac" -> true;
-      default -> false;
-    };
+    switch (ext) {
+      case "mp3":
+      case "flac": return true;
+      default: return false;
+    }
   }
   @ReactMethod
   public void readPic(String filePath, String picDir, Promise promise) {

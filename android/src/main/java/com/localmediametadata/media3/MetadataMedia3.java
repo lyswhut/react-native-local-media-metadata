@@ -128,12 +128,18 @@ public class MetadataMedia3 {
           if (metadata == null) continue;
           for(int i2 = 0; i2 < metadata.length(); i2++) {
             Metadata.Entry entry = metadata.get(i2);
-            if ((entry instanceof ApicFrame pic) && "APIC".equals(pic.id) && pic.pictureType == 3) {
-              promise.resolve(writePic(context, uri, picDir, pic.mimeType, pic.pictureData));
-              return;
-            } else if ((entry instanceof PictureFrame pic) && pic.pictureType == 3) {
-              promise.resolve(writePic(context, uri, picDir, pic.mimeType, pic.pictureData));
-              return;
+            if (entry instanceof ApicFrame) {
+              ApicFrame pic = (ApicFrame) entry;
+              if ("APIC".equals(pic.id) && pic.pictureType == 3) {
+                promise.resolve(writePic(context, uri, picDir, pic.mimeType, pic.pictureData));
+                return;
+              }
+            } else if (entry instanceof PictureFrame) {
+              PictureFrame pic = (PictureFrame) entry;
+              if (pic.pictureType == 3) {
+                promise.resolve(writePic(context, uri, picDir, pic.mimeType, pic.pictureData));
+                return;
+              }
             }
           }
           promise.resolve("");

@@ -31,6 +31,11 @@ package org.jaudiotagger.tag;
 public class TagException extends Exception
 {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5226319371974235699L;
+
+	/**
      * Creates a new TagException datatype.
      */
     public TagException()

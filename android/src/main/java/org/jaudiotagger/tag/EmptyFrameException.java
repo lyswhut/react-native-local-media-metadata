@@ -29,6 +29,11 @@ package org.jaudiotagger.tag;
 public class EmptyFrameException extends InvalidFrameException
 {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5761623018903709948L;
+
+	/**
      * Creates a new EmptyFrameException datatype.
      */
     public EmptyFrameException()

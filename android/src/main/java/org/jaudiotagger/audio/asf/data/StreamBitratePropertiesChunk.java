@@ -96,7 +96,7 @@ public class StreamBitratePropertiesChunk extends Chunk
     /**
      * (overridden)
      *
-     * @see Chunk#prettyPrint(String)
+     * @see org.jaudiotagger.audio.asf.data.Chunk#prettyPrint(String)
      */
     @Override
     public String prettyPrint(final String prefix)

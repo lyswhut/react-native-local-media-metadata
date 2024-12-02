@@ -21,27 +21,29 @@ public class ID3Chunk extends Chunk
 {
     public static Logger logger = Logger.getLogger("org.jaudiotagger.audio.aiff.chunk");
     private AiffTag aiffTag;
+    private String loggingName;
 
     /**
      * Constructor.
-     *
-     * @param chunkHeader        The header for this chunk
+     *  @param chunkHeader        The header for this chunk
      * @param chunkData  The content of this chunk
      * @param tag        The AiffTag into which information is stored
+     * @param loggingName
      */
-    public ID3Chunk(final ChunkHeader chunkHeader, final ByteBuffer chunkData, final AiffTag tag)
+    public ID3Chunk(final ChunkHeader chunkHeader, final ByteBuffer chunkData, final AiffTag tag, String loggingName)
     {
         super(chunkData, chunkHeader);
         aiffTag = tag;
+        this.loggingName=loggingName;
     }
 
     @Override
     public boolean readChunk() throws IOException
     {
-        AudioFile.logger.severe("Reading chunk");
+        AudioFile.logger.config(loggingName+":Reading chunk");
         if (!isId3v2Tag(chunkData))
         {
-            logger.severe("Invalid ID3 header for ID3 chunk");
+            logger.severe(loggingName+":Invalid ID3 header for ID3 chunk");
             return false;
         }
 
@@ -51,15 +53,15 @@ public class ID3Chunk extends Chunk
         {
             case ID3v22Tag.MAJOR_VERSION:
                 id3Tag = new ID3v22Tag();
-                AudioFile.logger.severe("Reading ID3V2.2 tag");
+                AudioFile.logger.config(loggingName+":Reading ID3V2.2 tag");
                 break;
             case ID3v23Tag.MAJOR_VERSION:
                 id3Tag = new ID3v23Tag();
-                AudioFile.logger.severe("Reading ID3V2.3 tag");
+                AudioFile.logger.config(loggingName+":Reading ID3V2.3 tag");
                 break;
             case ID3v24Tag.MAJOR_VERSION:
                 id3Tag = new ID3v24Tag();
-                AudioFile.logger.severe("Reading ID3V2.4 tag");
+                AudioFile.logger.config(loggingName+":Reading ID3V2.4 tag");
                 break;
             default:
                 return false;     // bad or unknown version
@@ -73,7 +75,7 @@ public class ID3Chunk extends Chunk
         }
         catch (TagException e)
         {
-            AudioFile.logger.info("Exception reading ID3 tag: " + e.getClass().getName() + ": " + e.getMessage());
+            AudioFile.logger.severe(loggingName+":Exception reading ID3 tag: " + e.getClass().getName() + ": " + e.getMessage());
             return false;
         }
         return true;

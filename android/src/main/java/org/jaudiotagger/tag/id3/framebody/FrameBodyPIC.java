@@ -23,7 +23,6 @@
  */
 package org.jaudiotagger.tag.id3.framebody;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.InvalidTagException;
 import org.jaudiotagger.tag.datatype.*;
 import org.jaudiotagger.tag.id3.ID3v22Frames;
@@ -33,6 +32,7 @@ import org.jaudiotagger.tag.reference.PictureTypes;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * ID3v22 Attached Picture

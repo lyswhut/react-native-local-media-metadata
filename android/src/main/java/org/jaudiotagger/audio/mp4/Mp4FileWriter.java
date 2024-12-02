@@ -18,32 +18,28 @@
  */
 package org.jaudiotagger.audio.mp4;
 
-import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
-import org.jaudiotagger.audio.generic.AudioFileWriter;
+import org.jaudiotagger.audio.generic.AudioFileWriter2;
 import org.jaudiotagger.tag.Tag;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.nio.file.Path;
 
 /**
  * Mp4 File Writer
  *
  * <p>This can write files containing either the .mp4 or .m4a suffixes
  */
-public class Mp4FileWriter extends AudioFileWriter
+public class Mp4FileWriter extends AudioFileWriter2
 {
-
-    private Mp4TagWriter tw = new Mp4TagWriter();
-
-
-    protected void writeTag(AudioFile audioFile, Tag tag, RandomAccessFile raf, RandomAccessFile rafTemp) throws CannotWriteException, IOException
+    @Override
+    protected void writeTag(Tag tag, Path file) throws CannotWriteException
     {
-        tw.write(tag, raf, rafTemp);
+        new Mp4TagWriter(file.toString()).write(tag, file);
     }
 
-    protected void deleteTag(Tag tag, RandomAccessFile raf, RandomAccessFile rafTemp) throws IOException
+    @Override
+    protected void deleteTag(Tag tag, Path file) throws CannotWriteException
     {
-        tw.delete(raf, rafTemp);
+        new Mp4TagWriter(file.toString()).delete(tag, file);
     }
 }

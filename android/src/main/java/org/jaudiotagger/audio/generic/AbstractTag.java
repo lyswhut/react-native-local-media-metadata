@@ -25,7 +25,7 @@ import java.util.*;
 
 /**
  * This class is the default implementation for
- * {@link Tag} and introduces some more useful
+ * {@link org.jaudiotagger.tag.Tag} and introduces some more useful
  * functionality to be implemented.<br>
  *
  * @author Raphaël Slinckx
@@ -49,7 +49,7 @@ public abstract class AbstractTag implements Tag
     /**
      * Add field
      *
-     * @see Tag#addField(TagField)
+     * @see org.jaudiotagger.tag.Tag#addField(org.jaudiotagger.tag.TagField)
      *
      *      Changed so add empty fields
      */
@@ -84,7 +84,7 @@ public abstract class AbstractTag implements Tag
     /**
      * Get list of fields within this tag with the specified id
      *
-     * @see Tag#getFields(String)
+     * @see org.jaudiotagger.tag.Tag#getFields(java.lang.String)
      */
     @Override
     public List<TagField> getFields(String id)
@@ -222,7 +222,7 @@ public abstract class AbstractTag implements Tag
     @Override
     public int getFieldCount()
     {
-        Iterator it = getFields();
+        Iterator<TagField> it = getFields();
         int count = 0;
         while (it.hasNext())
         {
@@ -241,7 +241,7 @@ public abstract class AbstractTag implements Tag
     /**
      * Does this tag contain any comon fields
      *
-     * @see Tag#hasCommonFields()
+     * @see org.jaudiotagger.tag.Tag#hasCommonFields()
      */
     @Override
     public boolean hasCommonFields()
@@ -252,7 +252,7 @@ public abstract class AbstractTag implements Tag
     /**
      * Does this tag contain a field with the specified id
      *
-     * @see Tag#hasField(String)
+     * @see org.jaudiotagger.tag.Tag#hasField(java.lang.String)
      */
     @Override
     public boolean hasField(String id)
@@ -278,7 +278,7 @@ public abstract class AbstractTag implements Tag
     /**
      * Is this tag empty
      *
-     * @see Tag#isEmpty()
+     * @see org.jaudiotagger.tag.Tag#isEmpty()
      */
     @Override
     public boolean isEmpty()
@@ -322,7 +322,7 @@ public abstract class AbstractTag implements Tag
      * Changed:Just because field is empty it doesn't mean it should be deleted. That should be the choice
      * of the developer. (Or does this break things)
      *
-     * @see Tag#setField(TagField)
+     * @see org.jaudiotagger.tag.Tag#setField(org.jaudiotagger.tag.TagField)
      */
     @Override
     public void setField(TagField field)
@@ -354,7 +354,7 @@ public abstract class AbstractTag implements Tag
     /**
      * Set or add encoding
      *
-     * @see Tag#setEncoding(String)
+     * @see org.jaudiotagger.tag.Tag#setEncoding(java.lang.String)
      */
     public boolean setEncoding(final Charset enc)
     {
@@ -363,7 +363,7 @@ public abstract class AbstractTag implements Tag
             return false;
         }
 
-        Iterator it = getFields();
+        Iterator<TagField> it = getFields();
         while (it.hasNext())
         {
             TagField field = (TagField) it.next();
@@ -379,13 +379,13 @@ public abstract class AbstractTag implements Tag
     /**
      * (overridden)
      *
-     * @see Object#toString()
+     * @see java.lang.Object#toString()
      */
     public String toString()
     {
         StringBuffer out = new StringBuffer();
         out.append("Tag content:\n");
-        Iterator it = getFields();
+        Iterator<TagField> it = getFields();
         while (it.hasNext())
         {
             TagField field = (TagField) it.next();

@@ -22,20 +22,22 @@
  */
 package org.jaudiotagger.tag.lyrics3;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import org.jaudiotagger.tag.InvalidTagException;
 import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.TagNotFoundException;
 import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jaudiotagger.tag.id3.AbstractID3v2Frame;
 import org.jaudiotagger.tag.id3.AbstractTag;
 import org.jaudiotagger.tag.id3.ID3v1Tag;
 import org.jaudiotagger.tag.id3.ID3v24Tag;
-
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class Lyrics3v2 extends AbstractLyrics3
 {
@@ -94,20 +96,31 @@ public class Lyrics3v2 extends AbstractLyrics3
             else
             {
                 Lyrics3v2Field newField;
-                Iterator<AbstractID3v2Frame> iterator;
-                iterator = (new ID3v24Tag(mp3tag)).iterator();
+                Iterator<List<TagField>> iterator;
+                iterator = new ID3v24Tag(mp3tag).iterator();
 
                 while (iterator.hasNext())
                 {
-                    try
-                    {
-                        newField = new Lyrics3v2Field(iterator.next());
-
-                        if (newField != null)
-                        {
-                            fieldMap.put(newField.getIdentifier(), newField);
-                        }
-                    }
+					try 
+					{
+						List<TagField> fields = iterator.next();
+						for(TagField element : fields) 
+						{
+							if (element instanceof AbstractID3v2Frame) 
+							{
+								AbstractID3v2Frame frame = (AbstractID3v2Frame) element;
+								if(Lyrics3v2Field.isLyrics3v2Field(frame) ) 
+								{
+									newField = new Lyrics3v2Field(frame);
+		
+									if (newField != null) 
+									{
+										fieldMap.put(newField.getIdentifier(), newField);
+									}
+								}
+							}
+						}
+					}
                     catch (TagException ex)
                     {
                         //invalid frame to createField lyrics3 field. ignore and keep going
@@ -241,7 +254,6 @@ public class Lyrics3v2 extends AbstractLyrics3
 
     public void read(ByteBuffer byteBuffer) throws TagException
     {
-        long filePointer;
         int lyricSize;
 
         if (seek(byteBuffer))
@@ -255,7 +267,7 @@ public class Lyrics3v2 extends AbstractLyrics3
 
         // reset file pointer to the beginning of the tag;
         seek(byteBuffer);
-        filePointer = byteBuffer.position();
+        byteBuffer.position();
 
         fieldMap = new HashMap<String, Lyrics3v2Field>();
 
@@ -397,10 +409,7 @@ public class Lyrics3v2 extends AbstractLyrics3
         String str;
         Lyrics3v2Field field;
         Iterator<Lyrics3v2Field> iterator;
-        ID3v1Tag id3v1tag;
         new ID3v1Tag();
-
-        id3v1tag = null;
 
         delete(file);
         file.seek(file.length());
@@ -471,11 +480,6 @@ public class Lyrics3v2 extends AbstractLyrics3
         offset += str.length();
 
         file.write(buffer, 0, offset);
-
-        if (id3v1tag != null)
-        {
-            id3v1tag.write(file);
-        }
     }
 
     /**

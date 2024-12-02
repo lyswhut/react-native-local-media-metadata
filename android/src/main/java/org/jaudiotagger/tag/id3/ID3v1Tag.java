@@ -23,7 +23,6 @@
  */
 package org.jaudiotagger.tag.id3;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.tag.*;
@@ -35,6 +34,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -190,6 +190,12 @@ public class ID3v1Tag extends AbstractID3v1Tag implements Tag
         ByteBuffer byteBuffer;
 
         fc = file.getChannel();
+
+        if(file.length() < TAG_LENGTH)
+        {
+            throw new IOException("File not large enough to contain a tag");
+        }
+
         fc.position(file.length() - TAG_LENGTH);
         byteBuffer = ByteBuffer.allocate(TAG_LENGTH);
         fc.read(byteBuffer);
@@ -621,7 +627,7 @@ public class ID3v1Tag extends AbstractID3v1Tag implements Tag
             FieldKey key = FieldKey.valueOf(id.toUpperCase());
             return hasField(key);
         }
-        catch(IllegalArgumentException iae)
+        catch(java.lang.IllegalArgumentException iae)
         {
             return false;
         }
@@ -673,10 +679,10 @@ public class ID3v1Tag extends AbstractID3v1Tag implements Tag
             case YEAR:
                 setYear(field.toString());
                 break;
-
-            case COMMENT:
-                setComment(field.toString());
-                break;
+			case COMMENT:
+				setComment(field.toString());
+				break;
+			default:
         }
     }
 
@@ -853,6 +859,7 @@ public class ID3v1Tag extends AbstractID3v1Tag implements Tag
             case COMMENT:
                 setComment("");
                 break;
+            default:
         }
     }
 
@@ -902,7 +909,7 @@ public class ID3v1Tag extends AbstractID3v1Tag implements Tag
     /**
      * @return an iterator to iterate through the fields of the tag
      */
-    public Iterator iterator()
+    public Iterator<Object> iterator()
     {
         return new ID3v1Iterator(this);
     }

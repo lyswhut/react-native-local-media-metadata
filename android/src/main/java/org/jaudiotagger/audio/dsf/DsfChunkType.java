@@ -28,7 +28,7 @@ public enum DsfChunkType
     }
 
     /**
-     * Get {@link DsfChunkType} for code (e.g. "SSND").
+     * Get {@link org.jaudiotagger.audio.dsf.DsfChunkType} for code (e.g. "SSND").
      *
      * @param code chunk id
      * @return chunk type or {@code null} if not registered

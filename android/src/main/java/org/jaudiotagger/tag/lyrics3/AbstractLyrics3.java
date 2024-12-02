@@ -46,8 +46,7 @@ public abstract class AbstractLyrics3 extends AbstractTag
      */
     public void delete(RandomAccessFile file) throws IOException
     {
-        long filePointer;
-        ID3v1Tag id3v1tag = new ID3v1Tag();
+        new ID3v1Tag();
 
 
     }

@@ -92,8 +92,6 @@ public class Mp4EsdsBox extends AbstractMp4Box
     private static final int SECTION_THREE = 0x03;
     private static final int SECTION_FOUR = 0x04;
     private static final int SECTION_FIVE = 0x05;
-    private static final int SECTION_SIX = 0x06;
-
     //Possible Section Filler values
     private static final int FILLER_START = 0x80;
     private static final int FILLER_OTHER = 0x81;
@@ -130,12 +128,6 @@ public class Mp4EsdsBox extends AbstractMp4Box
         this.header = header;
         dataBuffer.order(ByteOrder.BIG_ENDIAN);
 
-        //Not currently used, as lengths can extend over more than one section i think
-        int sectionThreeLength;
-        int sectionFourLength;
-        int sectionFiveLength;
-        int sectionSixLength;
-
         //As explained earlier the length of this atom is not fixed so processing is a bit more difficult
         //Process Flags
         dataBuffer.position(dataBuffer.position() + VERSION_FLAG_LENGTH + OTHER_FLAG_LENGTH);
@@ -143,7 +135,7 @@ public class Mp4EsdsBox extends AbstractMp4Box
         //Process Section 3 if exists
         if (dataBuffer.get() == SECTION_THREE)
         {
-            sectionThreeLength = processSectionHeader(dataBuffer);
+            processSectionHeader(dataBuffer);
             //Skip Other Section 3 data
             dataBuffer.position(dataBuffer.position() + ES_ID_LENGTH + STREAM_PRIORITY_LENGTH);
         }
@@ -151,7 +143,7 @@ public class Mp4EsdsBox extends AbstractMp4Box
         //Process Section 4 (to getFields type and bitrate)
         if (dataBuffer.get() == SECTION_FOUR)
         {
-            sectionFourLength = processSectionHeader(dataBuffer);
+            processSectionHeader(dataBuffer);
 
             //kind (in iTunes)
             kind = kindMap.get((int) dataBuffer.get());
@@ -166,7 +158,7 @@ public class Mp4EsdsBox extends AbstractMp4Box
         //Process Section 5,(to getFields no of channels and audioprofile(profile in itunes))
         if (dataBuffer.get() == SECTION_FIVE)
         {
-            sectionFiveLength = processSectionHeader(dataBuffer);
+            processSectionHeader(dataBuffer);
 
             //Audio Profile
             audioProfile = audioProfileMap.get((dataBuffer.get() >> 3));

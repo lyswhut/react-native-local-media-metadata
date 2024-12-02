@@ -23,7 +23,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Implementing classes represent a tag field for the entagged audio library.<br>
  * Very basic functionality is defined for use with
- * {@link Tag}.
+ * {@link org.jaudiotagger.tag.Tag}.
  *
  * @author Rapha�l Slinckx
  */

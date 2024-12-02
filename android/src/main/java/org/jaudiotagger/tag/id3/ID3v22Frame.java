@@ -15,7 +15,6 @@
  */
 package org.jaudiotagger.tag.id3;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.EmptyFrameException;
 import org.jaudiotagger.tag.InvalidDataTypeException;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

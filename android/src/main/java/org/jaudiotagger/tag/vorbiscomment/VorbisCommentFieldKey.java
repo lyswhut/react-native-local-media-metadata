@@ -20,7 +20,7 @@ public enum VorbisCommentFieldKey
 {
     ACOUSTID_FINGERPRINT("ACOUSTID_FINGERPRINT",EnumSet.of(Tagger.PICARD)),
     ACOUSTID_ID("ACOUSTID_ID",EnumSet.of(Tagger.PICARD)),
-    ALBUM("ALBUM", EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
+    ALBUM("ALBUM", EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ, Tagger.ROON)),
     ALBUMARTIST("ALBUMARTIST",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     ALBUMARTISTSORT("ALBUMARTISTSORT",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     ALBUMARTISTS("ALBUM_ARTISTS",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
@@ -28,14 +28,19 @@ public enum VorbisCommentFieldKey
     ALBUMARTIST_JRIVER("ALBUM ARTIST",EnumSet.of(Tagger.JRIVER)),
     ALBUMSORT("ALBUMSORT",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     ALBUM_ARTIST("ALBUM_ARTIST",EnumSet.of(Tagger.MEDIA_MONKEY)),
+    ALBUM_YEAR("ALBUM_YEAR",EnumSet.of(Tagger.JAIKOZ)),
     ARRANGER("ARRANGER",EnumSet.of(Tagger.PICARD)),
     ARRANGER_SORT("ARRANGER_SORT",EnumSet.of(Tagger.JAIKOZ)),
     ARTIST("ARTIST", EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
     ARTISTS("ARTISTS", EnumSet.of(Tagger.JAIKOZ)),
     ARTISTSORT("ARTISTSORT",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     ARTISTS_SORT("ARTISTS_SORT",EnumSet.of(Tagger.JAIKOZ)),
+    AUDIO_ENGINEER("AUDIO_ENGINEER",EnumSet.of(Tagger.SONGKONG)),
+    AUDIO_ENGINEER_SORT("AUDIO_ENGINEER_SORT",EnumSet.of(Tagger.SONGKONG)),
     ASIN("ASIN",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
-    BARCODE("BARCODE",EnumSet.of(Tagger.JAIKOZ)),
+    BALANCE_ENGINEER("BALANCE_ENGINEER",EnumSet.of(Tagger.SONGKONG)),
+    BALANCE_ENGINEER_SORT("BALANCE_ENGINEER_SORT",EnumSet.of(Tagger.SONGKONG)),
+    BARCODE("BARCODE",EnumSet.of(Tagger.JAIKOZ,Tagger.ROON)),
     BPM("BPM",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     CATALOGNUMBER("CATALOGNUMBER",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     CHOIR("CHOIR",EnumSet.of(Tagger.JAIKOZ)),
@@ -44,15 +49,16 @@ public enum VorbisCommentFieldKey
     CLASSICAL_NICKNAME("CLASSICAL_NICKNAME",EnumSet.of(Tagger.JAIKOZ)),
     COMMENT("COMMENT",EnumSet.of(Tagger.PICARD)),
     COMPILATION("COMPILATION",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
-    COMPOSER("COMPOSER",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    COMPOSER("COMPOSER",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ,Tagger.ROON)),
     COMPOSERSORT("COMPOSERSORT",EnumSet.of(Tagger.JAIKOZ)),
-    CONDUCTOR("CONDUCTOR",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    CONDUCTOR("CONDUCTOR",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ,Tagger.ROON)),
     CONDUCTOR_SORT("CONDUCTOR_SORT",EnumSet.of(Tagger.JAIKOZ)),
     CONTACT("CONTACT",EnumSet.of(Tagger.XIPH)),
     COPYRIGHT("COPYRIGHT",EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
     COUNTRY("COUNTRY",EnumSet.of(Tagger.PICARD)),
     COVERART("COVERART",EnumSet.of(Tagger.JAIKOZ)),
     COVERARTMIME("COVERARTMIME",EnumSet.of(Tagger.JAIKOZ)),
+    CREDITS("CREDITS",EnumSet.of(Tagger.SONGKONG)),
     CUSTOM1("CUSTOM1",EnumSet.of(Tagger.MEDIA_MONKEY)),
     CUSTOM2("CUSTOM2",EnumSet.of(Tagger.MEDIA_MONKEY)),
     CUSTOM3("CUSTOM3",EnumSet.of(Tagger.MEDIA_MONKEY)),
@@ -64,30 +70,42 @@ public enum VorbisCommentFieldKey
     DISCSUBTITLE("DISCSUBTITLE",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     DISCTOTAL("DISCTOTAL",EnumSet.of(Tagger.XIPH,Tagger.PICARD)),
     DJMIXER("DJMIXER",EnumSet.of(Tagger.PICARD)),
+    DJMIXER_SORT("DJMIXER_SORT",EnumSet.of(Tagger.SONGKONG)),
     ENCODEDBY("ENCODEDBY",EnumSet.of(Tagger.PICARD)),
     ENCODER("ENCODER"),
-    ENGINEER("ENGINEER",EnumSet.of(Tagger.PICARD)),
-    ENSEMBLE("ENSEMBLE",EnumSet.of(Tagger.MEDIA_MONKEY, Tagger.JAIKOZ)),
+    ENGINEER("ENGINEER",EnumSet.of(Tagger.PICARD,Tagger.ROON)),
+    ENGINEER_SORT("ENGINEER_SORT",EnumSet.of(Tagger.SONGKONG)),
+    ENSEMBLE("ENSEMBLE",EnumSet.of(Tagger.MEDIA_MONKEY, Tagger.JAIKOZ,Tagger.ROON)),
     ENSEMBLE_SORT("ENSEMBLE_SORT",EnumSet.of(Tagger.JAIKOZ)),
     FBPM("FBPM",EnumSet.of(Tagger.BEATUNES)),
     GENRE("GENRE",EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
-    GROUP("GROUP",EnumSet.of(Tagger.JAIKOZ)),
+    GROUP("GROUP",EnumSet.of(Tagger.JAIKOZ, Tagger.MINIMSERVER)),
     GROUPING("GROUPING",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     INSTRUMENT("INSTRUMENT",EnumSet.of(Tagger.JAIKOZ)),
-    INVOLVED_PERSON("INVOLVED_PERSON", EnumSet.of(Tagger.JAIKOZ)),
+    INVOLVEDPEOPLE("INVOLVEDPEOPLE", EnumSet.of(Tagger.ROON)),
+    IPI("IPI",EnumSet.of(Tagger.JAIKOZ)),
     ISRC("ISRC",EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
+    ISWC("ISWC",EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
     IS_CLASSICAL("IS_CLASSICAL",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    IS_GREATEST_HITS("IS_GREATEST_HITS",EnumSet.of(Tagger.JAIKOZ)),
+    IS_HD("IS_HD",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    IS_LIVE("LIVE",EnumSet.of(Tagger.ROON)),
     IS_SOUNDTRACK("IS_SOUNDTRACK",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    JAIKOZ_ID("JAIKOZ_ID",EnumSet.of(Tagger.JAIKOZ)),
     KEY("KEY"),
-    LABEL("LABEL",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    LABEL("LABEL",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ,Tagger.ROON)),
     LANGUAGE("LANGUAGE"),
     LICENSE("LICENSE",EnumSet.of(Tagger.XIPH)),
     LOCATION("LOCATION",EnumSet.of(Tagger.XIPH)),
-    LYRICIST("LYRICIST",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    LYRICIST("LYRICIST",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ,Tagger.ROON)),
+    LYRICIST_SORT("LYRICIST_SORT",EnumSet.of(Tagger.JAIKOZ)),
     LYRICS("LYRICS",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     MEDIA("MEDIA",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    MASTERING("MASTERING",EnumSet.of(Tagger.SONGKONG)),
+    MASTERING_SORT("MASTERING_SORT",EnumSet.of(Tagger.SONGKONG)),
     METADATA_BLOCK_PICTURE("METADATA_BLOCK_PICTURE",EnumSet.of(Tagger.XIPH)),
     MIXER("MIXER",EnumSet.of(Tagger.PICARD)),
+    MIXER_SORT("MIXER_SORT",EnumSet.of(Tagger.SONGKONG)),
     MOOD("MOOD",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     MOOD_ACOUSTIC("MOOD_ACOUSTIC", EnumSet.of(Tagger.JAIKOZ)),
     MOOD_AGGRESSIVE("MOOD_AGGRESSIVE", EnumSet.of(Tagger.JAIKOZ)),
@@ -115,8 +133,8 @@ public enum VorbisCommentFieldKey
     MUSICBRAINZ_TRACKID("MUSICBRAINZ_TRACKID",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     MUSICBRAINZ_WORK("MUSICBRAINZ_WORK", EnumSet.of(Tagger.JAIKOZ)),
     MUSICBRAINZ_WORKID("MUSICBRAINZ_WORKID",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
-    MUSICBRAINZ_WORK_COMPOSITION("MUSICBRAINZ_WORK_COMPOSITION",EnumSet.of(Tagger.JAIKOZ)),
-    MUSICBRAINZ_WORK_COMPOSITION_ID("MUSICBRAINZ_WORK_COMPOSITION_ID",EnumSet.of(Tagger.JAIKOZ)),
+    MUSICBRAINZ_RECORDING_WORK("MUSICBRAINZ_RECORDING_WORK",EnumSet.of(Tagger.JAIKOZ)),
+    MUSICBRAINZ_RECORDING_WORK_ID("MUSICBRAINZ_RECORDING_WORK_ID",EnumSet.of(Tagger.JAIKOZ)),
     MUSICBRAINZ_WORK_PART_LEVEL1("MUSICBRAINZ_WORK_PART_LEVEL1",EnumSet.of(Tagger.JAIKOZ)),
     MUSICBRAINZ_WORK_PART_LEVEL1_ID("MUSICBRAINZ_WORK_PART_LEVEL1_ID",EnumSet.of(Tagger.JAIKOZ)),
     MUSICBRAINZ_WORK_PART_LEVEL1_TYPE("MUSICBRAINZ_WORK_PART_LEVEL1_TYPE",EnumSet.of(Tagger.JAIKOZ)),
@@ -143,36 +161,53 @@ public enum VorbisCommentFieldKey
     ORCHESTRA_SORT("ORCHESTRA_SORT",EnumSet.of(Tagger.JAIKOZ)),
     ORGANIZATION("ORGANIZATION",EnumSet.of(Tagger.XIPH)),  //   Name of the organization producing the track (i.e. the 'record label')
     ORIGINAL_ALBUM("ORIGINAL ALBUM",EnumSet.of(Tagger.JAIKOZ,Tagger.MEDIA_MONKEY)),
+    ORIGINALRELEASEDATE("ORIGINALRELEASEDATE",EnumSet.of(Tagger.ROON)),
     ORIGINAL_ARTIST("ORIGINAL ARTIST",EnumSet.of(Tagger.JAIKOZ,Tagger.MEDIA_MONKEY)),
     ORIGINAL_LYRICIST("ORIGINAL LYRICIST",EnumSet.of(Tagger.MEDIA_MONKEY)),
     ORIGINAL_YEAR("ORIGINAL YEAR",EnumSet.of(Tagger.JAIKOZ,Tagger.MEDIA_MONKEY)),
-    PART("PART",EnumSet.of(Tagger.JAIKOZ)),
+    OVERALL_WORK("OVERALL_WORK",EnumSet.of(Tagger.JAIKOZ)),
+    PART("PART",EnumSet.of(Tagger.JAIKOZ,Tagger.ROON)),
     PART_NUMBER("PARTNUMBER",EnumSet.of(Tagger.XIPH)),
     PART_TYPE("PART_TYPE",EnumSet.of(Tagger.JAIKOZ)),
     PERFORMER("PERFORMER",EnumSet.of(Tagger.XIPH,Tagger.PICARD)),
     PERFORMER_NAME("PERFORMER_NAME",EnumSet.of(Tagger.JAIKOZ)),
     PERFORMER_NAME_SORT("PERFORMER_NAME_SORT",EnumSet.of(Tagger.JAIKOZ)),
     PERIOD("PERIOD",EnumSet.of(Tagger.MUSICHI)),
-    PRODUCER("PRODUCER",EnumSet.of(Tagger.PICARD)),
+    PRODUCER("PRODUCER",EnumSet.of(Tagger.PICARD,Tagger.ROON)),
+    PRODUCER_SORT("PRODUCER_SORT",EnumSet.of(Tagger.SONGKONG)),
     PRODUCTNUMBER("PRODUCTNUMBER",EnumSet.of(Tagger.XIPH)),
     QUALITY("QUALITY",EnumSet.of(Tagger.MEDIA_MONKEY)),
     RANKING("RANKING",EnumSet.of(Tagger.JAIKOZ)),
     RATING("RATING",EnumSet.of(Tagger.MEDIA_MONKEY)),
+    RECORDING_ENGINEER("RECORIDNG_ENGINEER",EnumSet.of(Tagger.SONGKONG)),
+    RECORDING_ENGINEER_SORT("RECORDING_ENGINEER_SORT",EnumSet.of(Tagger.SONGKONG)),
+    RECORDINGDATE("RECORDINGDATE",EnumSet.of(Tagger.ROON)),
+    RECORDINGSTARTDATE("RECORDINGSTARTDATE",EnumSet.of(Tagger.ROON)),
+    RECORDINGENDDATE("RECORDINGENDDATE",EnumSet.of(Tagger.ROON)),
+    RECORDINGLOCATION("RECORDINGLOCATION",EnumSet.of(Tagger.ROON)),
     RELEASECOUNTRY("RELEASECOUNTRY",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     REMIXER("REMIXER",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
+    ROONALBUMTAG("ROONALBUMTAG",EnumSet.of(Tagger.ROON)),
+    ROONTRACKTAG("ROONTRACKTAG",EnumSet.of(Tagger.ROON)),
     SCRIPT("SCRIPT",EnumSet.of(Tagger.JAIKOZ)),
+    SECTION("SECTION",EnumSet.of(Tagger.ROON)),
     SINGLE_DISC_TRACK_NO("SINGLE_DISC_TRACK_NO",EnumSet.of(Tagger.JAIKOZ)),
+    SONGKONG_ID("SONGKONG_ID",EnumSet.of(Tagger.SONGKONG)),
+    SOUND_ENGINEER("SOUND_ENGINEER",EnumSet.of(Tagger.SONGKONG)),
+    SOUND_ENGINEER_SORT("SOUNDO_ENGINEER_SORT",EnumSet.of(Tagger.SONGKONG)),
     SOURCEMEDIA("SOURCEMEDIA",EnumSet.of(Tagger.XIPH)),
     SUBTITLE("SUBTITLE",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     TAGS("TAGS",EnumSet.of(Tagger.JAIKOZ)),
     TEMPO("TEMPO",EnumSet.of(Tagger.MEDIA_MONKEY)),
     TIMBRE("TIMBRE_BRIGHTNESS", EnumSet.of(Tagger.JAIKOZ)),
-    TITLE("TITLE", EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
+    TITLE("TITLE", EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ,Tagger.ROON)),
     TITLE_MOVEMENT("TITLE_MOVEMENT", EnumSet.of(Tagger.JAIKOZ)),
     TITLESORT("TITLESORT",EnumSet.of(Tagger.PICARD,Tagger.JAIKOZ)),
     TONALITY("TONALITY", EnumSet.of(Tagger.JAIKOZ)),
     TRACKNUMBER("TRACKNUMBER",EnumSet.of(Tagger.XIPH,Tagger.PICARD,Tagger.JAIKOZ)),
     TRACKTOTAL("TRACKTOTAL",EnumSet.of(Tagger.XIPH,Tagger.PICARD)),
+    URL_BANDCAMP_ARTIST_SITE("URL_BANDCAMP_ARTIST_SITE",EnumSet.of(Tagger.SONGKONG)),
+    URL_BANDCAMP_RELEASE_SITE("URL_BANDCAMP_RELEASE_SITE",EnumSet.of(Tagger.SONGKONG)),
     URL_DISCOGS_ARTIST_SITE("URL_DISCOGS_ARTIST_SITE",EnumSet.of(Tagger.JAIKOZ)),
     URL_DISCOGS_RELEASE_SITE("URL_DISCOGS_RELEASE_SITE",EnumSet.of(Tagger.JAIKOZ)),
     URL_LYRICS_SITE("URL_LYRICS_SITE",EnumSet.of(Tagger.JAIKOZ)),
@@ -181,7 +216,7 @@ public enum VorbisCommentFieldKey
     URL_WIKIPEDIA_ARTIST_SITE("URL_WIKIPEDIA_ARTIST_SITE",EnumSet.of(Tagger.JAIKOZ)),
     URL_WIKIPEDIA_RELEASE_SITE("URL_WIKIPEDIA_RELEASE_SITE",EnumSet.of(Tagger.JAIKOZ)),
     VENDOR("VENDOR"),
-    VERSION("VERSION", EnumSet.of(Tagger.XIPH)),// The version field may be used to differentiate multiple versions of the same track title in a single collection. (e.g. remix info)
+    VERSION("VERSION", EnumSet.of(Tagger.XIPH, Tagger.ROON)),// The version field may be used to differentiate multiple versions of the same track title in a single collection. (e.g. remix info)
     WORK("WORK",EnumSet.of(Tagger.JAIKOZ)),
     WORK_TYPE("WORK_TYPE",EnumSet.of(Tagger.JAIKOZ)),
     ;
@@ -189,6 +224,7 @@ public enum VorbisCommentFieldKey
 
     private String fieldName;
     private EnumSet<Tagger> taggers;
+    private String realFieldName;
 
     VorbisCommentFieldKey(String fieldName)
     {
@@ -201,9 +237,27 @@ public enum VorbisCommentFieldKey
         this.taggers = taggers;
     }
 
+    VorbisCommentFieldKey(String fieldName, String realFieldName)
+    {
+        this.fieldName = fieldName;
+        this.realFieldName = realFieldName;
+    }
+
+    VorbisCommentFieldKey(String fieldName, String realFieldName, EnumSet<Tagger> taggers)
+    {
+        this.fieldName = fieldName;
+        this.realFieldName = realFieldName;
+        this.taggers = taggers;
+    }
+
     public String getFieldName()
     {
         return fieldName;
+    }
+
+    public String getRealFieldName()
+    {
+        return realFieldName;
     }
 
     /**

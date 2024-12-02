@@ -22,19 +22,19 @@ import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.generic.AudioFileWriter2;
 import org.jaudiotagger.tag.Tag;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class WavFileWriter extends AudioFileWriter2
 {
-   @Override
-    protected void writeTag(Tag tag, File file) throws CannotWriteException
+    @Override
+    protected void writeTag(Tag tag, Path file) throws CannotWriteException
     {
-        new WavTagWriter(file.getPath()).write(tag, file);
+        new WavTagWriter(file.toString()).write(tag, file);
     }
 
     @Override
-    protected void deleteTag(Tag tag, File file) throws CannotWriteException
+    protected void deleteTag(Tag tag, Path file) throws CannotWriteException
     {
-        new WavTagWriter(file.getPath()).delete(tag, file);
+        new WavTagWriter(file.toString()).delete(tag, file);
     }
 }

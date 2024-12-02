@@ -1,6 +1,6 @@
 package org.jaudiotagger.tag.vorbiscomment.util;
 
-import org.jaudiotagger.StandardCharsets;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Base64Coder

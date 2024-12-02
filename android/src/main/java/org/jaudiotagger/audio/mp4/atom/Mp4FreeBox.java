@@ -1,12 +1,12 @@
 package org.jaudiotagger.audio.mp4.atom;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.mp4.Mp4AtomIdentifier;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * FreeBox ( padding)

@@ -27,7 +27,7 @@ import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
 
 import java.nio.charset.Charset;
 
-import static org.jaudiotagger.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
 /**
  * Represents a String whose size is determined by finding of a null character at the end of the String with fixed text encoding.
@@ -44,7 +44,7 @@ public class StringNullTerminated extends TextEncodedStringNullTerminated
      */
     public StringNullTerminated(String identifier, AbstractTagFrameBody frameBody)
     {
-        super(identifier, frameBody);
+        super(identifier, frameBody, false);
     }
 
     public StringNullTerminated(StringNullTerminated object)

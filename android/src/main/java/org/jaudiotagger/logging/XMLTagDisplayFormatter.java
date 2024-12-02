@@ -31,8 +31,6 @@ import java.text.StringCharacterIterator;
 */
 public class XMLTagDisplayFormatter extends AbstractTagDisplayFormatter
 {
-    private static XMLTagDisplayFormatter formatter;
-
     protected static final String xmlOpenStart = "<";
     protected static final String xmlOpenEnd = ">";
     protected static final String xmlCloseStart = "</";

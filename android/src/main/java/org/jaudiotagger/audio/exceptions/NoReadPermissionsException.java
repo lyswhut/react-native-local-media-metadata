@@ -25,6 +25,11 @@ package org.jaudiotagger.audio.exceptions;
 public class NoReadPermissionsException extends CannotReadException
 {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1917828252842714301L;
+
+	/**
      * Creates an instance.
      */
     public NoReadPermissionsException()

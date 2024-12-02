@@ -25,6 +25,11 @@ package org.jaudiotagger.tag;
 public class PaddingException extends InvalidFrameIdentifierException
 {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1308046847105237663L;
+
+	/**
      * Creates a new PaddingException datatype.
      */
     public PaddingException()

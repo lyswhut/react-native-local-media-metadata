@@ -27,6 +27,8 @@ import org.jaudiotagger.tag.InvalidDataTypeException;
 import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
 import org.jaudiotagger.tag.id3.ID3Tags;
 
+import java.util.logging.Level;
+
 
 /**
  * Represents a number held as a fixed number of digits.
@@ -143,7 +145,10 @@ public class NumberFixedLength extends AbstractDataType
             lvalue += (arr[i] & 0xff);
         }
         value = lvalue;
-        logger.config("Read NumberFixedlength:" + value);
+        if(logger.isLoggable(Level.CONFIG))
+        {
+            logger.config("Read NumberFixedlength:" + value);
+        }
     }
 
 

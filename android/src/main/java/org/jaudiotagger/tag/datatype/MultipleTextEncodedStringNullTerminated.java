@@ -25,13 +25,13 @@ public class MultipleTextEncodedStringNullTerminated extends AbstractDataType
     public MultipleTextEncodedStringNullTerminated(String identifier, AbstractTagFrameBody frameBody)
     {
         super(identifier, frameBody);
-        value = new Values();
+        value = new MultipleTextEncodedStringNullTerminated.Values();
     }
 
     public MultipleTextEncodedStringNullTerminated(TextEncodedStringSizeTerminated object)
     {
         super(object);
-        value = new Values();
+        value = new MultipleTextEncodedStringNullTerminated.Values();
     }
 
     public MultipleTextEncodedStringNullTerminated(MultipleTextEncodedStringNullTerminated object)
@@ -89,7 +89,7 @@ public class MultipleTextEncodedStringNullTerminated extends AbstractDataType
             try
             {
                 //Read String
-                TextEncodedStringNullTerminated next = new TextEncodedStringNullTerminated(identifier, frameBody);
+                TextEncodedStringNullTerminated next = new TextEncodedStringNullTerminated(identifier, frameBody, true);
                 next.readByteArray(arr, offset);
 
                 if (next.getSize() == 0)

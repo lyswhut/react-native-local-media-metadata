@@ -84,8 +84,8 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
 
   // https://mvnrepository.com/artifact/com.googlecode.juniversalchardet/juniversalchardet
-  implementation group: 'com.googlecode.juniversalchardet', name: 'juniversalchardet', version: '1.0.3'
+  implementation "com.googlecode.juniversalchardet:juniversalchardet:1.0.3"
   implementation "androidx.documentfile:documentfile:1.0.1"
-  implementation "androidx.media3:media3-exoplayer:1.4.0"
+  implementation "androidx.media3:media3-exoplayer:1.5.0"
 }
 

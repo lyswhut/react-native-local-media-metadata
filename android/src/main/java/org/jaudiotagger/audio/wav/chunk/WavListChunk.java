@@ -26,12 +26,14 @@ import org.jaudiotagger.tag.wav.WavTag;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.logging.Logger;
 
 /**
  * Reads a list chunk, only interested in it if contains INFO chunk as this contains basic metadata
  */
 public class WavListChunk extends Chunk
 {
+    public static Logger logger = Logger.getLogger("org.jaudiotagger.audio.wav.chunk.WavListChunk");
 
     private boolean isValid = false;
 
@@ -59,12 +61,18 @@ public class WavListChunk extends Chunk
         {
             WavInfoChunk chunk = new WavInfoChunk(tag, loggingName);
             result = chunk.readChunks(chunkData);
+
             //This is the start of the enclosing LIST element
             tag.getInfoTag().setStartLocationInFile(chunkHeader.getStartLocationInFile());
             tag.getInfoTag().setEndLocationInFile(chunkHeader.getStartLocationInFile() + ChunkHeader.CHUNK_HEADER_SIZE + chunkHeader.getSize());
             tag.setExistingInfoTag(true);
+            return result;
         }
-        return result;
+        else
+        {
+            logger.severe("LIST chunk does not contain INFO instead contains "+subIdentifier + " so skipping");
+            return true;
+        }
     }
 
 

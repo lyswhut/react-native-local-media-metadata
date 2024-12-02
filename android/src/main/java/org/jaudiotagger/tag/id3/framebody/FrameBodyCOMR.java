@@ -199,8 +199,8 @@ public class FrameBodyCOMR extends AbstractID3v2FrameBody implements ID3v24Frame
         objectList.add(new StringDate(DataTypes.OBJ_VALID_UNTIL, this));
         objectList.add(new StringNullTerminated(DataTypes.OBJ_CONTACT_URL, this));
         objectList.add(new NumberHashMap(DataTypes.OBJ_RECIEVED_AS, this, ReceivedAsTypes.RECEIVED_AS_FIELD_SIZE));
-        objectList.add(new TextEncodedStringNullTerminated(DataTypes.OBJ_SELLER_NAME, this));
-        objectList.add(new TextEncodedStringNullTerminated(DataTypes.OBJ_DESCRIPTION, this));
+        objectList.add(new TextEncodedStringNullTerminated(DataTypes.OBJ_SELLER_NAME, this, false));
+        objectList.add(new TextEncodedStringNullTerminated(DataTypes.OBJ_DESCRIPTION, this, false));
         objectList.add(new StringNullTerminated(DataTypes.OBJ_MIME_TYPE, this));
         objectList.add(new ByteArraySizeTerminated(DataTypes.OBJ_SELLER_LOGO, this));
     }

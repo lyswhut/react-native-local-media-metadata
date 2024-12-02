@@ -25,7 +25,7 @@ public class ChunkSummary
         return chunkId+":StartLocation:"
                 + Hex.asDecAndHex(fileStartLocation)
                 + ":SizeIncHeader:"
-                + chunkSize + ChunkHeader.CHUNK_HEADER_SIZE
+                + (chunkSize + ChunkHeader.CHUNK_HEADER_SIZE)
                 + ":EndLocation:"
                 + Hex.asDecAndHex(endLocation);
     }

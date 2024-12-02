@@ -267,7 +267,7 @@ public class MetadataDescriptor implements Comparable<MetadataDescriptor>, Clone
     /**
      * (overridden)
      *
-     * @see Object#clone()
+     * @see java.lang.Object#clone()
      */
     @Override
     public Object clone() throws CloneNotSupportedException
@@ -300,7 +300,7 @@ public class MetadataDescriptor implements Comparable<MetadataDescriptor>, Clone
     /**
      * (overridden)
      *
-     * @see Object#equals(Object)
+     * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(final Object obj)
@@ -856,7 +856,7 @@ public class MetadataDescriptor implements Comparable<MetadataDescriptor>, Clone
     /**
      * (overridden)
      *
-     * @see Object#toString()
+     * @see java.lang.Object#toString()
      */
     @Override
     public String toString()

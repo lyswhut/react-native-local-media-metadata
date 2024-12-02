@@ -18,7 +18,6 @@
  */
 package org.jaudiotagger.tag.mp4;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.AbstractTagCreator;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.mp4.Mp4AtomIdentifier;
@@ -33,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 /**
@@ -73,11 +73,11 @@ public class Mp4TagCreator extends AbstractTagCreator
      * Convert tagdata to rawdata ready for writing to file
      *
      * @param tag
-     * @param padding TODO padding parameter currently ignored
+     * @param isLastBlock TODO padding parameter currently ignored
      * @return
      * @throws UnsupportedEncodingException
      */
-    public ByteBuffer convert(Tag tag, int padding) throws UnsupportedEncodingException
+    public ByteBuffer convertMetadata(Tag tag, boolean isLastBlock) throws UnsupportedEncodingException
     {
         try
         {

@@ -18,7 +18,6 @@
  */
 package org.jaudiotagger.audio.mp4;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.mp4.atom.Mp4BoxHeader;
@@ -32,10 +31,12 @@ import org.jaudiotagger.tag.mp4.atom.Mp4DataBox;
 import org.jaudiotagger.tag.mp4.field.*;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -83,91 +84,92 @@ public class Mp4TagReader
      * There are gaps between these boxes
 
      */
-    public Mp4Tag read(RandomAccessFile raf) throws CannotReadException, IOException
+    public Mp4Tag read(Path file) throws CannotReadException, IOException
     {
-        FileChannel fc = raf.getChannel();
-        Mp4Tag tag = new Mp4Tag();
-
-        //Get to the facts everything we are interested in is within the moov box, so just load data from file
-        //once so no more file I/O needed
-        Mp4BoxHeader moovHeader = Mp4BoxHeader.seekWithinLevel(fc, Mp4AtomIdentifier.MOOV.getFieldName());
-        if (moovHeader == null)
-        {
-            throw new CannotReadException(ErrorMessage.MP4_FILE_NOT_CONTAINER.getMsg());
-        }
-        ByteBuffer moovBuffer = ByteBuffer.allocate(moovHeader.getLength() - Mp4BoxHeader.HEADER_LENGTH);
-        raf.getChannel().read(moovBuffer);
-        moovBuffer.rewind();
-
-        //Level 2-Searching for "udta" within "moov"
-        Mp4BoxHeader boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.UDTA.getFieldName());
-        if (boxHeader != null)
-        {
-            //Level 3-Searching for "meta" within udta
-            boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.META.getFieldName());
-            if (boxHeader == null)
+        try(SeekableByteChannel fc = Files.newByteChannel(file)) {
+            Mp4Tag tag = new Mp4Tag();
+    
+            //Get to the facts everything we are interested in is within the moov box, so just load data from file
+            //once so no more file I/O needed
+            Mp4BoxHeader moovHeader = Mp4BoxHeader.seekWithinLevel(fc, Mp4AtomIdentifier.MOOV.getFieldName());
+            if (moovHeader == null)
             {
-                logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
-                return tag;
+                throw new CannotReadException(ErrorMessage.MP4_FILE_NOT_CONTAINER.getMsg());
             }
-            Mp4MetaBox meta = new Mp4MetaBox(boxHeader, moovBuffer);
-            meta.processData();
-
-            //Level 4- Search for "ilst" within meta
-            boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.ILST.getFieldName());
-             //This file does not actually contain a tag
-            if (boxHeader == null)
+            ByteBuffer moovBuffer = ByteBuffer.allocate(moovHeader.getLength() - Mp4BoxHeader.HEADER_LENGTH);
+            fc.read(moovBuffer);
+            moovBuffer.rewind();
+    
+            //Level 2-Searching for "udta" within "moov"
+            Mp4BoxHeader boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.UDTA.getFieldName());
+            if (boxHeader != null)
             {
-                logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
-                return tag;
+                //Level 3-Searching for "meta" within udta
+                boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.META.getFieldName());
+                if (boxHeader == null)
+                {
+                    logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
+                    return tag;
+                }
+                Mp4MetaBox meta = new Mp4MetaBox(boxHeader, moovBuffer);
+                meta.processData();
+    
+                //Level 4- Search for "ilst" within meta
+                boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.ILST.getFieldName());
+                 //This file does not actually contain a tag
+                if (boxHeader == null)
+                {
+                    logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
+                    return tag;
+                }
             }
-        }
-        else
-        {
-            //Level 2-Searching for "meta" not within udta
-            boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.META.getFieldName());
-            if (boxHeader == null)
+            else
             {
-                logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
-                return tag;
+                //Level 2-Searching for "meta" not within udta
+                boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.META.getFieldName());
+                if (boxHeader == null)
+                {
+                    logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
+                    return tag;
+                }
+                Mp4MetaBox meta = new Mp4MetaBox(boxHeader, moovBuffer);
+                meta.processData();
+    
+    
+                //Level 3- Search for "ilst" within meta
+                boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.ILST.getFieldName());
+                //This file does not actually contain a tag
+                if (boxHeader == null)
+                {
+                    logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
+                    return tag;
+                }
             }
-            Mp4MetaBox meta = new Mp4MetaBox(boxHeader, moovBuffer);
-            meta.processData();
-
-
-            //Level 3- Search for "ilst" within meta
-            boxHeader = Mp4BoxHeader.seekWithinLevel(moovBuffer, Mp4AtomIdentifier.ILST.getFieldName());
-            //This file does not actually contain a tag
-            if (boxHeader == null)
+    
+            //Size of metadata (exclude the size of the ilst parentHeader), take a slice starting at
+            //metadata children to make things safer
+            int length = boxHeader.getLength() - Mp4BoxHeader.HEADER_LENGTH;
+            ByteBuffer metadataBuffer = moovBuffer.slice();
+            //Datalength is longer are there boxes after ilst at this level?
+            logger.config("headerlengthsays:" + length + "datalength:" + metadataBuffer.limit());
+            int read = 0;
+            logger.config("Started to read metadata fields at position is in metadata buffer:" + metadataBuffer.position());
+            while (read < length)
             {
-                logger.warning(ErrorMessage.MP4_FILE_HAS_NO_METADATA.getMsg());
-                return tag;
+                //Read the boxHeader
+                boxHeader.update(metadataBuffer);
+    
+                //Create the corresponding datafield from the id, and slice the buffer so position of main buffer
+                //wont get affected
+                logger.config("Next position is at:" + metadataBuffer.position());
+                createMp4Field(tag, boxHeader, metadataBuffer.slice());
+    
+                //Move position in buffer to the start of the next parentHeader
+                metadataBuffer.position(metadataBuffer.position() + boxHeader.getDataLength());
+                read += boxHeader.getLength();
             }
+            return tag;
         }
-
-        //Size of metadata (exclude the size of the ilst parentHeader), take a slice starting at
-        //metadata children to make things safer
-        int length = boxHeader.getLength() - Mp4BoxHeader.HEADER_LENGTH;
-        ByteBuffer metadataBuffer = moovBuffer.slice();
-        //Datalength is longer are there boxes after ilst at this level?
-        logger.config("headerlengthsays:" + length + "datalength:" + metadataBuffer.limit());
-        int read = 0;
-        logger.config("Started to read metadata fields at position is in metadata buffer:" + metadataBuffer.position());
-        while (read < length)
-        {
-            //Read the boxHeader
-            boxHeader.update(metadataBuffer);
-
-            //Create the corresponding datafield from the id, and slice the buffer so position of main buffer
-            //wont get affected
-            logger.config("Next position is at:" + metadataBuffer.position());
-            createMp4Field(tag, boxHeader, metadataBuffer.slice());
-
-            //Move position in buffer to the start of the next parentHeader
-            metadataBuffer.position(metadataBuffer.position() + boxHeader.getDataLength());
-            read += boxHeader.getLength();
-        }
-        return tag;
     }
 
     /**

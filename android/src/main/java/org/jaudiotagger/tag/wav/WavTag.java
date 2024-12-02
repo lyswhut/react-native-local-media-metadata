@@ -43,11 +43,12 @@ import java.util.logging.Logger;
  */
 public class WavTag implements Tag, Id3SupportingTag
 {
-    private static final Logger logger = Logger.getLogger(WavTag.class.getName());
+    private static final Logger logger = Logger.getLogger(WavTag.class.getPackage().getName());
     
     private static final String NULL = "\0";
 
-	private List<ChunkSummary> chunkSummaryList = new ArrayList<ChunkSummary>();
+	private List<ChunkSummary> chunkSummaryList  = new ArrayList<ChunkSummary>();
+    private List<ChunkSummary> metadataChunkList = new ArrayList<ChunkSummary>();
 
     public void addChunkSummary(ChunkSummary cs)
     {
@@ -59,6 +60,24 @@ public class WavTag implements Tag, Id3SupportingTag
         return chunkSummaryList;
     }
 
+    public void addMetadataChunkSummary(ChunkSummary cs)
+    {
+        metadataChunkList.add(cs);
+    }
+
+    public List<ChunkSummary> getMetadataChunkSummaryList()
+    {
+        return metadataChunkList;
+    }
+
+
+    //(Read audio okay) but was unable to read all chunks because of bad data chunks
+    private boolean isBadChunkData = false;
+
+    //Found null bytes not part of any chunk
+    private boolean isNonStandardPadding = false;
+
+    //Metadata tag is incorrectly aligned
     private boolean isIncorrectlyAlignedTag = false;
 
     private boolean isExistingId3Tag = false;
@@ -144,11 +163,12 @@ public class WavTag implements Tag, Id3SupportingTag
     {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("Chunk Summary:\n");
         for(ChunkSummary cs:chunkSummaryList)
         {
-            sb.append(cs.toString()+"\n");
+            sb.append("\t"+cs.toString()+"\n");
         }
-
+        sb.append("\n");
         if (id3Tag != null)
         {
              sb.append("Wav ID3 Tag:\n");
@@ -157,7 +177,8 @@ public class WavTag implements Tag, Id3SupportingTag
                  sb.append("\tstartLocation:" + Hex.asDecAndHex(getStartLocationInFileOfId3Chunk()) + "\n");
                  sb.append("\tendLocation:" + Hex.asDecAndHex(getEndLocationInFileOfId3Chunk()) + "\n");
              }
-             sb.append(id3Tag.toString()+"\n");
+             //Wav ID3 tags needs trailing null for each value (not usually required) to work in Windows
+             sb.append(id3Tag.toString().replace("\0","")+"\n");
         }
         if (infoTag != null)
         {
@@ -652,5 +673,25 @@ public class WavTag implements Tag, Id3SupportingTag
         }
         //Default in case not set somehow
         return new ID3v23Tag();
+    }
+
+    public boolean isBadChunkData()
+    {
+        return isBadChunkData;
+    }
+
+    public void setBadChunkData(boolean badChunkData)
+    {
+        isBadChunkData = badChunkData;
+    }
+
+    public boolean isNonStandardPadding()
+    {
+        return isNonStandardPadding;
+    }
+
+    public void setNonStandardPadding(boolean nonStandardPadding)
+    {
+        isNonStandardPadding = nonStandardPadding;
     }
 }

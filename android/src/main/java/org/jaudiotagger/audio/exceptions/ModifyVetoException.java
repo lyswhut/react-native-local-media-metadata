@@ -33,6 +33,11 @@ public class ModifyVetoException extends Exception
 {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1235535875585831678L;
+
+	/**
      * (overridden)
      */
     public ModifyVetoException()
@@ -44,7 +49,7 @@ public class ModifyVetoException extends Exception
      * (overridden)
      *
      * @param message
-     * @see Exception#Exception(String)
+     * @see Exception#Exception(java.lang.String)
      */
     public ModifyVetoException(String message)
     {
@@ -56,7 +61,7 @@ public class ModifyVetoException extends Exception
      *
      * @param message
      * @param cause
-     * @see Exception#Exception(String,Throwable)
+     * @see Exception#Exception(java.lang.String,java.lang.Throwable)
      */
     public ModifyVetoException(String message, Throwable cause)
     {
@@ -67,7 +72,7 @@ public class ModifyVetoException extends Exception
      * (overridden)
      *
      * @param cause
-     * @see Exception#Exception(Throwable)
+     * @see Exception#Exception(java.lang.Throwable)
      */
     public ModifyVetoException(Throwable cause)
     {

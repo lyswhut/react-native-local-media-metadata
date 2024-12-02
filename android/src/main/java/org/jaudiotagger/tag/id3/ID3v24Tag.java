@@ -22,8 +22,6 @@ import org.jaudiotagger.tag.*;
 import org.jaudiotagger.tag.datatype.DataTypes;
 import org.jaudiotagger.tag.datatype.Pair;
 import org.jaudiotagger.tag.id3.framebody.*;
-import org.jaudiotagger.tag.id3.valuepair.MusicianCredits;
-import org.jaudiotagger.tag.id3.valuepair.StandardIPLSKey;
 import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.ArtworkFactory;
 import org.jaudiotagger.tag.lyrics3.AbstractLyrics3;
@@ -310,8 +308,8 @@ public class ID3v24Tag extends AbstractID3v2Tag
      */
     public ID3v24Tag()
     {
-        frameMap = new LinkedHashMap();
-        encryptedFrameMap = new LinkedHashMap();
+        frameMap = new LinkedHashMap<>();
+        encryptedFrameMap = new LinkedHashMap<>();
                 
     }
 
@@ -321,7 +319,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
      */
     protected void copyPrimitives(AbstractID3v2Tag copyObj)
     {
-        logger.config("Copying primitives");
+        logger.config(getLoggingFilename() +":Copying primitives");
         super.copyPrimitives(copyObj);
 
         if (copyObj instanceof ID3v24Tag)
@@ -366,12 +364,13 @@ public class ID3v24Tag extends AbstractID3v2Tag
         }
         catch (InvalidFrameException ife)
         {
-            logger.log(Level.SEVERE, "Unable to convert frame:" + frame.getIdentifier());
+            logger.log(Level.SEVERE, getLoggingFilename() + ":Unable to convert frame:" + frame.getIdentifier());
         }
     }
 
     /**
      * Convert frame into ID3v24 frame(s)
+     *
      * @param frame
      * @return
      * @throws InvalidFrameException
@@ -379,43 +378,31 @@ public class ID3v24Tag extends AbstractID3v2Tag
     @Override
     protected List<AbstractID3v2Frame> convertFrame(AbstractID3v2Frame frame) throws InvalidFrameException
     {
-        List<AbstractID3v2Frame> frames = new ArrayList<AbstractID3v2Frame>();
+        List<AbstractID3v2Frame> frames = new ArrayList<>();
         if(frame instanceof ID3v22Frame && frame.getIdentifier().equals(ID3v22Frames.FRAME_ID_V2_IPLS))
         {
             frame = new ID3v23Frame(frame);
+            frames.add(frame);
         }
-
-        //This frame may need splitting and converting into two frames depending on its content
-        if(frame instanceof ID3v23Frame && frame.getIdentifier().equals(ID3v23Frames.FRAME_ID_V3_INVOLVED_PEOPLE))
+        //Convert from IPLS to TIPL
+        //Note we used to try and work out if should map to TIPL or TMCL but that logic was unsustainable
+        else if(frame instanceof ID3v23Frame && frame.getIdentifier().equals(ID3v23Frames.FRAME_ID_V3_INVOLVED_PEOPLE))
         {
             List<Pair> pairs= ((FrameBodyIPLS)frame.getBody()).getPairing().getMapping();
-            List<Pair> pairsTipl = new ArrayList<Pair>();
-            List<Pair> pairsTmcl = new ArrayList<Pair>();
+            List<Pair> pairsTipl = new ArrayList<>();
 
             for(Pair next:pairs)
             {
-                if(StandardIPLSKey.isKey(next.getKey()))
-                {
-                    pairsTipl.add(next);
-                }
-                else if(MusicianCredits.isKey(next.getKey()))
-                {
-                    pairsTmcl.add(next);
-                }
-                else
-                {
-                    pairsTipl.add(next);
-                }
+                pairsTipl.add(next);
             }
-            AbstractID3v2Frame tipl = new ID3v24Frame((ID3v23Frame)frame,ID3v24Frames.FRAME_ID_INVOLVED_PEOPLE);
-            FrameBodyTIPL tiplBody  = new FrameBodyTIPL(frame.getBody().getTextEncoding(),pairsTipl);
-            tipl.setBody(tiplBody);
-            frames.add(tipl);
 
-            AbstractID3v2Frame tmcl = new ID3v24Frame((ID3v23Frame)frame,ID3v24Frames.FRAME_ID_MUSICIAN_CREDITS);
-            FrameBodyTMCL tmclBody  = new FrameBodyTMCL(frame.getBody().getTextEncoding(),pairsTmcl);
-            tmcl.setBody(tmclBody);
-            frames.add(tmcl);
+            if(pairsTipl.size()>0)
+            {
+                AbstractID3v2Frame tipl = new ID3v24Frame((ID3v23Frame) frame, ID3v24Frames.FRAME_ID_INVOLVED_PEOPLE);
+                FrameBodyTIPL tiplBody = new FrameBodyTIPL(frame.getBody().getTextEncoding(), pairsTipl);
+                tipl.setBody(tiplBody);
+                frames.add(tipl);
+            }
         }
         else
         {
@@ -434,12 +421,30 @@ public class ID3v24Tag extends AbstractID3v2Tag
      * @param existingFrame
      */
     @Override
-    protected void processDuplicateFrame(AbstractID3v2Frame newFrame, AbstractID3v2Frame existingFrame)
+    protected void combineFrames(AbstractID3v2Frame newFrame, List<TagField> existing)
     {
         //We dont add this new frame we just add the contents to existing frame
         //
         if (newFrame.getBody() instanceof FrameBodyTDRC)
         {
+			AbstractID3v2Frame existingFrame = null;
+			for (Iterator<TagField> tfi = existing.iterator(); tfi.hasNext();) {
+				TagField tf = tfi.next();
+				if (tf instanceof FrameBodyUnsupported) {
+					tfi.remove();
+				}
+				if(tf instanceof AbstractID3v2Frame) 
+				{
+					existingFrame = (AbstractID3v2Frame) tf;
+					break;
+				}
+			}
+			if(existing.isEmpty()) 
+			{
+				existing.add(newFrame);
+				return;
+			}
+
             if (existingFrame.getBody() instanceof FrameBodyTDRC)
             {
                 FrameBodyTDRC body = (FrameBodyTDRC) existingFrame.getBody();
@@ -467,24 +472,15 @@ public class ID3v24Tag extends AbstractID3v2Tag
                 }
                 body.setObjectValue(DataTypes.OBJ_TEXT,body.getFormattedText());
             }
-            // The first frame was a TDRC frame that was not really allowed, this new frame was probably a
-            // valid frame such as TYER which has been converted to TDRC, replace the firstframe with this frame
-            else if (existingFrame.getBody() instanceof FrameBodyUnsupported)
-            {
-                frameMap.put(newFrame.getIdentifier(), newFrame);
-            }
             else
             {
                 //we just lose this frame, we have already got one with the correct id.
-                logger.warning("Found duplicate TDRC frame in invalid situation,discarding:" + newFrame.getIdentifier());
+                logger.warning(getLoggingFilename() +":Found duplicate TDRC frame in invalid situation,discarding:" + newFrame.getIdentifier());
             }
         }
         else
         {
-            List<AbstractID3v2Frame> list = new ArrayList<AbstractID3v2Frame>();
-            list.add(existingFrame);
-            list.add(newFrame);
-            frameMap.put(newFrame.getIdentifier(), list);
+           existing.add(newFrame);
         }
     }
 
@@ -495,7 +491,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
      */
     public ID3v24Tag(ID3v24Tag copyObject)
     {
-        logger.config("Creating tag from another tag of same type");
+        logger.config(getLoggingFilename() +":Creating tag from another tag of same type");
         copyPrimitives(copyObject);
         copyFrames(copyObject);
     }
@@ -507,16 +503,16 @@ public class ID3v24Tag extends AbstractID3v2Tag
      */
     public ID3v24Tag(AbstractTag mp3tag)
     {
-        logger.config("Creating tag from a tag of a different version");
-        frameMap = new LinkedHashMap();
-        encryptedFrameMap = new LinkedHashMap();
+        logger.config(getLoggingFilename() +":Creating tag from a tag of a different version");
+        frameMap = new LinkedHashMap<>();
+        encryptedFrameMap = new LinkedHashMap<>();
 
         if (mp3tag != null)
         {
             //Should use simpler copy constructor
             if ((mp3tag instanceof ID3v24Tag))
             {
-                throw new UnsupportedOperationException("Copy Constructor not called. Please type cast the argument");
+                throw new UnsupportedOperationException(getLoggingFilename() +":Copy Constructor not called. Please type cast the argument");
             }
             /* If we get a tag, we want to convert to id3v2_4
              * both id3v1 and lyrics3 convert to this type
@@ -540,35 +536,35 @@ public class ID3v24Tag extends AbstractID3v2Tag
                     newBody = new FrameBodyTIT2((byte) 0, id3tag.title);
                     newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_TITLE);
                     newFrame.setBody(newBody);
-                    frameMap.put(newFrame.getIdentifier(), newFrame);
+                    setFrame(newFrame);
                 }
                 if (id3tag.artist.length() > 0)
                 {
                     newBody = new FrameBodyTPE1((byte) 0, id3tag.artist);
                     newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_ARTIST);
                     newFrame.setBody(newBody);
-                    frameMap.put(newFrame.getIdentifier(), newFrame);
+                    setFrame(newFrame);
                 }
                 if (id3tag.album.length() > 0)
                 {
                     newBody = new FrameBodyTALB((byte) 0, id3tag.album);
                     newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_ALBUM);
                     newFrame.setBody(newBody);
-                    frameMap.put(newFrame.getIdentifier(), newFrame);
+                    setFrame(newFrame);
                 }
                 if (id3tag.year.length() > 0)
                 {
                     newBody = new FrameBodyTDRC((byte) 0, id3tag.year);
                     newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_YEAR);
                     newFrame.setBody(newBody);
-                    frameMap.put(newFrame.getIdentifier(), newFrame);
+                    setFrame(newFrame);
                 }
                 if (id3tag.comment.length() > 0)
                 {
                     newBody = new FrameBodyCOMM((byte) 0, "ENG", "", id3tag.comment);
                     newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_COMMENT);
                     newFrame.setBody(newBody);
-                    frameMap.put(newFrame.getIdentifier(), newFrame);
+                    setFrame(newFrame);
                 }
                 if (((id3tag.genre & ID3v1Tag.BYTE_TO_UNSIGNED) >= 0) && ((id3tag.genre & ID3v1Tag.BYTE_TO_UNSIGNED) != ID3v1Tag.BYTE_TO_UNSIGNED))
                 {
@@ -578,7 +574,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
                     newBody = new FrameBodyTCON((byte) 0, genre);
                     newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_GENRE);
                     newFrame.setBody(newBody);
-                    frameMap.put(newFrame.getIdentifier(), newFrame);
+                    setFrame(newFrame);
                 }
                 if (mp3tag instanceof ID3v11Tag)
                 {
@@ -588,7 +584,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
                         newBody = new FrameBodyTRCK((byte) 0, Byte.toString(id3tag2.track));
                         newFrame = new ID3v24Frame(ID3v24Frames.FRAME_ID_TRACK);
                         newFrame.setBody(newBody);
-                        frameMap.put(newFrame.getIdentifier(), newFrame);
+                        setFrame(newFrame);
                     }
                 }
             }
@@ -614,11 +610,11 @@ public class ID3v24Tag extends AbstractID3v2Tag
                     {
                         field = iterator.next();
                         newFrame = new ID3v24Frame(field);
-                        frameMap.put(newFrame.getIdentifier(), newFrame);
+                        setFrame(newFrame);
                     }
                     catch (InvalidTagException ex)
                     {
-                        logger.warning("Unable to convert Lyrics3 to v24 Frame:Frame Identifier");
+                        logger.warning(getLoggingFilename() +":Unable to convert Lyrics3 to v24 Frame:Frame Identifier");
                     }
                 }
             }
@@ -634,8 +630,8 @@ public class ID3v24Tag extends AbstractID3v2Tag
      */
     public ID3v24Tag(ByteBuffer buffer, String loggingFilename) throws TagException
     {
-        frameMap = new LinkedHashMap();
-        encryptedFrameMap = new LinkedHashMap();
+        frameMap = new LinkedHashMap<>();
+        encryptedFrameMap = new LinkedHashMap<>();
 
         setLoggingFilename(loggingFilename);
         this.read(buffer);
@@ -688,7 +684,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
             }
         }
         size += super.getSize();
-        logger.finer("Tag Size is" + size);
+        logger.finer(getLoggingFilename() +":Tag Size is" + size);
         return size;
     }
 
@@ -868,17 +864,15 @@ public class ID3v24Tag extends AbstractID3v2Tag
     public void read(ByteBuffer byteBuffer) throws TagException
     {
         int size;
-        byte[] buffer;
         if (!seek(byteBuffer))
         {
             throw new TagNotFoundException(getLoggingFilename() + ":" + getIdentifier() + " tag not found");
         }
-        logger.config(getLoggingFilename() + ":" + "Reading ID3v24 tag");
         readHeaderFlags(byteBuffer);
 
         // Read the size, this is size of tag apart from tag header
         size = ID3SyncSafeInteger.bufferToValue(byteBuffer);
-        logger.config(getLoggingFilename() + ":" + "Reading tag from file size set in header is" + size);
+        logger.config(getLoggingFilename() + ":" + "Reading tag from file size set in header is:" + size);
 
         if (extended)
         {
@@ -900,8 +894,8 @@ public class ID3v24Tag extends AbstractID3v2Tag
         logger.finest(getLoggingFilename() + ":" + "Start of frame body at" + byteBuffer.position());
         //Now start looking for frames
         ID3v24Frame next;
-        frameMap = new LinkedHashMap();
-        encryptedFrameMap = new LinkedHashMap();
+        frameMap = new LinkedHashMap<>();
+        encryptedFrameMap = new LinkedHashMap<>();
 
         //Read the size from the Tag Header
         this.fileReadSize = size;
@@ -913,7 +907,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
             try
             {
                 //Read Frame
-                logger.finest(getLoggingFilename() + ":" + "looking for next frame at:" + byteBuffer.position());
+                logger.config(getLoggingFilename() + ":" + "looking for next frame at:" + byteBuffer.position());
                 next = new ID3v24Frame(byteBuffer, getLoggingFilename());
                 id = next.getIdentifier();
                 loadFrameIntoMap(id, next);
@@ -1109,7 +1103,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
     public long write(File file, long audioStartLocation) throws IOException
     {
         setLoggingFilename(file.getName());
-        logger.config("Writing tag to file:"+getLoggingFilename());
+        logger.config(getLoggingFilename()+":Writing tag to file:");
 
         //Write Body Buffer
         byte[] bodyByteBuffer = writeFramesToBuffer().toByteArray();
@@ -1131,7 +1125,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
     @Override
     public void write(WritableByteChannel channel, int currentTagSize) throws IOException
     {
-        logger.severe("Writing tag to channel");
+        logger.config(getLoggingFilename() +":Writing tag to channel");
 
         byte[] bodyByteBuffer = writeFramesToBuffer().toByteArray();
 
@@ -1182,7 +1176,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
     }
 
     /**
-     * Are all frame swithin this tag unsynchronized
+     * Are all frames within this tag unsynchronized
      *
      * <p>Because synchronization occurs at the frame level it is not normally desirable to unsynchronize all frames
      * and hence this flag is not normally set.
@@ -1301,7 +1295,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
      * @return comparator used to order frames in preferred order for writing to file
      *         so that most important frames are written first.
      */
-    public Comparator getPreferredFrameOrderComparator()
+    public Comparator<String> getPreferredFrameOrderComparator()
     {
         return ID3v24PreferredFrameOrderComparator.getInstanceof();
     }
@@ -1317,6 +1311,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
             Artwork artwork = ArtworkFactory.getNew();
             artwork.setMimeType(coverArt.getMimeType());
             artwork.setPictureType(coverArt.getPictureType());
+            artwork.setDescription(coverArt.getDescription());
             if (coverArt.isImageUrl())
             {
                 artwork.setLinked(true);
@@ -1340,7 +1335,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
             body.setObjectValue(DataTypes.OBJ_PICTURE_DATA, artwork.getBinaryData());
             body.setObjectValue(DataTypes.OBJ_PICTURE_TYPE, artwork.getPictureType());
             body.setObjectValue(DataTypes.OBJ_MIME_TYPE, artwork.getMimeType());
-            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, "");
+            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, artwork.getDescription());
             return frame;
         }
         else
@@ -1355,7 +1350,7 @@ public class ID3v24Tag extends AbstractID3v2Tag
             }
             body.setObjectValue(DataTypes.OBJ_PICTURE_TYPE, artwork.getPictureType());
             body.setObjectValue(DataTypes.OBJ_MIME_TYPE, FrameBodyAPIC.IMAGE_IS_URL);
-            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, "");
+            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, artwork.getDescription());
             return frame;
         }
     }

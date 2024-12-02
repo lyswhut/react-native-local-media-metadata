@@ -115,7 +115,7 @@ public class AndroidArtwork implements Artwork
      * Create Artwork from File
      *
      * @param file
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public void setFromFile(File file)  throws IOException
     {
@@ -135,7 +135,7 @@ public class AndroidArtwork implements Artwork
      *
      * @param file
      * @return
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public static AndroidArtwork createArtworkFromFile(File file)  throws IOException
     {
@@ -161,7 +161,7 @@ public class AndroidArtwork implements Artwork
        * Create Linked Artwork from URL
        *
        * @param url
-       * @throws IOException
+       * @throws java.io.IOException
        */
       public void setLinkedFromURL(String url)  throws IOException
       {

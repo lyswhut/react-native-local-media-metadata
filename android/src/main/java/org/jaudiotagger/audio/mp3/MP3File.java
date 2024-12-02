@@ -23,8 +23,8 @@ package org.jaudiotagger.audio.mp3;
 
 
 import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.*;
+import org.jaudiotagger.audio.generic.Permissions;
 import org.jaudiotagger.logging.*;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
@@ -37,6 +37,9 @@ import org.jaudiotagger.tag.reference.ID3V2Version;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -176,10 +179,8 @@ public class MP3File extends AudioFile
         if (startByte >= AbstractID3v2Tag.TAG_HEADER_LENGTH)
         {
             logger.finer("Attempting to read id3v2tags");
-            FileInputStream fis = null;
-            try
+            try (final FileInputStream fis = new FileInputStream(file))
             {
-                fis = new FileInputStream(file);
                 final ByteBuffer bb = ByteBuffer.allocateDirect(startByte);
                 fis.getChannel().read(bb,0);
                 bb.rewind();
@@ -220,8 +221,6 @@ public class MP3File extends AudioFile
                         logger.config("No id3v22 tag found");
                     }
                 }
-            } finally {
-                AudioFileIO.closeQuietly(fis);
             }
         }
         else
@@ -231,47 +230,11 @@ public class MP3File extends AudioFile
     }
 
     /**
-     * Read lyrics3 Tag
-     *
-     * TODO:not working
-     *
-     * @param file
-     * @param newFile
-     * @param loadOptions
-     * @throws IOException
-     */
-    private void readLyrics3Tag(File file, RandomAccessFile newFile, int loadOptions) throws IOException
-    {
-        /*if ((loadOptions & LOAD_LYRICS3) != 0)
-        {
-            try
-            {
-                lyrics3tag = new Lyrics3v2(newFile);
-            }
-            catch (TagNotFoundException ex)
-            {
-            }
-            try
-            {
-                if (lyrics3tag == null)
-                {
-                    lyrics3tag = new Lyrics3v1(newFile);
-                }
-            }
-            catch (TagNotFoundException ex)
-            {
-            }
-        }
-        */
-    }
-
-
-    /**
      *
      * @param startByte
      * @param endByte
      * @return
-     * @throws IOException
+     * @throws Exception
      *
      * @return true if all the bytes between in the file between startByte and endByte are null, false
      * otherwise
@@ -463,7 +426,7 @@ public class MP3File extends AudioFile
      *
      * @param file
      * @return the location within the file that the audio starts
-     * @throws IOException
+     * @throws java.io.IOException
      * @throws org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
      */
     public long getMP3StartByte(File file) throws InvalidAudioFrameException, IOException
@@ -694,7 +657,8 @@ public class MP3File extends AudioFile
 		id3v1TagSize  = id1tag.getSize();
 		}
 		
-		InputStream inStream = new FileInputStream(mp3File);
+		InputStream inStream = Files
+				.newInputStream(Paths.get(mp3File.getAbsolutePath()));
 		
 		byte[] buffer = new byte[bufferSize];
 
@@ -718,7 +682,7 @@ public class MP3File extends AudioFile
 		
 		byte[] hash = digest.digest();
 
-		inStream.close();
+		
         return hash;
     }
 
@@ -895,14 +859,16 @@ public class MP3File extends AudioFile
      */
     public void precheck(File file) throws IOException
     {
-        if (!file.exists())
+        Path path = file.toPath();
+        if (!Files.exists(path))
         {
             logger.severe(ErrorMessage.GENERAL_WRITE_FAILED_BECAUSE_FILE_NOT_FOUND.getMsg(file.getName()));
             throw new IOException(ErrorMessage.GENERAL_WRITE_FAILED_BECAUSE_FILE_NOT_FOUND.getMsg(file.getName()));
         }
 
-        if (TagOptionSingleton.getInstance().isCheckIsWritable() && !file.canWrite())
+        if (TagOptionSingleton.getInstance().isCheckIsWritable() && !Files.isWritable(path))
         {
+            logger.severe(Permissions.displayPermissions(path));
             logger.severe(ErrorMessage.GENERAL_WRITE_FAILED.getMsg(file.getName()));
             throw new IOException(ErrorMessage.GENERAL_WRITE_FAILED.getMsg(file.getName()));
         }
@@ -1125,7 +1091,6 @@ public class MP3File extends AudioFile
         return tag;
     }
 
-
     /**
      * Get the ID3v2 tag and convert to preferred version or if the file doesn't have one at all
      * create a default tag of preferred version and set it. The file may already contain a ID3v1 tag but because
@@ -1134,18 +1099,27 @@ public class MP3File extends AudioFile
      * @return
      */
     @Override
-    public Tag getTagAndConvertOrCreateAndSetDefault()
+    public Tag getTagAndConvertOrCreateDefault()
     {
         Tag tag          = getTagOrCreateDefault();
         Tag convertedTag = convertID3Tag((AbstractID3v2Tag)tag, TagOptionSingleton.getInstance().getID3V2Version());
         if(convertedTag!=null)
         {
-            setTag(convertedTag);
+            return convertedTag;
         }
-        else
-        {
-            setTag(tag);
-        }
+        return tag;
+    }
+
+    /**
+     * Get the ID3v2 tag and convert to preferred version and set as the current tag
+     *
+     * @return
+     */
+    @Override
+    public Tag getTagAndConvertOrCreateAndSetDefault()
+    {
+        Tag tag = getTagAndConvertOrCreateDefault();
+        setTag(tag);
         return getTag();
     }
 }

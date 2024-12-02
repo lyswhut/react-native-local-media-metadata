@@ -1,6 +1,5 @@
 package org.jaudiotagger.tag.mp4.field;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.mp4.atom.Mp4BoxHeader;
 import org.jaudiotagger.logging.ErrorMessage;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Represents reverse dns field, used for custom information

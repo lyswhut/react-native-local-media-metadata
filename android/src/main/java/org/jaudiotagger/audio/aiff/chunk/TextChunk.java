@@ -1,6 +1,5 @@
 package org.jaudiotagger.audio.aiff.chunk;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.aiff.AiffAudioHeader;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.iff.Chunk;
@@ -8,6 +7,7 @@ import org.jaudiotagger.audio.iff.ChunkHeader;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Provides common functionality for textual chunks like {@link NameChunk}, {@link AuthorChunk},

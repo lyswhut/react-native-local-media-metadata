@@ -164,32 +164,37 @@ public abstract class AbstractID3v2FrameBody extends AbstractTagFrameBody
         for (AbstractDataType object : objectList)
         //correct dataType.
         {
-            logger.finest("offset:" + offset);
-
-            //The read has extended further than the defined frame size (ok to extend upto
-            //size because the next datatype may be of length 0.)
-            if (offset > (size))
-            {
-                logger.warning("Invalid Size for FrameBody");
-                throw new InvalidFrameException("Invalid size for Frame Body");
-            }
-
-            //Try and load it with data from the Buffer
-            //if it fails frame is invalid
-            try
-            {
-                object.readByteArray(buffer, offset);
-            }
-            catch (InvalidDataTypeException e)
-            {
-                logger.warning("Problem reading datatype within Frame Body:" + e.getMessage());
-                throw e;
-            }
+            readIntoNextObject(buffer, object, offset);
             //Increment Offset to start of next datatype.
             offset += object.getSize();
         }
     }
 
+    protected void readIntoNextObject(byte[] buffer, AbstractDataType object, int offset) throws InvalidTagException
+    {
+        logger.finest("offset:" + offset);
+
+        //The read has extended further than the defined frame size (ok to extend upto
+        //size because the next datatype may be of length 0.)
+        if (offset > (size))
+        {
+            logger.warning("Invalid Size for FrameBody");
+            throw new InvalidFrameException("Invalid size for Frame Body");
+        }
+
+        //Try and load it with data from the Buffer
+        //if it fails frame is invalid
+        try
+        {
+            object.readByteArray(buffer, offset);
+        }
+        catch (InvalidDataTypeException e)
+        {
+            logger.warning("Problem reading datatype within Frame Body:" + e.getMessage());
+            throw e;
+        }
+
+    }
     /**
      * Write the contents of this datatype to the byte array
      *

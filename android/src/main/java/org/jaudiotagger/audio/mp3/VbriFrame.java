@@ -40,12 +40,8 @@ public class VbriFrame
 
     private static final int VBRI_HEADER_BUFFER_SIZE = 120; //TODO this is just a guess, not right
     private static final int VBRI_IDENTIFIER_BUFFER_SIZE = 4;
-    private static final int VBRI_DELAY_BUFFER_SIZE = 2;
-    private static final int VBRI_QUALITY_BUFFER_SIZE = 2;
     private static final int VBRI_AUDIOSIZE_BUFFER_SIZE = 4;
     private static final int VBRI_FRAMECOUNT_BUFFER_SIZE = 4;
-    private static final int VBRI_TOC_ENTRY_BUFFER_SIZE = 2;
-
     public static final int MAX_BUFFER_SIZE_NEEDED_TO_READ_VBRI = VBRI_OFFSET + VBRI_HEADER_BUFFER_SIZE;
 
     private static final int BYTE_1 = 0;
@@ -63,8 +59,6 @@ public class VbriFrame
     private boolean vbr = false;
     private int frameCount = -1;
     private int audioSize = -1;
-    private LameFrame lameFrame;
-
     /**
      * Read the VBRI Properties from the buffer
      */
@@ -85,7 +79,6 @@ public class VbriFrame
     {
         byte frameSizeBuffer[] = new byte[VBRI_AUDIOSIZE_BUFFER_SIZE];
         header.get(frameSizeBuffer);
-        boolean audioSizeEnabled = true;
         audioSize = (frameSizeBuffer[BYTE_1] << 24) & 0xFF000000 | (frameSizeBuffer[BYTE_2] << 16) & 0x00FF0000 | (frameSizeBuffer[BYTE_3] << 8) & 0x0000FF00 | frameSizeBuffer[BYTE_4] & 0x000000FF;
     }
 
@@ -96,7 +89,6 @@ public class VbriFrame
     {
         byte frameCountBuffer[] = new byte[VBRI_FRAMECOUNT_BUFFER_SIZE];
         header.get(frameCountBuffer);
-        boolean frameCountEnabled = true;
         frameCount = (frameCountBuffer[BYTE_1] << 24) & 0xFF000000 | (frameCountBuffer[BYTE_2] << 16) & 0x00FF0000 | (frameCountBuffer[BYTE_3] << 8) & 0x0000FF00 | frameCountBuffer[BYTE_4] & 0x000000FF;
     }
 
@@ -184,6 +176,10 @@ public class VbriFrame
      */
     public String toString()
     {
-        return "VBRIheader" + " vbr:" + vbr + " frameCount:" + frameCount + " audioFileSize:" + audioSize + " encoder:" + getEncoder();
+        return "VBRIheader\n"
+                + "\tvbr:" + vbr +"\n"
+                + "\tframeCount:" + frameCount+"\n"
+                + "\taudioFileSize:" + audioSize +"\n"
+                + "\tencoder:" + getEncoder()+"\n" ;
     }
 }

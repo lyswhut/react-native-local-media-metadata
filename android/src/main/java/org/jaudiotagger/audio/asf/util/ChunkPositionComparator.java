@@ -25,7 +25,7 @@ import java.util.Comparator;
 
 /**
  * This class is needed for ordering all types of
- * {@link Chunk}s ascending by their Position. <br>
+ * {@link org.jaudiotagger.audio.asf.data.Chunk}s ascending by their Position. <br>
  *
  * @author Christian Laireiter
  */

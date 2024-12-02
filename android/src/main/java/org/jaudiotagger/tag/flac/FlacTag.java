@@ -1,6 +1,5 @@
 package org.jaudiotagger.tag.flac;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockDataPicture;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.tag.*;
@@ -11,6 +10,7 @@ import org.jaudiotagger.tag.vorbiscomment.VorbisCommentFieldKey;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -205,6 +205,7 @@ public class FlacTag implements Tag
                 {
                     TagField tagfield = createField(genericKey, value);
                     addField(tagfield);
+                    return;
                 }
 
                 case WRITE_JRIVER_ALBUMARTIST:
@@ -625,7 +626,16 @@ public class FlacTag implements Tag
 
     public String toString()
     {
-        return "FLAC " + getVorbisCommentTag();
+        StringBuilder sb = new StringBuilder("FLAC " + getVorbisCommentTag());
+        if(images.size()>0)
+        {
+            sb.append("\n\tImages\n");
+            for (MetadataBlockDataPicture next : images)
+            {
+                sb.append(next);
+            }
+        }
+        return sb.toString();
     }
 
 }

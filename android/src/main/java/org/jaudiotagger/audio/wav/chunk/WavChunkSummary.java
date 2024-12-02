@@ -1,9 +1,11 @@
 package org.jaudiotagger.audio.wav.chunk;
 
+import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.iff.ChunkSummary;
 import org.jaudiotagger.audio.wav.WavChunkType;
 import org.jaudiotagger.tag.wav.WavTag;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -23,28 +25,15 @@ public class WavChunkSummary
     public static long getStartLocationOfFirstMetadataChunk(WavTag tag)
     {
         //Work out the location of the first metadata tag (could be id3 or LIST tag)
-        long startLocationOfMetadatTag = -1;
-        if(tag.getInfoTag()!=null)
+        if(tag.getMetadataChunkSummaryList().size()>0)
         {
-            startLocationOfMetadatTag = tag.getInfoTag().getStartLocationInFile();
-
-            if(tag.getID3Tag()!=null)
-            {
-                if(tag.getStartLocationInFileOfId3Chunk() < startLocationOfMetadatTag)
-                {
-                    startLocationOfMetadatTag = tag.getStartLocationInFileOfId3Chunk();
-                }
-            }
+            return tag.getMetadataChunkSummaryList().get(0).getFileStartLocation();
         }
-        else if(tag.getID3Tag()!=null)
-        {
-            startLocationOfMetadatTag = tag.getStartLocationInFileOfId3Chunk();
-        }
-        return startLocationOfMetadatTag;
+        return -1;
     }
 
     /**
-     * Checks that there are only id3 tags after the currently selected id3tag because this means its safe to truncate
+     * Checks that there are only metadata tags after the currently selected metadata because this means its safe to truncate
      * the remainder of the file.
      *
      * @param tag
@@ -60,12 +49,16 @@ public class WavChunkSummary
         }
 
         boolean firstMetadataTag = false;
+
         for(ChunkSummary cs:tag.getChunkSummaryList())
         {
+            //Once we have found first metadata chunk we check all other chunks afterwards and if they are
+            //only metadata chunks we can truncate file at start of this metadata chunk
             if(firstMetadataTag)
             {
                 if(
                         !cs.getChunkId().equals(WavChunkType.ID3.getCode()) &&
+                        !cs.getChunkId().equals(WavChunkType.ID3_UPPERCASE.getCode()) &&
                         !cs.getChunkId().equals(WavChunkType.LIST.getCode()) &&
                         !cs.getChunkId().equals(WavChunkType.INFO.getCode())
                   )
@@ -75,6 +68,7 @@ public class WavChunkSummary
             }
             else
             {
+                //Found the first metadata chunk
                 if (cs.getFileStartLocation() == startLocationOfMetadatTag)
                 {
                     //Found starting point

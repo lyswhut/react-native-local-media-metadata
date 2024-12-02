@@ -24,7 +24,6 @@
  */
 package org.jaudiotagger.tag.id3;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.tag.*;
@@ -35,6 +34,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -160,32 +160,36 @@ public class ID3v11Tag extends ID3v1Tag
                 String text;
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_TITLE))
                 {
-                    frame = (ID3v24Frame) id3tag.getFrame(ID3v24Frames.FRAME_ID_TITLE);
+                    List<TagField> fields =  id3tag.getFrame(ID3v24Frames.FRAME_ID_TITLE);
+                    frame = (ID3v24Frame)fields.get(0);
                     text = ((FrameBodyTIT2) frame.getBody()).getText();
                     this.title = ID3Tags.truncate(text, FIELD_TITLE_LENGTH);
                 }
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_ARTIST))
                 {
-                    frame = (ID3v24Frame) id3tag.getFrame(ID3v24Frames.FRAME_ID_ARTIST);
+                    List<TagField> fields =  id3tag.getFrame(ID3v24Frames.FRAME_ID_ARTIST);
+                    frame = (ID3v24Frame)fields.get(0);
                     text = ((FrameBodyTPE1) frame.getBody()).getText();
                     this.artist = ID3Tags.truncate(text, FIELD_ARTIST_LENGTH);
                 }
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_ALBUM))
                 {
-                    frame = (ID3v24Frame) id3tag.getFrame(ID3v24Frames.FRAME_ID_ALBUM);
+                    List<TagField> fields =  id3tag.getFrame(ID3v24Frames.FRAME_ID_ALBUM);
+                    frame = (ID3v24Frame)fields.get(0);
                     text = ((FrameBodyTALB) frame.getBody()).getText();
                     this.album = ID3Tags.truncate(text, FIELD_ALBUM_LENGTH);
                 }
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_YEAR))
                 {
-                    frame = (ID3v24Frame) id3tag.getFrame(ID3v24Frames.FRAME_ID_YEAR);
+                    List<TagField> fields =  id3tag.getFrame(ID3v24Frames.FRAME_ID_YEAR);
+                    frame = (ID3v24Frame)fields.get(0);
                     text = ((FrameBodyTDRC) frame.getBody()).getText();
                     this.year = ID3Tags.truncate(text, FIELD_YEAR_LENGTH);
                 }
 
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_COMMENT))
                 {
-                    Iterator iterator = id3tag.getFrameOfType(ID3v24Frames.FRAME_ID_COMMENT);
+                    Iterator<Object> iterator = id3tag.getFrameOfType(ID3v24Frames.FRAME_ID_COMMENT);
                     text = "";
                     while (iterator.hasNext())
                     {
@@ -196,7 +200,8 @@ public class ID3v11Tag extends ID3v1Tag
                 }
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_GENRE))
                 {
-                    frame = (ID3v24Frame) id3tag.getFrame(ID3v24Frames.FRAME_ID_GENRE);
+                    List<TagField> fields =  id3tag.getFrame(ID3v24Frames.FRAME_ID_GENRE);
+                    frame = (ID3v24Frame) fields.get(0);
                     text = ((FrameBodyTCON) frame.getBody()).getText();
                     try
                     {
@@ -215,7 +220,8 @@ public class ID3v11Tag extends ID3v1Tag
                 }
                 if (id3tag.hasFrame(ID3v24Frames.FRAME_ID_TRACK))
                 {
-                    frame = (ID3v24Frame) id3tag.getFrame(ID3v24Frames.FRAME_ID_TRACK);
+                    List<TagField> fields =  id3tag.getFrame(ID3v24Frames.FRAME_ID_TRACK);
+                    frame = (ID3v24Frame)fields.get(0);
                     this.track = (byte) ((FrameBodyTRCK) frame.getBody()).getTrackNo().intValue();
                 }
             }
@@ -235,7 +241,10 @@ public class ID3v11Tag extends ID3v1Tag
         setLoggingFilename(loggingFilename);
         FileChannel fc;
         ByteBuffer byteBuffer = ByteBuffer.allocate(TAG_LENGTH);
-
+        if(file.length() < TAG_LENGTH)
+        {
+            throw new IOException("File not large enough to contain a tag");
+        }
         fc = file.getChannel();
         fc.position(file.length() - TAG_LENGTH);
 

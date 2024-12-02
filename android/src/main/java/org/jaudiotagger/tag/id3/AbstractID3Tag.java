@@ -91,7 +91,7 @@ public abstract class AbstractID3Tag extends AbstractTag
      *
      * @return logging filename to be used in debugging
      */
-    protected String getLoggingFilename()
+    public  String getLoggingFilename()
     {
         return loggingFilename;
     }
@@ -101,7 +101,7 @@ public abstract class AbstractID3Tag extends AbstractTag
      *
      * @param loggingFilename
      */
-    protected void setLoggingFilename(String loggingFilename)
+    public void setLoggingFilename(String loggingFilename)
     {
         this.loggingFilename = loggingFilename;
     }

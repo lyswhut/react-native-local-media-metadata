@@ -1,5 +1,6 @@
 package org.jaudiotagger.audio.dsf;
 
+import org.jaudiotagger.audio.SupportedFileFormat;
 import org.jaudiotagger.audio.generic.GenericAudioHeader;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.iff.IffHeaderChunk;
@@ -73,6 +74,7 @@ public class FmtChunk
         int blocksPerSample = audioInfoChunk.getInt();
 
         audioHeader.setEncodingType("DSF");
+        audioHeader.setFormat(SupportedFileFormat.DSF.getDisplayName());
         audioHeader.setBitRate(bitsPerSample * samplingFreqency * channelNumber);
         audioHeader.setBitsPerSample(bitsPerSample);
         audioHeader.setChannelNumber(channelNumber);
@@ -80,7 +82,6 @@ public class FmtChunk
         audioHeader.setNoOfSamples(sampleCount);
         audioHeader.setPreciseLength((float) sampleCount / samplingFreqency);
         audioHeader.setVariableBitRate(false);
-        logger.log(Level.FINE, "Created audio header: " + audioHeader);
         return audioHeader;
     }
 }

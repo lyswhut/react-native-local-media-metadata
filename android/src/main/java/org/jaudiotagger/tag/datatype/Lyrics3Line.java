@@ -23,19 +23,20 @@
  */
 package org.jaudiotagger.tag.datatype;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.InvalidDataTypeException;
 import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Lyrics3Line extends AbstractDataType
 {
     /**
      *
      */
-    private LinkedList<Lyrics3TimeStamp> timeStamp = new LinkedList<Lyrics3TimeStamp>();
+    private List<Lyrics3TimeStamp> timeStamp = new LinkedList<Lyrics3TimeStamp>();
 
     /**
      *

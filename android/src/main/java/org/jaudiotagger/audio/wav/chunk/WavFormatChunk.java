@@ -27,6 +27,7 @@ import org.jaudiotagger.logging.Hex;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.logging.Logger;
 
 /**
  * Reads the fmt header, this contains the information required for constructing Audio header
@@ -42,16 +43,13 @@ import java.nio.ByteBuffer;
 */
 public class WavFormatChunk extends Chunk
 {
-    private static final int   STANDARD_DATA_SIZE = 18;
     private static final int   EXTENSIBLE_DATA_SIZE = 22;
-    private static final int   EXTENSIBLE_DATA_SIZE_WE_NEED = 10;
-
-    private static final String WAV_RIFF_ENCODING_PREPEND = "WAV-RIFF ";
-
+    public static Logger logger = Logger.getLogger("org.jaudiotagger.audio.wav.chunk");
 
     private boolean isValid = false;
 
-    private int blockAlign,  channelMask;
+    @SuppressWarnings("unused")
+	private int blockAlign,  channelMask;
     private WavSubFormat wsf;
     private GenericAudioHeader info;
 
@@ -100,6 +98,7 @@ public class WavFormatChunk extends Chunk
         {
             info.setEncodingType("Unknown Sub Format Code:"+ Hex.asHex(subFormatCode));
         }
+        //logger.severe(info.toString());
         return true;
     }
 

@@ -340,7 +340,7 @@ public final class GUID
      * This method compares two objects. If the given Object is a {@link GUID},
      * the stored GUID values are compared. <br>
      *
-     * @see Object#equals(Object)
+     * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(final Object obj)

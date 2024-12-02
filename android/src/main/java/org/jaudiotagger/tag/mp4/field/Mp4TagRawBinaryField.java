@@ -1,6 +1,5 @@
 package org.jaudiotagger.tag.mp4.field;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.audio.mp4.atom.Mp4BoxHeader;
 import org.jaudiotagger.tag.TagField;
@@ -10,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Represents raw binary data
@@ -29,7 +29,7 @@ public class Mp4TagRawBinaryField extends Mp4TagField
      *
      * @param header
      * @param raw
-     * @throws UnsupportedEncodingException
+     * @throws java.io.UnsupportedEncodingException
      *
      */
     public Mp4TagRawBinaryField(Mp4BoxHeader header, ByteBuffer raw) throws UnsupportedEncodingException
@@ -48,7 +48,7 @@ public class Mp4TagRawBinaryField extends Mp4TagField
      * Used when creating raw content
      *
      * @return
-     * @throws UnsupportedEncodingException
+     * @throws java.io.UnsupportedEncodingException
      *
      */
     protected byte[] getDataBytes() throws UnsupportedEncodingException

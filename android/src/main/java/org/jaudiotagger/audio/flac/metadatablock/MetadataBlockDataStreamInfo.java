@@ -66,11 +66,18 @@ public class MetadataBlockDataStreamInfo  implements MetadataBlockData
 
     public MetadataBlockDataStreamInfo(MetadataBlockHeader header, FileChannel fc) throws IOException
     {
+        if (header.getDataLength() < STREAM_INFO_DATA_LENGTH)
+        {
+            isValid = false;
+            throw new IOException("MetadataBlockDataStreamInfo HeaderDataSize is invalid:" + header.getDataLength());
+        }
+
         rawdata = ByteBuffer.allocate(header.getDataLength());
         rawdata.order(ByteOrder.BIG_ENDIAN);
         int bytesRead = fc.read(rawdata);
         if (bytesRead < header.getDataLength())
         {
+            isValid = false;
             throw new IOException("Unable to read required number of bytes, read:" + bytesRead + ":required:" + header.getDataLength());
         }
         rawdata.flip();

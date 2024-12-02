@@ -25,8 +25,8 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jaudiotagger.tag.wav.WavTag;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Reads Audio and Metadata information contained in Wav file.
@@ -38,15 +38,16 @@ public class WavFileReader extends AudioFileReader2
 
     }
 
-    protected GenericAudioHeader getEncodingInfo(File file) throws CannotReadException, IOException
+    @Override
+    protected GenericAudioHeader getEncodingInfo(Path path) throws CannotReadException, IOException
     {
-        return new WavInfoReader(file.getPath()).read(file);
+        return new WavInfoReader(path.toString()).read(path);
     }
 
     @Override
-    protected Tag getTag(File file) throws IOException, CannotReadException
+    protected Tag getTag(Path path) throws IOException, CannotReadException
     {           
-        WavTag tag =  new WavTagReader(file.getPath()).read(file);
+        WavTag tag =  new WavTagReader(path.toString()).read(path);
         switch (TagOptionSingleton.getInstance().getWavOptions())
         {
             case READ_ID3_ONLY_AND_SYNC:
@@ -54,6 +55,7 @@ public class WavFileReader extends AudioFileReader2
             case READ_INFO_ONLY_AND_SYNC:
             case READ_INFO_UNLESS_ONLY_ID3_AND_SYNC:
                 tag.syncTagsAfterRead();
+            default:
         }
         return tag;
     }

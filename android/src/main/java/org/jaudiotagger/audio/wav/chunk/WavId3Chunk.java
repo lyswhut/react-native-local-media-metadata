@@ -21,17 +21,19 @@ public class WavId3Chunk extends Chunk
 {
     public static Logger logger = Logger.getLogger("org.jaudiotagger.audio.wav.chunk");
     private WavTag wavTag;
-
+    private String loggingName;
     /**
      * Constructor.
-     *  @param chunkData  The content of this chunk
+     * @param chunkData  The content of this chunk
      * @param chunkHeader        The header for this chunk
      * @param tag        The WavTag into which information is stored
+     * @param loggingName
      */
-    public WavId3Chunk(final ByteBuffer chunkData, final ChunkHeader chunkHeader, final WavTag tag)
+    public WavId3Chunk(final ByteBuffer chunkData, final ChunkHeader chunkHeader, final WavTag tag, String loggingName)
     {
         super(chunkData, chunkHeader);
         wavTag = tag;
+        this.loggingName = loggingName;
     }
 
     @Override
@@ -49,15 +51,15 @@ public class WavId3Chunk extends Chunk
         {
             case ID3v22Tag.MAJOR_VERSION:
                 id3Tag = new ID3v22Tag();
-                AudioFile.logger.finest("Reading ID3V2.2 tag");
+                id3Tag.setLoggingFilename(loggingName);
                 break;
             case ID3v23Tag.MAJOR_VERSION:
                 id3Tag = new ID3v23Tag();
-                AudioFile.logger.finest("Reading ID3V2.3 tag");
+                id3Tag.setLoggingFilename(loggingName);
                 break;
             case ID3v24Tag.MAJOR_VERSION:
                 id3Tag = new ID3v24Tag();
-                AudioFile.logger.finest("Reading ID3V2.4 tag");
+                id3Tag.setLoggingFilename(loggingName);
                 break;
             default:
                 return false;     // bad or unknown version

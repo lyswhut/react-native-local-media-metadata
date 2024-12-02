@@ -18,10 +18,10 @@
  */
 package org.jaudiotagger.audio.mp3;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.Utils;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The first frame can sometimes contain a LAME frame at the end of the Xing frame

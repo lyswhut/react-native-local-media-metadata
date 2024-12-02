@@ -27,7 +27,6 @@ import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.TagNotFoundException;
 import org.jaudiotagger.tag.id3.AbstractTag;
 import org.jaudiotagger.tag.id3.ID3Tags;
-import org.jaudiotagger.tag.id3.ID3v1Tag;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -83,10 +82,10 @@ public class Lyrics3v1 extends AbstractLyrics3
      * Creates a new Lyrics3v1 datatype.
      *
      * @throws TagNotFoundException
-     * @throws IOException
+     * @throws java.io.IOException
      * @param byteBuffer
      */
-    public Lyrics3v1(ByteBuffer byteBuffer) throws TagNotFoundException, IOException
+    public Lyrics3v1(ByteBuffer byteBuffer) throws TagNotFoundException, java.io.IOException
     {
         try
         {
@@ -159,15 +158,15 @@ public class Lyrics3v1 extends AbstractLyrics3
 
     /**
      * @return
-     * @throws UnsupportedOperationException
+     * @throws java.lang.UnsupportedOperationException
      *
      */
-    public Iterator iterator()
+    public Iterator<Object> iterator()
     {
         /**
          * @todo Implement this org.jaudiotagger.tag.AbstractMP3Tag abstract method
          */
-        throw new UnsupportedOperationException("Method iterator() not yet implemented.");
+        throw new java.lang.UnsupportedOperationException("Method iterator() not yet implemented.");
     }
 
     /**
@@ -280,9 +279,6 @@ public class Lyrics3v1 extends AbstractLyrics3
         String str;
         int offset;
         byte[] buffer;
-        ID3v1Tag id3v1tag;
-
-        id3v1tag = null;
 
         delete(file);
         file.seek(file.length());
@@ -317,11 +313,6 @@ public class Lyrics3v1 extends AbstractLyrics3
         offset += str.length();
 
         file.write(buffer, 0, offset);
-
-        if (id3v1tag != null)
-        {
-            id3v1tag.write(file);
-        }
     }
 
 }

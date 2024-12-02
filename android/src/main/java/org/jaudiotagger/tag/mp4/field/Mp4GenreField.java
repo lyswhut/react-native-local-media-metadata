@@ -106,9 +106,10 @@ public class Mp4GenreField extends Mp4TagTextNumberField
         Mp4BoxHeader header = new Mp4BoxHeader(data);
         Mp4DataBox databox = new Mp4DataBox(header, data);
         dataSize = header.getDataLength();
+
         numbers = databox.getNumbers();
 
-        if(numbers.size()>0)
+        if(numbers!=null && numbers.size()>0)
         {
             int genreId = numbers.get(0);
             //Get value, we have to adjust index by one because iTunes labels from one instead of zero

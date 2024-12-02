@@ -3,6 +3,7 @@ package org.jaudiotagger.audio;
 import org.jaudiotagger.audio.dsf.Dsf;
 import org.jaudiotagger.audio.exceptions.*;
 import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockDataPicture;
+import org.jaudiotagger.audio.generic.Permissions;
 import org.jaudiotagger.audio.real.RealTag;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.tag.Tag;
@@ -22,6 +23,8 @@ import org.jaudiotagger.tag.wav.WavTag;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -233,6 +236,7 @@ public class AudioFile
      */
     protected RandomAccessFile checkFilePermissions(File file, boolean readOnly) throws ReadOnlyFileException, FileNotFoundException, CannotReadException
     {
+        Path path = file.toPath();
         RandomAccessFile newFile;
         checkFileExists(file);
 
@@ -240,18 +244,21 @@ public class AudioFile
         if (readOnly)
         {
             //May not even be readable
-            if(!file.canRead())
+            if(!Files.isReadable(path))
             {
-                logger.severe("Unable to read file:" + file.getPath());
-                throw new NoReadPermissionsException(ErrorMessage.GENERAL_READ_FAILED_DO_NOT_HAVE_PERMISSION_TO_READ_FILE.getMsg(file.getPath()));
+                logger.severe("Unable to read file:" + path);
+                logger.severe(Permissions.displayPermissions(path));
+                throw new NoReadPermissionsException(ErrorMessage.GENERAL_READ_FAILED_DO_NOT_HAVE_PERMISSION_TO_READ_FILE.getMsg(path));
             }
             newFile = new RandomAccessFile(file, "r");
         }
         else
         {
-            if (TagOptionSingleton.getInstance().isCheckIsWritable() && !file.canWrite())
+            if (TagOptionSingleton.getInstance().isCheckIsWritable() && !Files.isWritable(path))
             {
-                throw new ReadOnlyFileException(ErrorMessage.NO_PERMISSIONS_TO_WRITE_TO_FILE.getMsg(file.getPath()));
+                logger.severe(Permissions.displayPermissions(file.toPath()));
+                logger.severe(Permissions.displayPermissions(path));
+                throw new ReadOnlyFileException(ErrorMessage.NO_PERMISSIONS_TO_WRITE_TO_FILE.getMsg(path));
             }
             newFile = new RandomAccessFile(file, "rw");
         }
@@ -297,6 +304,10 @@ public class AudioFile
             return new FlacTag(VorbisCommentTag.createNewTag(), new ArrayList< MetadataBlockDataPicture >());
         }
         else if(SupportedFileFormat.OGG.getFilesuffix().equals(extension))
+        {
+            return VorbisCommentTag.createNewTag();
+        }
+        else if(SupportedFileFormat.OGA.getFilesuffix().equals(extension))
         {
             return VorbisCommentTag.createNewTag();
         }
@@ -380,14 +391,13 @@ public class AudioFile
     }
 
     /**
-     * Get the tag and convert to the default tag version or if the file doesn't have one at all, create a default tag
-     * set as tag for this file
+     *  Get the tag and convert to the default tag version or if the file doesn't have one at all, create a default tag
      *
-     * Conversions are currently only necessary/available for formats that support ID3
+     *  Conversions are currently only necessary/available for some formats that support ID3- Dsf, Mp3
      *
      * @return
      */
-    public Tag getTagAndConvertOrCreateAndSetDefault()
+    public Tag getTagAndConvertOrCreateDefault()
     {
         Tag tag = getTagOrCreateDefault();
 
@@ -399,17 +409,31 @@ public class AudioFile
             Tag convertedTag = convertID3Tag((AbstractID3v2Tag)tag, TagOptionSingleton.getInstance().getID3V2Version());
             if(convertedTag!=null)
             {
-                setTag(convertedTag);
+                return convertedTag;
             }
             else
             {
-                setTag(tag);
+                return tag;
             }
         }
         else
         {
-            setTag(tag);
+           return tag;
         }
+    }
+
+    /**
+     * Get the tag and convert to the default tag version or if the file doesn't have one at all, create a default tag
+     * set as tag for this file
+     *
+     * Conversions are currently only necessary/available for some formats that support ID3- Dsf, Mp3
+     *
+     * @return
+     */
+    public Tag getTagAndConvertOrCreateAndSetDefault()
+    {
+        Tag tag = getTagAndConvertOrCreateDefault();
+        setTag(tag);
         return getTag();
     }
 

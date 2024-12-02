@@ -8,7 +8,12 @@ import java.io.IOException;
  */
 public class UnableToRenameFileException extends IOException
 {
-    public UnableToRenameFileException(String message)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3942088615944301367L;
+
+	public UnableToRenameFileException(String message)
     {
         super(message);
     }

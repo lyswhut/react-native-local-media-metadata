@@ -27,6 +27,11 @@ package org.jaudiotagger.audio.exceptions;
 public class ReadOnlyFileException extends Exception
 {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3390133566776688874L;
+
+	/**
      * Creates a new ReadOnlyException datatype.
      */
     public ReadOnlyFileException()

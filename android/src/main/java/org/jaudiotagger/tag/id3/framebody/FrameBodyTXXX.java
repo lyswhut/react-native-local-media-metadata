@@ -56,11 +56,17 @@ public class FrameBodyTXXX extends AbstractFrameBodyTextInfo implements ID3v24Fr
     public static final String ACOUSTID_FINGERPRINT         = "Acoustid Fingerprint";
     public static final String ACOUSTID_ID                  = "Acoustid Id";
     public static final String AMAZON_ASIN                  = "ASIN";
+    public static final String ARRANGER                     = "ARRANGER";
     public static final String ARRANGER_SORT                = "ARRANGER_SORT";
     public static final String ARTISTS                      = "ARTISTS";
     public static final String ARTISTS_SORT                 = "ARTISTS_SORT";
     public static final String ALBUM_ARTISTS                = "ALBUM_ARTISTS";
     public static final String ALBUM_ARTISTS_SORT           = "ALBUM_ARTISTS_SORT";
+    public static final String ALBUM_YEAR                   = "ALBUM_YEAR";
+    public static final String AUDIO_ENGINEER               = "AUDIO_ENGINEER";
+    public static final String AUDIO_ENGINEER_SORT          = "AUDIO_ENGINEER_SORT";
+    public static final String BALANCE_ENGINEER             = "BALANCE_ENGINEER";
+    public static final String BALANCE_ENGINEER_SORT        = "BALANCE_ENGINEER_SORT";
     public static final String BARCODE                      = "BARCODE";
     public static final String CATALOG_NO                   = "CATALOGNUMBER";
     public static final String CHOIR                        = "CHOIR";
@@ -69,13 +75,29 @@ public class FrameBodyTXXX extends AbstractFrameBodyTextInfo implements ID3v24Fr
     public static final String CLASSICAL_NICKNAME           = "CLASSICAL_NICKNAME";
     public static final String CONDUCTOR_SORT               = "CONDUCTOR_SORT";
     public static final String COUNTRY                      = "Country";
+    public static final String CREDITS                      = "CREDITS";
+    public static final String DJMIXER                      = "DJMIXER";
+    public static final String DJMIXER_SORT                 = "DJMIXER_SORT";
+    public static final String ENGINEER                     = "ENGINEER";
+    public static final String ENGINEER_SORT                = "ENGINEER_SORT";
     public static final String ENSEMBLE                     = "ENSEMBLE";
     public static final String ENSEMBLE_SORT                = "ENSEMBLE_SORT";
     public static final String FBPM                         = "FBPM";
     public static final String GROUP                        = "GROUP";
+    public static final String IPI                          = "IPI";
     public static final String INSTRUMENT                   = "INSTRUMENT";
     public static final String IS_CLASSICAL                 = "IS_CLASSICAL";
+    public static final String IS_GREATEST_HITS             = "IS_GREATEST_HITS";
+    public static final String IS_HD                        = "IS_HD";
     public static final String IS_SOUNDTRACK                = "IS_SOUNDTRACK";
+    public static final String ISWC                         = "ISWC";
+    public static final String JAIKOZ_ID                    = "JAIKOZ_ID";
+    public static final String LIVE                         = "LIVE";
+    public static final String LYRICIST_SORT                = "LYRICIST_SORT";
+    public static final String MASTERING                    = "MASTERING";
+    public static final String MASTERING_SORT               = "MASTERING_SORT";
+    public static final String MIXER                        = "MIXER";
+    public static final String MIXER_SORT                   = "MIXER_SORT";
     public static final String MOOD                         = "MOOD";          //ID3 v23 only
     public static final String MOOD_ACOUSTIC                = "MOOD_ACOUSTIC";
     public static final String MOOD_AGGRESSIVE              = "MOOD_AGGRESSIVE";
@@ -98,8 +120,8 @@ public class FrameBodyTXXX extends AbstractFrameBodyTextInfo implements ID3v24Fr
     public static final String MUSICBRAINZ_ORIGINAL_ALBUMID = "MusicBrainz Original Album Id";
     public static final String MUSICBRAINZ_RELEASE_GROUPID  = "MusicBrainz Release Group Id";
     public static final String MUSICBRAINZ_RELEASE_TRACKID  = "MusicBrainz Release Track Id";
-    public static final String MUSICBRAINZ_WORK_COMPOSITION             = "MUSICBRAINZ_WORK_COMPOSITION";
-    public static final String MUSICBRAINZ_WORK_COMPOSITION_ID          = "MUSICBRAINZ_WORK_COMPOSITION_ID";
+    public static final String MUSICBRAINZ_RECORDING_WORK               = "MUSICBRAINZ_RECORDING_WORK";
+    public static final String MUSICBRAINZ_RECORDING_WORK_ID            = "MUSICBRAINZ_RECORDING_WORK_ID";
     public static final String MUSICBRAINZ_WORKID                       = "MusicBrainz Work Id";
     public static final String MUSICBRAINZ_WORK                         = "MUSICBRAINZ_WORK";
     public static final String MUSICBRAINZ_WORK_PART_LEVEL1             = "MUSICBRAINZ_WORK_PART_LEVEL1";
@@ -124,19 +146,38 @@ public class FrameBodyTXXX extends AbstractFrameBodyTextInfo implements ID3v24Fr
     public static final String OPUS                                     = "OPUS";
     public static final String ORCHESTRA                                = "ORCHESTRA";
     public static final String ORCHESTRA_SORT                           = "ORCHESTRA_SORT";
+    public static final String ORIGINALRELEASEDATE                      = "ORIGINALRELEASEDATE";
+    public static final String OVERALL_WORK                             = "OVERALL_WORK";
     public static final String PART                                     = "PART";
     public static final String PART_NUMBER                              = "PARTNUMBER";
     public static final String PART_TYPE                                = "PART_TYPE";
+    public static final String PERFORMER                                = "PERFORMER";
     public static final String PERFORMER_NAME                           = "PERFORMER_NAME";
     public static final String PERFORMER_NAME_SORT                      = "PERFORMER_NAME_SORT";
     public static final String PERIOD                                   = "PERIOD";
+    public static final String PRODUCER                                 = "PRODUCER";
+    public static final String PRODUCER_SORT                            = "PRODUCER_SORT";
     public static final String RANKING                                  = "RANKING";
-    public static final String SCRIPT                                   = "Script";
+    public static final String RECORDING_ENGINEER                       = "RECORDING_ENGINEER";
+    public static final String RECORDING_ENGINEER_SORT                  = "RECORDING_ENGINEER_SORT";
+    public static final String RECORDINGDATE                            = "RECORDINGDATE";
+    public static final String RECORDINGSTARTDATE                       = "RECORDINGSTARTDATE";
+    public static final String RECORDINGENDDATE                         = "RECORDINGENDDATE";
+    public static final String RECORDINGLOCATION                        = "RECORDINGLOCATION";
+    public static final String REMIXER                                  = "REMIXER";
+    public static final String ROONALBUMTAG                             = "ROONALBUMTAG";
+    public static final String ROONTRACKTAG                             = "ROONTRACKTAG";
+    public static final String SCRIPT                                   = "SCRIPT";
+    public static final String SECTION                                  = "SECTION";
     public static final String SINGLE_DISC_TRACK_NO                     = "SINGLE_DISC_TRACK_NO";
+    public static final String SONGKONG_ID                              = "SONGKONG_ID";
+    public static final String SOUND_ENGINEER                           = "SOUND_ENGINEER";
+    public static final String SOUND_ENGINEER_SORT                      = "SOUND_ENGINEER_SORT";
     public static final String TAGS                                     = "TAGS";
     public static final String TIMBRE                                   = "TIMBRE_BRIGHTNESS";
     public static final String TITLE_MOVEMENT                           = "TITLE_MOVEMENT";
     public static final String TONALITY                                 = "TONALITY";
+    public static final String VERSION                                  = "VERSION";
     public static final String WORK                                     = "WORK";
     public static final String WORK_TYPE                                = "WORK_TYPE";
 
@@ -247,8 +288,7 @@ public class FrameBodyTXXX extends AbstractFrameBodyTextInfo implements ID3v24Fr
     protected void setupObjectList()
     {
         objectList.add(new NumberHashMap(DataTypes.OBJ_TEXT_ENCODING, this, TextEncoding.TEXT_ENCODING_FIELD_SIZE));
-        objectList.add(new TextEncodedStringNullTerminated(DataTypes.OBJ_DESCRIPTION, this));
+        objectList.add(new TextEncodedStringNullTerminated(DataTypes.OBJ_DESCRIPTION, this, false));
         objectList.add(new TextEncodedStringSizeTerminated(DataTypes.OBJ_TEXT, this));
     }
-
 }

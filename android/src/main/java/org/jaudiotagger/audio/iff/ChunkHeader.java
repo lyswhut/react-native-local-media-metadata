@@ -1,6 +1,5 @@
 package org.jaudiotagger.audio.iff;
 
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.Utils;
 
 import java.io.IOException;
@@ -8,6 +7,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Each {@link Chunk} starts with a chunk header consisting of a 4 byte id and then a 4 byte size field, the size field
@@ -40,8 +40,7 @@ public class ChunkHeader
         header.order(byteOrder);
         header.position(0);
         this.chunkId  = Utils.readFourBytesAsChars(header);
-        this.size = header.getInt();
-
+        this.size = Integer.toUnsignedLong(header.getInt());
         return true;
     }
 

@@ -38,6 +38,7 @@ import org.jaudiotagger.tag.id3.valuepair.TextEncoding;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A frame body contains the data content for a frame
@@ -59,7 +60,7 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
     /**
      * List of data types that make up this particular frame body.
      */
-    protected ArrayList<AbstractDataType> objectList = new ArrayList<AbstractDataType>();
+    protected List<AbstractDataType> objectList = new ArrayList<>();
 
     /**
      * Return the Text Encoding
@@ -109,10 +110,9 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
      */
     protected AbstractTagFrameBody(AbstractTagFrameBody copyObject)
     {
-        AbstractDataType newObject;
         for (int i = 0; i < copyObject.objectList.size(); i++)
         {
-            newObject = (AbstractDataType) ID3Tags.copyObject(copyObject.objectList.get(i));
+        	AbstractDataType newObject = (AbstractDataType) ID3Tags.copyObject(copyObject.objectList.get(i));
             newObject.setBody(this);
             this.objectList.add(newObject);
         }
@@ -177,11 +177,8 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
      */
     public final void setObjectValue(String identifier, Object value)
     {
-        AbstractDataType object;
-        Iterator<AbstractDataType> iterator = objectList.listIterator();
-        while (iterator.hasNext())
+        for(AbstractDataType object : objectList) 
         {
-            object = iterator.next();
             if (object.getIdentifier().equals(identifier))
             {
                 object.setValue(value);
@@ -212,11 +209,8 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
      */
     public final AbstractDataType getObject(String identifier)
     {
-        AbstractDataType object;
-        Iterator<AbstractDataType> iterator = objectList.listIterator();
-        while (iterator.hasNext())
+        for(AbstractDataType object : objectList) 
         {
-            object = iterator.next();
             if (object.getIdentifier().equals(identifier))
             {
                 return object;
@@ -233,11 +227,8 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
     public int getSize()
     {
         int size = 0;
-        AbstractDataType object;
-        Iterator<AbstractDataType> iterator = objectList.listIterator();
-        while (iterator.hasNext())
+        for(AbstractDataType object : objectList)
         {
-            object = iterator.next();
             size += object.getSize();
         }
         return size;
@@ -258,12 +249,12 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
         {
             return false;
         }
-        ArrayList<AbstractDataType> superset = ((AbstractTagFrameBody) obj).objectList;
-        for (AbstractDataType anObjectList : objectList)
+        List<AbstractDataType> superset = ((AbstractTagFrameBody) obj).objectList;
+        for (AbstractDataType object : objectList)
         {
-            if (anObjectList.getValue() != null)
+            if (object.getValue() != null)
             {
-                if (!superset.contains(anObjectList))
+                if (!superset.contains(object))
                 {
                     return false;
                 }
@@ -297,7 +288,7 @@ public abstract class AbstractTagFrameBody extends AbstractTagItem
      *
      * @return iterator of the DataType list.
      */
-    public Iterator iterator()
+    public Iterator<? extends AbstractDataType> iterator()
     {
         return objectList.iterator();
     }

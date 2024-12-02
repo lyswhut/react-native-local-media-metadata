@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-
 /**
  * SeekTable Block
  *
@@ -32,6 +31,17 @@ import java.nio.channels.FileChannel;
  * resolution within a stream adds less than 2k. There can be only one SEEKTABLE in a stream, but the table can have
  * any number of seek points. There is also a special 'placeholder' seekpoint which will be ignored by decoders but
  * which can be used to reserve space for future seek point insertion.
+ *
+ * SEEKPOINT
+ * <64> 	Sample number of first sample in the target frame, or 0xFFFFFFFFFFFFFFFF for a placeholder point.
+ * <64> 	Offset (in bytes) from the first byte of the first frame header to the first byte of the target frame's header.
+ * <16> 	Number of samples in the target frame.
+ * NOTES
+ *
+ * For placeholder points, the second and third field values are undefined.
+ * Seek points within a table must be sorted in ascending order by sample number.
+ * Seek points within a table must be unique by sample number, with the exception of placeholder points.
+ * The previous two notes imply that there may be any number of placeholder points, but they must all occur at the end of the table.
  */
 public class MetadataBlockDataSeekTable implements MetadataBlockData
 {
@@ -42,13 +52,19 @@ public class MetadataBlockDataSeekTable implements MetadataBlockData
         data = ByteBuffer.allocate(header.getDataLength());
         fc.read(data);
         data.flip();
+
+        /* ENABLE For DEBUGGING
+        while(data.position() < data.limit())
+        {
+            System.out.println(String.format("SampleNo:%d, Offset:%d, NoOfSamples:%d", data.getLong(), data.getLong(), data.getShort()));
+        }
+        */
     }
 
     public ByteBuffer getBytes()
     {
         return data;
     }
-
 
     public int getLength()
     {

@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel;
 import java.util.logging.Logger;
 
 /**
- * Common to all IFF formats such as Wav and Aiff
+ * Common to all IFF formats such as Wav and Aiff, is the the top level chunk, 8 byte header plus 4 byte type field
  */
 public class IffHeaderChunk
 {
@@ -17,14 +17,14 @@ public class IffHeaderChunk
     public static int SIGNATURE_LENGTH = 4;
     public static int SIZE_LENGTH = 4;
     public static int TYPE_LENGTH = 4;
-    public static int HEADER_LENGTH = SIGNATURE_LENGTH + SIZE_LENGTH + TYPE_LENGTH;
+    public static int FORM_HEADER_LENGTH = SIGNATURE_LENGTH + SIZE_LENGTH + TYPE_LENGTH;
 
     /**
      * If Size is not even then we skip a byte, because chunks have to be aligned
      *
      * @param raf
      * @param chunkHeader
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public static void ensureOnEqualBoundary(final RandomAccessFile raf,ChunkHeader chunkHeader) throws IOException
     {

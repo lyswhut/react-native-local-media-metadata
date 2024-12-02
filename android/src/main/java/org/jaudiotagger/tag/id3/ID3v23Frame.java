@@ -16,7 +16,6 @@
 package org.jaudiotagger.tag.id3;
 
 import org.jaudiotagger.FileConstants;
-import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.logging.Hex;
 import org.jaudiotagger.tag.EmptyFrameException;
@@ -34,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -236,7 +236,7 @@ public class ID3v23Frame extends AbstractID3v2Frame
             // Unable to find a suitable frameBody, this should not happen
             else
             {
-                logger.severe("Orig id is:" + frame.getIdentifier() + "Unable to create Frame Body");
+                logger.severe("Orig id is:" + frame.getIdentifier() + ":Unable to create Frame Body");
                 throw new InvalidFrameException("Orig id is:" + frame.getIdentifier() + "Unable to create Frame Body");
             }
         }
@@ -384,24 +384,24 @@ public class ID3v23Frame extends AbstractID3v2Frame
             byteBuffer.get();
             throw new EmptyFrameException(identifier + " is empty frame");
         }
-        else if (frameSize > byteBuffer.remaining())
+        //Do we have enough room for framesize (plus the two flag bytes we havewnt yet read)
+        else if (frameSize + 2 > byteBuffer.remaining())
         {
             logger.warning(getLoggingFilename() + ":Invalid Frame size of " +frameSize +" larger than size of" + byteBuffer.remaining() + " before mp3 audio:" + identifier);
             throw new InvalidFrameException(identifier + " is invalid frame:"+frameSize +" larger than size of" + byteBuffer.remaining() + " before mp3 audio:" + identifier);
         }
 
         //Read the flag bytes
-        statusFlags = new StatusFlags(byteBuffer.get());
+        statusFlags   = new StatusFlags(byteBuffer.get());
         encodingFlags = new EncodingFlags(byteBuffer.get());
         String id;
 
         //If this identifier is a valid v24 identifier or easily converted to v24
         id = ID3Tags.convertFrameID23To24(identifier);
-
         // Cant easily be converted to v24 but is it a valid v23 identifier
         if (id == null)
         {
-            // It is a valid v23 identifier so should be able to find a
+            // If it is a valid v23 identifier so should be able to find a
             //  frame body for it.
             if (ID3Tags.isID3v23FrameIdentifier(identifier))
             {
@@ -413,7 +413,6 @@ public class ID3v23Frame extends AbstractID3v2Frame
                 id = UNSUPPORTED_ID;
             }
         }
-        logger.fine(getLoggingFilename() + ":Identifier was:" + identifier + " reading using:" + id + "with frame size:" + frameSize);
 
         //Read extra bits appended to frame header for various encodings
         //These are not included in header size but are included in frame size but won't be read when we actually
@@ -483,9 +482,17 @@ public class ID3v23Frame extends AbstractID3v2Frame
             }
             else if (((EncodingFlags) encodingFlags).isEncryption())
             {
-                frameBodyBuffer = byteBuffer.slice();
-                frameBodyBuffer.limit(frameSize);
-                frameBody = readEncryptedBody(identifier, frameBodyBuffer, frameSize);
+                if(byteBuffer.remaining()>=frameSize)
+                {
+                    frameBodyBuffer = byteBuffer.slice();
+                    frameBodyBuffer.limit(frameSize);
+                    frameBody = readEncryptedBody(identifier, frameBodyBuffer, frameSize);
+                }
+                else
+                {
+                    logger.warning(getLoggingFilename() + ":Invalid Frame " +frameSize +" encodingFlagSetButNotEnoughBytes:" + byteBuffer.remaining() + " before mp3 audio:" + identifier);
+                    throw new InvalidFrameException(identifier + " invalid frame:"+frameSize +"  encodingFlagSetButNotEnoughBytes:" + byteBuffer.remaining() + " before mp3 audio:" + identifier);
+                }
             }
             else
             {
@@ -505,7 +512,7 @@ public class ID3v23Frame extends AbstractID3v2Frame
         }
         finally
         {
-            //Update position of main buffer, so no attempt is made to reread these bytes
+            //Update position of main buffer, so no attempt is made to re-read these bytes
             byteBuffer.position(byteBuffer.position() + realFrameSize);
         }
     }

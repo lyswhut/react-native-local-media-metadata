@@ -22,7 +22,7 @@ import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.generic.AudioFileWriter2;
 import org.jaudiotagger.tag.Tag;
 
-import java.io.File;
+import java.nio.file.Path;
 
 
 /**
@@ -34,13 +34,13 @@ public class FlacFileWriter extends AudioFileWriter2
     private FlacTagWriter tw = new FlacTagWriter();
 
     @Override
-    protected void writeTag(Tag tag, File file) throws CannotWriteException
+    protected void writeTag(Tag tag, Path file) throws CannotWriteException
     {
         tw.write(tag, file);
     }
 
     @Override
-    protected void deleteTag(Tag tag, File file) throws CannotWriteException
+    protected void deleteTag(Tag tag, Path file) throws CannotWriteException
     {
         tw.delete(tag, file);
     }

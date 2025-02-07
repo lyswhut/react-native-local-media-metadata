@@ -108,7 +108,7 @@ public class Utils {
     return new String(Base64.encode(data, Base64.NO_WRAP), StandardCharsets.UTF_8);
   }
   public static String decodeString(byte[] data) {
-    UniversalDetector detector = new UniversalDetector(null);
+    UniversalDetector detector = new UniversalDetector();
     detector.handleData(data, 0, data.length);
     detector.dataEnd();
     String detectedCharset = detector.getDetectedCharset();

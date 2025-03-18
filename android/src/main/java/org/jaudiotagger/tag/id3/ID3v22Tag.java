@@ -104,8 +104,8 @@ public class ID3v22Tag extends AbstractID3v2Tag
      */
     public ID3v22Tag()
     {
-        frameMap = new LinkedHashMap<>();
-        encryptedFrameMap = new LinkedHashMap<>();
+        frameMap = new LinkedHashMap();
+        encryptedFrameMap = new LinkedHashMap();
     }
 
     /**
@@ -158,8 +158,8 @@ public class ID3v22Tag extends AbstractID3v2Tag
      */
     public ID3v22Tag(AbstractTag mp3tag)
     {
-        frameMap = new LinkedHashMap<>();
-        encryptedFrameMap = new LinkedHashMap<>();
+        frameMap = new LinkedHashMap();
+        encryptedFrameMap = new LinkedHashMap();
         logger.config("Creating tag from a tag of a different version");
         //Default Superclass constructor does nothing
         if (mp3tag != null)
@@ -259,7 +259,7 @@ public class ID3v22Tag extends AbstractID3v2Tag
     @Override
     protected List<AbstractID3v2Frame> convertFrame(AbstractID3v2Frame frame) throws InvalidFrameException
     {
-        List<AbstractID3v2Frame> frames = new ArrayList<>();
+        List<AbstractID3v2Frame> frames = new ArrayList<AbstractID3v2Frame>();
         if ((frame.getIdentifier().equals(ID3v24Frames.FRAME_ID_YEAR)) && (frame.getBody() instanceof FrameBodyTDRC))
         {
             FrameBodyTDRC tmpBody = (FrameBodyTDRC) frame.getBody();
@@ -400,8 +400,8 @@ public class ID3v22Tag extends AbstractID3v2Tag
     {
         //Now start looking for frames
         ID3v22Frame next;
-        frameMap = new LinkedHashMap<>();
-        encryptedFrameMap = new LinkedHashMap<>();
+        frameMap = new LinkedHashMap();
+        encryptedFrameMap = new LinkedHashMap();
 
         //Read the size from the Tag Header
         this.fileReadSize = size;
@@ -416,7 +416,7 @@ public class ID3v22Tag extends AbstractID3v2Tag
             try
             {
                 //Read Frame
-                logger.config(getLoggingFilename() + ":" + "looking for next frame at:" + byteBuffer.position());
+                logger.finest(getLoggingFilename() + ":" + "looking for next frame at:" + byteBuffer.position());
                 next = new ID3v22Frame(byteBuffer, getLoggingFilename());
                 String id = next.getIdentifier();
                 loadFrameIntoMap(id, next);
@@ -474,14 +474,14 @@ public class ID3v22Tag extends AbstractID3v2Tag
             //Create Year frame (v2.2 id,but uses v2.3 body)
             newFrame = new ID3v22Frame(ID3v22Frames.FRAME_ID_V2_TYER);
             ((AbstractFrameBodyTextInfo) newFrame.getBody()).setText(tmpBody.getYear());
-            setFrame(newFrame);
+            frameMap.put(newFrame.getIdentifier(), newFrame);
         }
         if (tmpBody.getTime().length() != 0)
         {
             //Create Time frame (v2.2 id,but uses v2.3 body)
             newFrame = new ID3v22Frame(ID3v22Frames.FRAME_ID_V2_TIME);
             ((AbstractFrameBodyTextInfo) newFrame.getBody()).setText(tmpBody.getTime());
-            setFrame(newFrame);
+            frameMap.put(newFrame.getIdentifier(), newFrame);
         }
     }
 
@@ -763,7 +763,7 @@ public class ID3v22Tag extends AbstractID3v2Tag
      * @return comparator used to order frames in preffrred order for writing to file
      * so that most important frames are written first.
      */
-    public Comparator<String> getPreferredFrameOrderComparator()
+    public Comparator getPreferredFrameOrderComparator()
     {
         return ID3v22PreferredFrameOrderComparator.getInstanceof();
     }
@@ -782,7 +782,6 @@ public class ID3v22Tag extends AbstractID3v2Tag
             Artwork artwork = ArtworkFactory.getNew();
             artwork.setMimeType(ImageFormats.getMimeTypeForFormat(coverArt.getFormatType()));
             artwork.setPictureType(coverArt.getPictureType());
-            artwork.setDescription(coverArt.getDescription());
             if (coverArt.isImageUrl())
             {
                 artwork.setLinked(true);
@@ -809,7 +808,7 @@ public class ID3v22Tag extends AbstractID3v2Tag
             body.setObjectValue(DataTypes.OBJ_PICTURE_DATA, artwork.getBinaryData());
             body.setObjectValue(DataTypes.OBJ_PICTURE_TYPE, artwork.getPictureType());
             body.setObjectValue(DataTypes.OBJ_IMAGE_FORMAT, ImageFormats.getFormatForMimeType(artwork.getMimeType()));
-            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, artwork.getDescription());
+            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, "");
             return frame;
         }
         else
@@ -824,7 +823,7 @@ public class ID3v22Tag extends AbstractID3v2Tag
             }
             body.setObjectValue(DataTypes.OBJ_PICTURE_TYPE, artwork.getPictureType());
             body.setObjectValue(DataTypes.OBJ_IMAGE_FORMAT, FrameBodyAPIC.IMAGE_IS_URL);
-            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, artwork.getDescription());
+            body.setObjectValue(DataTypes.OBJ_DESCRIPTION, "");
             return frame;
         }
     }

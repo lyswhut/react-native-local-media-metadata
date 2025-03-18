@@ -286,17 +286,5 @@ public abstract class ID3Frames extends AbstractStringStringValuePair
         loadID3v23ID3v24Mapping();
     }
 
-    /**
-     * <p>Allows setting of a special iTunes 12.6 mode, where
-     * {@link org.jaudiotagger.tag.FieldKey#GROUPING} is mapped to the
-     * non-standard frame {@code GPP1} and {@link org.jaudiotagger.tag.FieldKey#WORK}
-     * to {@code TIT1} instead of the regular mapping
-     * ({@code GROUPING -> TIT1, WORK -> TXXX:WORK}).</p>
-     *
-     * <p>This method is called internally by {@link org.jaudiotagger.tag.TagOptionSingleton#setId3v2ITunes12_6WorkGroupingMode(boolean)}
-     * and should not be called by framework users directly.</p>
-     *
-     * @param id3v2ITunes12_6Mode true or false
-     */
-    public abstract void setITunes12_6WorkGroupingMode(boolean id3v2ITunes12_6Mode);
+
 }

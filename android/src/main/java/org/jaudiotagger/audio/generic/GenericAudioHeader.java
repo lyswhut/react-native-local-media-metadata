@@ -34,6 +34,7 @@ import org.jaudiotagger.audio.AudioHeader;
  */
 public class GenericAudioHeader implements AudioHeader
 {
+    //Use objects so clearer wherher has been set or not
     private Long    audioDataLength;
     private Long    audioDataStartPosition;
     private Long    audioDataEndPosition;
@@ -42,7 +43,6 @@ public class GenericAudioHeader implements AudioHeader
     private Integer samplingRate;
     private Integer bitsPerSample;
     private String  encodingType;
-    private String  format;
     private Boolean isVbr = Boolean.TRUE; //TODO this is a weird default
     private Boolean isLossless;
     private Double  trackLength;
@@ -112,7 +112,7 @@ public class GenericAudioHeader implements AudioHeader
      */
     public String getFormat()
     {
-        return format;
+        return encodingType;
     }
 
 
@@ -234,17 +234,6 @@ public class GenericAudioHeader implements AudioHeader
     }
 
     /**
-     * Sets the type of the encoding.<br>
-     * This is the generic encoding format, e.g mp3, Flac, Aac, AppleLossless
-     *
-     * @param format Format.
-     */
-    public void setFormat(String format)
-    {
-        this.format=format;
-    }
-
-    /**
      * This method sets the audio duration of the represented clip.<br>
      *
      * @param length The duration of the audio in seconds (single-precision).
@@ -310,7 +299,7 @@ public class GenericAudioHeader implements AudioHeader
     /**
      * Pretty prints this encoding info
      *
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      */
     public String toString()
     {
@@ -352,15 +341,10 @@ public class GenericAudioHeader implements AudioHeader
         {
             out.append("\tnumberOfChannels:"+noOfChannels+"\n");
         }
-        if(format!=null)
-        {
-            out.append("\tformat:"+format+"\n");
-        }
         if(encodingType!=null)
         {
             out.append("\tencodingType:"+encodingType+"\n");
         }
-
         if(isVbr!=null)
         {
             out.append("\tisVbr:"+isVbr+"\n");

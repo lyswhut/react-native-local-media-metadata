@@ -7,11 +7,6 @@ package org.jaudiotagger.audio.exceptions;
 public class NoWritePermissionsException extends CannotWriteException
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -156467854598317547L;
-
-	/**
      * Creates an instance.
      */
     public NoWritePermissionsException()

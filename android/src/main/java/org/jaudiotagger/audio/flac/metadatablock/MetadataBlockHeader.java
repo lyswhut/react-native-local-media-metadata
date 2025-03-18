@@ -35,11 +35,10 @@ public class MetadataBlockHeader
     public static final int BLOCK_LENGTH        = 3;
     public static final int HEADER_LENGTH       = BLOCK_TYPE_LENGTH + BLOCK_LENGTH;
 
-    private long        startByte; //for debugging
-    private boolean     isLastBlock;
-    private int         dataLength;
-    private byte[]      bytes;
-    private BlockType   blockType;
+    private boolean isLastBlock;
+    private int dataLength;
+    private byte[] bytes;
+    private BlockType blockType;
 
     public static Logger logger = Logger.getLogger("org.jaudiotagger.audio.flac");
     /**
@@ -52,19 +51,18 @@ public class MetadataBlockHeader
     public static MetadataBlockHeader readHeader(FileChannel fc) throws CannotReadException, IOException
     {
         ByteBuffer rawdata = ByteBuffer.allocate(HEADER_LENGTH);
-        long startByte = fc.position();
         int bytesRead = fc.read(rawdata);
         if (bytesRead < HEADER_LENGTH)
         {
             throw new IOException("Unable to read required number of databytes read:" + bytesRead + ":required:" + HEADER_LENGTH);
         }
         rawdata.rewind();
-        return new MetadataBlockHeader(startByte, rawdata);
+        return new MetadataBlockHeader(rawdata);
     }
 
     public String toString()
     {
-        return String.format("StartByte:%d BlockType:%s DataLength:%d isLastBlock:%s",startByte, blockType, dataLength, isLastBlock);
+        return "BlockType:"+blockType + " DataLength:"+dataLength + " isLastBlock:"+isLastBlock;
     }
 
     /**
@@ -72,9 +70,8 @@ public class MetadataBlockHeader
      *
      * @param rawdata
      */
-    public MetadataBlockHeader(long startByte, ByteBuffer rawdata) throws CannotReadException
+    public MetadataBlockHeader(ByteBuffer rawdata) throws CannotReadException
     {
-        this.startByte = startByte;
         isLastBlock = ((rawdata.get(0) & 0x80) >>> 7) == 1;
         int type = rawdata.get(0) & 0x7F;
         if (type < BlockType.values().length)
@@ -156,11 +153,6 @@ public class MetadataBlockHeader
         return bytes;
     }
 
-    public byte[] getBytesWithLastBlockFlag()
-    {
-        bytes[0] = (byte) (bytes[0] | 0x80);
-        return bytes;
-    }
     public byte[] getBytes()
     {
         return bytes;

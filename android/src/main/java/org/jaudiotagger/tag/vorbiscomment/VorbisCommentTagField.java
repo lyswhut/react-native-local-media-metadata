@@ -18,12 +18,12 @@
  */
 package org.jaudiotagger.tag.vorbiscomment;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.TagTextField;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import static org.jaudiotagger.tag.vorbiscomment.VorbisCommentFieldKey.*;
 

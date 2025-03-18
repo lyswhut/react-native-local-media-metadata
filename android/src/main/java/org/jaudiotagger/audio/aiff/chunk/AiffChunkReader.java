@@ -19,7 +19,7 @@ public abstract class AiffChunkReader
      * @param fc
      * @param chunkHeader
      * @return
-     * @throws java.io.IOException
+     * @throws IOException
      */
     protected ByteBuffer readChunkDataIntoBuffer(FileChannel fc, final ChunkHeader chunkHeader) throws IOException
     {

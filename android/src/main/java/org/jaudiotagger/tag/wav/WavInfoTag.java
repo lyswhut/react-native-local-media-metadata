@@ -30,15 +30,15 @@ import java.util.List;
 /**
  * Represent wav metadata found in the LISTINFO Chunk
  *
- * An LIST INFO chunk was the original way to store metadata but similarly to ID3v1 it suffers from a limited
+ * An LIST INFO chunk was the original way to store metadata but simailr to ID3v1 it suffers from a limited
  * set of fields, although non-standard extra field cannot be added, notably there is no support for images.
  *
- * Many Wav editors now instead/additionally add data with an ID3 tag
+ * Any Wavc editors now instead/addtionally add data with an ID3tag
  */
 public class WavInfoTag extends GenericTag
 {
     //We dont use these fields but we need to read them so they can be written back if user modifies
-    private List<TagTextField> unrecognisedFields = new ArrayList<>();
+    private List<TagTextField> unrecognisedFields = new ArrayList<TagTextField>();
 
     private Long startLocationInFile = null;
 
@@ -64,8 +64,7 @@ public class WavInfoTag extends GenericTag
                 FieldKey.LYRICIST,
                 FieldKey.ENCODER,
                 FieldKey.CONDUCTOR,
-                FieldKey.RATING,
-                FieldKey.COPYRIGHT);
+                FieldKey.RATING);
     }
     public String toString()
     {
@@ -78,13 +77,13 @@ public class WavInfoTag extends GenericTag
         {
             output.append("\tendLocation:" + Hex.asDecAndHex(getEndLocationInFile()) + "\n");
         }
-        output.append(super.toString().replace("\0",""));
+        output.append(super.toString());
         if(unrecognisedFields.size()>0)
         {
             output.append("\nUnrecognized Tags:\n");
             for(TagTextField next:unrecognisedFields)
             {
-                output.append("\t"+next.getId()+":"+next.getContent().replace("\0","")+"\n");
+                output.append("\t"+next.getId()+":"+next.getContent()+"\n");
             }
         }
         return output.toString();

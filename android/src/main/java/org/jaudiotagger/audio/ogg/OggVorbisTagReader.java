@@ -19,6 +19,7 @@
  */
 package org.jaudiotagger.audio.ogg;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.ogg.util.OggPageHeader;
 import org.jaudiotagger.audio.ogg.util.VorbisHeader;
@@ -31,7 +32,6 @@ import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -71,7 +71,7 @@ public class OggVorbisTagReader
         byte[] rawVorbisCommentData = readRawPacketData(raf);
 
         //Begin tag reading
-        VorbisCommentTag tag = vorbisCommentReader.read(rawVorbisCommentData, true, null);
+        VorbisCommentTag tag = vorbisCommentReader.read(rawVorbisCommentData, true);
         logger.fine("CompletedReadCommentTag");
         return tag;
     }
@@ -156,7 +156,7 @@ public class OggVorbisTagReader
      * @param startVorbisCommentPage
      * @param raf
      * @throws org.jaudiotagger.audio.exceptions.CannotReadException
-     * @throws java.io.IOException
+     * @throws IOException
      * @return
      */
     private byte[] convertToVorbisCommentPacket(OggPageHeader startVorbisCommentPage, RandomAccessFile raf) throws IOException, CannotReadException
@@ -214,7 +214,7 @@ public class OggVorbisTagReader
      * @param fileOffsetOfStartingOggPage
      * @param raf
      * @throws org.jaudiotagger.audio.exceptions.CannotReadException
-     * @throws java.io.IOException
+     * @throws IOException
      * @return
      */
     public byte[] convertToVorbisSetupHeaderPacket(long fileOffsetOfStartingOggPage, RandomAccessFile raf) throws IOException, CannotReadException
@@ -301,7 +301,7 @@ public class OggVorbisTagReader
      * @param fileOffsetOfStartingOggPage
      * @param raf
      * @throws org.jaudiotagger.audio.exceptions.CannotReadException
-     * @throws java.io.IOException
+     * @throws IOException
      * @return
      */
     public byte[] convertToVorbisSetupHeaderPacketAndAdditionalPackets(long fileOffsetOfStartingOggPage, RandomAccessFile raf) throws IOException, CannotReadException

@@ -21,6 +21,7 @@ import java.util.ArrayList;
  */
 public class Mp4DiscNoField extends Mp4TagTextNumberField
 {
+    private static final int NONE_VALUE_INDEX = 0;
     private static final int DISC_NO_INDEX = 1;
     private static final int DISC_TOTAL_INDEX = 2;
 

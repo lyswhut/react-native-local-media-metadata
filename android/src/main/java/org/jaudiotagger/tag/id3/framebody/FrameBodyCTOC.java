@@ -94,7 +94,7 @@ import java.nio.ByteBuffer;
  * @author Marc Gimpel, Horizon Wimba S.A.
  * @version $Id$
  */
-public class FrameBodyCTOC extends AbstractID3v2FrameBody implements ID3v2ChapterFrameBody, ID3v24FrameBody, ID3v23FrameBody
+public class FrameBodyCTOC extends AbstractID3v2FrameBody implements ID3v2ChapterFrameBody
 {
     /**
      * Creates a new FrameBodyCTOC datatype.

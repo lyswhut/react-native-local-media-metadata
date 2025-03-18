@@ -8,12 +8,7 @@ import java.io.IOException;
  */
 public class UnableToModifyFileException extends IOException
 {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 5015053427539691565L;
-
-	public UnableToModifyFileException(String message)
+    public UnableToModifyFileException(String message)
     {
         super(message);
     }

@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static org.jaudiotagger.StandardCharsets.ISO_8859_1;
 
 
 /**

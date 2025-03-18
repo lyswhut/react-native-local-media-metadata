@@ -24,15 +24,14 @@ public enum Tagger
     JRIVER(13,"JRiver"),
     GODFATHER(14,"The Godfather"),
     MUSICHI(15, "Musichi"),
-    ROON(16,"Roon"),
-    SONGKONG(17,"SongKong"),
-    MINIMSERVER(18,"MinimServer"),
     ;
 
+    private int compatability;
     private String desc;
 
     Tagger(int compatability,String desc)
     {
+        this.compatability=compatability;
         this.desc=desc;
     }
 

@@ -45,7 +45,7 @@ public class OggVorbisCommentTagCreator
     //Creates the ByteBuffer for the ogg tag
     public ByteBuffer convert(Tag tag) throws UnsupportedEncodingException
     {
-        ByteBuffer ogg = creator.convertMetadata(tag);
+        ByteBuffer ogg = creator.convert(tag);
         int tagLength = ogg.capacity() + VorbisHeader.FIELD_PACKET_TYPE_LENGTH + VorbisHeader.FIELD_CAPTURE_PATTERN_LENGTH + OggVorbisCommentTagCreator.FIELD_FRAMING_BIT_LENGTH;
 
         ByteBuffer buf = ByteBuffer.allocate(tagLength);

@@ -8,11 +8,6 @@ package org.jaudiotagger.tag;
 public class KeyNotFoundException extends RuntimeException
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -4532369719091873024L;
-
-	/**
      * Creates a new KeyNotFoundException datatype.
      */
     public KeyNotFoundException()

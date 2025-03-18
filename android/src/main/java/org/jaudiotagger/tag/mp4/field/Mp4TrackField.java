@@ -22,8 +22,11 @@ import java.util.ArrayList;
  */
 public class Mp4TrackField extends Mp4TagTextNumberField
 {
+    private static final int NONE_VALUE_INDEX = 0;
     private static final int TRACK_NO_INDEX = 1;
     private static final int TRACK_TOTAL_INDEX = 2;
+    private static final int NONE_END_VALUE_INDEX = 3;
+
     /**
      * Create new Track Field parsing the String for the trackno/total
      *
@@ -153,11 +156,7 @@ public class Mp4TrackField extends Mp4TagTextNumberField
      */
     public Short getTrackNo()
     {
-        if(numbers.get(TRACK_NO_INDEX)!=null)
-        {
-            return numbers.get(TRACK_NO_INDEX);
-        }
-        return 0;
+        return numbers.get(TRACK_NO_INDEX);
     }
 
     /**
@@ -165,11 +164,11 @@ public class Mp4TrackField extends Mp4TagTextNumberField
      */
     public Short getTrackTotal()
     {
-        if(numbers.get(TRACK_TOTAL_INDEX)!=null)
+        if(numbers.size()<=TRACK_TOTAL_INDEX)
         {
-            return numbers.get(TRACK_TOTAL_INDEX);
+            return 0;
         }
-        return 0;
+        return numbers.get(TRACK_TOTAL_INDEX);
     }
 
      /**

@@ -262,11 +262,6 @@ public class XingFrame
      */
     public String toString()
     {
-        return "Xing Header+\n"
-                + "\tvbr:" + vbr +"\n"
-                + "\tframeCountEnabled:" + isFrameCountEnabled+"\n"
-                + "\tframeCount:" + frameCount +"\n"
-                + "\taudioSizeEnabled:" + isAudioSizeEnabled+"\n"
-                + "\taudioFileSize:" + audioSize+"\n";
+        return "xingheader" + " vbr:" + vbr + " frameCountEnabled:" + isFrameCountEnabled + " frameCount:" + frameCount + " audioSizeEnabled:" + isAudioSizeEnabled + " audioFileSize:" + audioSize;
     }
 }

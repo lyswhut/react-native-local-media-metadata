@@ -8,12 +8,7 @@ import java.io.IOException;
  */
 public class UnableToCreateFileException extends IOException
 {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 3390375837765957908L;
-
-	public UnableToCreateFileException(String message)
+    public UnableToCreateFileException(String message)
     {
         super(message);
     }

@@ -22,7 +22,7 @@ public interface TagWriter
      * @param raf
      * @param rafTemp
      * @throws org.jaudiotagger.audio.exceptions.CannotWriteException
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void write(AudioFile af, Tag tag, RandomAccessFile raf, RandomAccessFile rafTemp) throws CannotWriteException, IOException;
 }

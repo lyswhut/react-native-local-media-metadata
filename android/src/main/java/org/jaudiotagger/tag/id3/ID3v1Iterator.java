@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
-public class ID3v1Iterator implements Iterator<Object>
+public class ID3v1Iterator implements Iterator
 {
     /**
      *

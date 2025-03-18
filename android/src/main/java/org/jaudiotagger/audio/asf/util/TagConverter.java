@@ -29,8 +29,8 @@ import java.util.List;
 
 /**
  * This class provides functionality to convert
- * {@link org.jaudiotagger.audio.asf.data.AsfHeader}objects into
- * {@link org.jaudiotagger.tag.Tag}objects.<br>
+ * {@link AsfHeader}objects into
+ * {@link Tag}objects.<br>
  *
  * @author Christian Laireiter (liree)
  */

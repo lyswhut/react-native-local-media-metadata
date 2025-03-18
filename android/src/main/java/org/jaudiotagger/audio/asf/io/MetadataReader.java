@@ -122,19 +122,33 @@ public class MetadataReader implements ChunkReader
     }
 
     /**
-     * Reads the given number of bytes and checks the last byte, if it's equal to
+     * Reads the given amount of bytes and checks the last byte, if its equal to
      * one or zero (true / false).<br>
+     * All other bytes must be zero. (if assertions enabled).
      *
-     * @param stream stream to read from
-     * @param length number of bytes to read
+     * @param stream stream to read from.
+     * @param bytes  amount of bytes
      * @return <code>true</code> or <code>false</code>.
      * @throws IOException on I/O Errors
      */
-    private boolean readBoolean(final InputStream stream, final int length) throws IOException
+    private boolean readBoolean(final InputStream stream, final int bytes) throws IOException
     {
-        final byte[] tmp = new byte[length];
+        final byte[] tmp = new byte[bytes];
         stream.read(tmp);
-        return tmp[length - 1] == 1;
+        boolean result = false;
+        for (int i = 0; i < bytes; i++)
+        {
+            if (i == bytes - 1)
+            {
+                result = tmp[i] == 1;
+                assert tmp[i] == 0 || tmp[i] == 1;
+            }
+            else
+            {
+                assert tmp[i] == 0;
+            }
+        }
+        return result;
     }
 
 }

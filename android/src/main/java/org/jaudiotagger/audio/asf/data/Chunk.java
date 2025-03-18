@@ -172,7 +172,7 @@ public class Chunk
     /**
      * (overridden)
      *
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      */
     @Override
     public String toString()

@@ -21,7 +21,7 @@ public class AiffAudioHeader extends GenericAudioHeader
     private AiffType fileType;
     private Date timestamp;
     private Endian endian;
-//    private String audioEncoding;
+    private String audioEncoding;
     private String name;
     private String author;
     private String copyright;

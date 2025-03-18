@@ -5,12 +5,7 @@ package org.jaudiotagger.audio.exceptions;
  */
 public class InvalidBoxHeaderException extends RuntimeException
 {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -8797541836152099722L;
-
-	public InvalidBoxHeaderException(String message)
+    public InvalidBoxHeaderException(String message)
     {
         super(message);
     }

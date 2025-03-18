@@ -52,9 +52,4 @@ public class ID3v2ChapterFrames extends ID3Frames
         multipleFrames = new TreeSet<String>();
         discardIfFileAlteredFrames = new TreeSet<String>();
     }
-
-    @Override
-    public void setITunes12_6WorkGroupingMode(final boolean id3v2ITunes12_6Mode) {
-        throw new UnsupportedOperationException();
-    }
 }

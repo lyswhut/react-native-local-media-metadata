@@ -70,7 +70,7 @@ public class Mp4DataBox extends AbstractMp4Box
         {
             content = Utils.getString(this.dataBuffer, PRE_DATA_LENGTH, header.getDataLength() - PRE_DATA_LENGTH, header.getEncoding());
         }
-        else if (type == Mp4FieldType.IMPLICIT.getFileClassId() || type == Mp4FieldType.GENRES.getFileClassId()) 
+        else if (type == Mp4FieldType.IMPLICIT.getFileClassId())
         {
             numbers = new ArrayList<Short>();
 

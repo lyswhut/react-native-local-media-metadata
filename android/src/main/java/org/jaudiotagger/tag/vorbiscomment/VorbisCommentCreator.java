@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.jaudiotagger.StandardCharsets.UTF_8;
 
 /**
  * Create the raw packet data for a Vorbis Comment Tag
@@ -40,12 +40,12 @@ public class VorbisCommentCreator extends AbstractTagCreator
      * Convert tagdata to rawdata ready for writing to file
      *
      * @param tag
-     * @param isLastBlock
+     * @param padding
      * @return
      * @throws UnsupportedEncodingException
      */
     //TODO padding parameter currently ignored
-    public ByteBuffer convertMetadata(Tag tag, boolean isLastBlock) throws UnsupportedEncodingException
+    public ByteBuffer convert(Tag tag, int padding) throws UnsupportedEncodingException
     {
         try
         {
@@ -58,11 +58,7 @@ public class VorbisCommentCreator extends AbstractTagCreator
             baos.write(vendorString.getBytes(UTF_8));
 
             //User Comment List
-            int listLength = tag.getFieldCount();
-            if(((VorbisCommentTag) tag).hasField(VorbisCommentFieldKey.VENDOR))
-            {
-                listLength = listLength - 1;
-            }
+            int listLength = tag.getFieldCount() - 1; //Remove Vendor from count         
             baos.write(Utils.getSizeLEInt32(listLength));
 
             //Add metadata raw content

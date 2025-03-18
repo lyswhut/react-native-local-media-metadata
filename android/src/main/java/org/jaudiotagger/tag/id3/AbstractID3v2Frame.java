@@ -17,7 +17,9 @@ package org.jaudiotagger.tag.id3;
 
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.*;
-import org.jaudiotagger.tag.id3.framebody.*;
+import org.jaudiotagger.tag.id3.framebody.AbstractID3v2FrameBody;
+import org.jaudiotagger.tag.id3.framebody.FrameBodyEncrypted;
+import org.jaudiotagger.tag.id3.framebody.FrameBodyUnsupported;
 import org.jaudiotagger.tag.id3.valuepair.TextEncoding;
 import org.jaudiotagger.utils.EqualsUtil;
 
@@ -121,8 +123,7 @@ public abstract class AbstractID3v2Frame extends AbstractTagFrame implements Tag
         // to keep things up to date.
         try
         {
-            @SuppressWarnings("unchecked")
-			Class<AbstractID3v2FrameBody> c = (Class<AbstractID3v2FrameBody>) Class.forName("org.jaudiotagger.tag.id3.framebody.FrameBody" + identifier);
+            Class<AbstractID3v2FrameBody> c = (Class<AbstractID3v2FrameBody>) Class.forName("org.jaudiotagger.tag.id3.framebody.FrameBody" + identifier);
             frameBody = c.newInstance();
         }
         catch (ClassNotFoundException cnfe)
@@ -253,437 +254,23 @@ public abstract class AbstractID3v2Frame extends AbstractTagFrame implements Tag
      * @return a newly created FrameBody
      * @throws InvalidFrameException unable to construct a framebody from the data
      */
+    @SuppressWarnings("unchecked")
+    //TODO using reflection is rather slow perhaps we should change this
     protected AbstractID3v2FrameBody readBody(String identifier, ByteBuffer byteBuffer, int frameSize)
             throws InvalidFrameException, InvalidDataTypeException
     {
-        //Map to FrameBody (keep old reflection code in case we miss any)
-        //In future maybe able to do https://stackoverflow.com/questions/61662231/better-alternative-to-reflection-than-large-switch-statement-using-java-8
+        //Use reflection to map id to frame body, which makes things much easier
+        //to keep things up to date,although slight performance hit.
         logger.finest("Creating framebody:start");
+
         AbstractID3v2FrameBody frameBody;
         try
         {
-            switch (identifier)
-            {
-                case ID3v24Frames.FRAME_ID_AUDIO_ENCRYPTION:
-                    frameBody = new FrameBodyAENC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ATTACHED_PICTURE:
-                    frameBody = new FrameBodyAPIC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_AUDIO_SEEK_POINT_INDEX:
-                    frameBody = new FrameBodyASPI(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_CHAPTER:
-                    frameBody = new FrameBodyCHAP(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_COMMENT:
-                    frameBody = new FrameBodyCOMM(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_COMMERCIAL_FRAME:
-                    frameBody = new FrameBodyCOMR(byteBuffer, frameSize);
-                    break;
-
-                case ID3v22Frames.FRAME_ID_V2_ENCRYPTED_FRAME:
-                    frameBody = new FrameBodyCRM(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_CHAPTER_TOC:
-                    frameBody = new FrameBodyCTOC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ENCRYPTION:
-                    frameBody = new FrameBodyENCR(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_EQUALISATION2:
-                    frameBody = new FrameBodyEQU2(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_EVENT_TIMING_CODES:
-                    frameBody = new FrameBodyETCO(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_GENERAL_ENCAPS_OBJECT:
-                    frameBody = new FrameBodyGEOB(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ITUNES_GROUPING:
-                    frameBody = new FrameBodyGRP1(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_GROUP_ID_REG:
-                    frameBody = new FrameBodyGRID(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_INVOLVED_PEOPLE:
-                    frameBody = new FrameBodyIPLS(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_LINKED_INFO:
-                    frameBody = new FrameBodyLINK(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_MUSIC_CD_ID:
-                    frameBody = new FrameBodyMCDI(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_MOVEMENT_NO:
-                    frameBody = new FrameBodyMVIN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_MOVEMENT:
-                    frameBody = new FrameBodyMVNM(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_OWNERSHIP:
-                    frameBody = new FrameBodyOWNE(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_PLAY_COUNTER:
-                    frameBody = new FrameBodyPCNT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v22Frames.FRAME_ID_V2_ATTACHED_PICTURE:
-                    frameBody = new FrameBodyPIC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_POPULARIMETER:
-                    frameBody = new FrameBodyPOPM(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_POSITION_SYNC:
-                    frameBody = new FrameBodyPOSS(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_PRIVATE:
-                    frameBody = new FrameBodyPRIV(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_RECOMMENDED_BUFFER_SIZE:
-                    frameBody = new FrameBodyRBUF(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_RELATIVE_VOLUME_ADJUSTMENT2:
-                    frameBody = new FrameBodyRVA2(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_RELATIVE_VOLUME_ADJUSTMENT:
-                    frameBody = new FrameBodyRVAD(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_REVERB:
-                    frameBody = new FrameBodyRVRB(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_SEEK:
-                    frameBody = new FrameBodySEEK(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_SIGNATURE:
-                    frameBody = new FrameBodySIGN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_SYNC_LYRIC:
-                    frameBody = new FrameBodySYLT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_SYNC_TEMPO:
-                    frameBody = new FrameBodySYTC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ALBUM:
-                    frameBody = new FrameBodyTALB(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_BPM:
-                    frameBody = new FrameBodyTBPM(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_IS_COMPILATION:
-                    frameBody = new FrameBodyTCMP(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_GENRE:
-                    frameBody = new FrameBodyTCON(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_COPYRIGHTINFO:
-                    frameBody = new FrameBodyTCOP(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TDAT:
-                    frameBody = new FrameBodyTDAT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ENCODING_TIME:
-                    frameBody = new FrameBodyTDEN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_PLAYLIST_DELAY:
-                    frameBody = new FrameBodyTDLY(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ORIGINAL_RELEASE_TIME:
-                    frameBody = new FrameBodyTDOR(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_YEAR:
-                    frameBody = new FrameBodyTDRC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_RELEASE_TIME:
-                    frameBody = new FrameBodyTDRL(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_TAGGING_TIME:
-                    frameBody = new FrameBodyTDTG(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ENCODEDBY:
-                    frameBody = new FrameBodyTENC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_LYRICIST:
-                    frameBody = new FrameBodyTEXT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_FILE_TYPE:
-                    frameBody = new FrameBodyTFLT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TIME:
-                    frameBody = new FrameBodyTIME(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_INVOLVED_PEOPLE:
-                    frameBody = new FrameBodyTIPL(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_CONTENT_GROUP_DESC:
-                    frameBody = new FrameBodyTIT1(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_TITLE:
-                    frameBody = new FrameBodyTIT2(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_TITLE_REFINEMENT:
-                    frameBody = new FrameBodyTIT3(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_INITIAL_KEY:
-                    frameBody = new FrameBodyTKEY(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_LANGUAGE:
-                    frameBody = new FrameBodyTLAN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_LENGTH:
-                    frameBody = new FrameBodyTLEN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_MUSICIAN_CREDITS:
-                    frameBody = new FrameBodyTMCL(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_MEDIA_TYPE:
-                    frameBody = new FrameBodyTMED(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_MOOD:
-                    frameBody = new FrameBodyTMOO(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ORIG_TITLE:
-                    frameBody = new FrameBodyTOAL(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ORIG_FILENAME:
-                    frameBody = new FrameBodyTOFN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ORIG_LYRICIST:
-                    frameBody = new FrameBodyTOLY(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ORIGARTIST:
-                    frameBody = new FrameBodyTOPE(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TORY:
-                    frameBody = new FrameBodyTORY(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_FILE_OWNER:
-                    frameBody = new FrameBodyTOWN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ARTIST:
-                    frameBody = new FrameBodyTPE1(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ACCOMPANIMENT:
-                    frameBody = new FrameBodyTPE2(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_CONDUCTOR:
-                    frameBody = new FrameBodyTPE3(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_REMIXED:
-                    frameBody = new FrameBodyTPE4(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_SET:
-                    frameBody = new FrameBodyTPOS(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_PRODUCED_NOTICE:
-                    frameBody = new FrameBodyTPRO(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_PUBLISHER:
-                    frameBody = new FrameBodyTPUB(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_TRACK:
-                    frameBody = new FrameBodyTRCK(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TRDA:
-                    frameBody = new FrameBodyTRDA(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_RADIO_NAME:
-                    frameBody = new FrameBodyTRSN(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_RADIO_OWNER:
-                    frameBody = new FrameBodyTRSO(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TSIZ:
-                    frameBody = new FrameBodyTSIZ(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ALBUM_ARTIST_SORT_ORDER_ITUNES:
-                    frameBody = new FrameBodyTSO2(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ALBUM_SORT_ORDER:
-                    frameBody = new FrameBodyTSOA(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_COMPOSER_SORT_ORDER_ITUNES:
-                    frameBody = new FrameBodyTSOC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ARTIST_SORT_ORDER:
-                    frameBody = new FrameBodyTSOP(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_TITLE_SORT_ORDER:
-                    frameBody = new FrameBodyTSOT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_ISRC:
-                    frameBody = new FrameBodyTSRC(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_HW_SW_SETTINGS:
-                    frameBody = new FrameBodyTSSE(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_SET_SUBTITLE:
-                    frameBody = new FrameBodyTSST(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_USER_DEFINED_INFO:
-                    frameBody = new FrameBodyTXXX(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TYER:
-                    frameBody = new FrameBodyTYER(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_UNIQUE_FILE_ID:
-                    frameBody = new FrameBodyUFID(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_TERMS_OF_USE:
-                    frameBody = new FrameBodyUSER(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_UNSYNC_LYRICS:
-                    frameBody = new FrameBodyUSLT(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_COMMERCIAL:
-                    frameBody = new FrameBodyWCOM(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_COPYRIGHT:
-                    frameBody = new FrameBodyWCOP(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_FILE_WEB:
-                    frameBody = new FrameBodyWOAF(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_ARTIST_WEB:
-                    frameBody = new FrameBodyWOAR(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_SOURCE_WEB:
-                    frameBody = new FrameBodyWOAS(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_OFFICIAL_RADIO:
-                    frameBody = new FrameBodyWORS(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_PAYMENT:
-                    frameBody = new FrameBodyWPAY(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_URL_PUBLISHERS:
-                    frameBody = new FrameBodyWPUB(byteBuffer, frameSize);
-                    break;
-
-                case ID3v24Frames.FRAME_ID_USER_DEFINED_URL:
-                    frameBody = new FrameBodyWXXX(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_ALBUM_SORT_ORDER_MUSICBRAINZ:
-                    frameBody = new FrameBodyXSOA(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_ARTIST_SORT_ORDER_MUSICBRAINZ:
-                    frameBody = new FrameBodyXSOP(byteBuffer, frameSize);
-                    break;
-
-                case ID3v23Frames.FRAME_ID_V3_TITLE_SORT_ORDER_MUSICBRAINZ:
-                    frameBody = new FrameBodyXSOT(byteBuffer, frameSize);
-                    break;
-
-                //Catch-all incase we have missed any
-                default:
-                    @SuppressWarnings("unchecked") Class<AbstractID3v2FrameBody> c = (Class<AbstractID3v2FrameBody>) Class.forName("org.jaudiotagger.tag.id3.framebody.FrameBody" + identifier);
-                    Class<?>[] constructorParameterTypes = {Class.forName("java.nio.ByteBuffer"), Integer.TYPE};
-                    Object[] constructorParameterValues = {byteBuffer, frameSize};
-                    Constructor<AbstractID3v2FrameBody> construct = c.getConstructor(constructorParameterTypes);
-                    frameBody = (construct.newInstance(constructorParameterValues));
-            }
-        }
-        catch(InvalidTagException e)
-        {
-            throw new InvalidFrameException(e.getMessage());
+            Class<AbstractID3v2FrameBody> c = (Class<AbstractID3v2FrameBody>) Class.forName("org.jaudiotagger.tag.id3.framebody.FrameBody" + identifier);
+            Class<?>[] constructorParameterTypes = {Class.forName("java.nio.ByteBuffer"), Integer.TYPE};
+            Object[] constructorParameterValues = {byteBuffer, frameSize};
+            Constructor<AbstractID3v2FrameBody> construct = c.getConstructor(constructorParameterTypes);
+            frameBody = (construct.newInstance(constructorParameterValues));
         }
         //No class defined for this frame type,use FrameUnsupported
         catch (ClassNotFoundException cex)
@@ -717,13 +304,13 @@ public abstract class AbstractID3v2Frame extends AbstractTagFrame implements Tag
             {
                 throw (RuntimeException) ite.getCause();
             }
-            else if (ite.getCause() instanceof InvalidFrameException)
+            else if(ite.getCause() instanceof  InvalidFrameException )
             {
-                throw (InvalidFrameException) ite.getCause();
+                throw (InvalidFrameException)ite.getCause();
             }
-            else if (ite.getCause() instanceof InvalidDataTypeException)
+            else if(ite.getCause() instanceof  InvalidDataTypeException )
             {
-                throw (InvalidDataTypeException) ite.getCause();
+                throw (InvalidDataTypeException)ite.getCause();
             }
             else
             {
@@ -748,11 +335,9 @@ public abstract class AbstractID3v2Frame extends AbstractTagFrame implements Tag
             logger.log(Level.SEVERE, getLoggingFilename() + ":" + "Illegal access exception :" + iae.getMessage(), iae);
             throw new RuntimeException(iae.getMessage());
         }
-
         logger.finest(getLoggingFilename() + ":" + "Created framebody:end" + frameBody.getIdentifier());
         frameBody.setHeader(this);
         return frameBody;
-
     }
 
     /**

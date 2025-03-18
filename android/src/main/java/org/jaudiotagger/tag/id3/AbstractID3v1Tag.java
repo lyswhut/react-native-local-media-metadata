@@ -129,7 +129,7 @@ abstract public class AbstractID3v1Tag extends AbstractID3Tag
 
         if(file.length() < TAG_LENGTH)
         {
-            throw new IOException("File not large enough to contain a tag");
+            throw new IOException("File not not appear large enough to contain a tag");
         }
         fc.position(file.length() - TAG_LENGTH);
         byteBuffer = ByteBuffer.allocate(TAG_LENGTH);

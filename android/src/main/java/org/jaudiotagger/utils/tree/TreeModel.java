@@ -41,7 +41,7 @@ package org.jaudiotagger.utils.tree;
  * @author Rob Davis
  * @author Ray Ryan
  */
-public interface TreeModel<T>
+public interface TreeModel
 {
 
     /**
@@ -50,7 +50,7 @@ public interface TreeModel<T>
      *
      * @return  the root of the tree
      */
-    public TreeNode<T> getRoot();
+    public Object getRoot();
 
 
     /**
@@ -65,7 +65,7 @@ public interface TreeModel<T>
      * @param   parent  a node in the tree, obtained from this data source
      * @return  the child of <code>parent</code> at index <code>index</code>
      */
-    public TreeNode<T> getChild(TreeNode<T> parent, int index);
+    public Object getChild(Object parent, int index);
 
 
     /**
@@ -77,7 +77,7 @@ public interface TreeModel<T>
      * @param   parent  a node in the tree, obtained from this data source
      * @return  the number of children of the node <code>parent</code>
      */
-    public int getChildCount(TreeNode<T> parent);
+    public int getChildCount(Object parent);
 
 
     /**
@@ -91,7 +91,7 @@ public interface TreeModel<T>
      * @param   node  a node in the tree, obtained from this data source
      * @return  true if <code>node</code> is a leaf
      */
-    public boolean isLeaf(TreeNode<T> node);
+    public boolean isLeaf(Object node);
 
     /**
       * Messaged when the user has altered the value for the item identified
@@ -102,7 +102,7 @@ public interface TreeModel<T>
       * @param path path to the node that the user has altered
       * @param newValue the new value from the TreeCellEditor
       */
-    public void valueForPathChanged(TreePath<T> path, T newValue);
+    public void valueForPathChanged(TreePath path, Object newValue);
 
     /**
      * Returns the index of child in parent.  If either <code>parent</code>
@@ -116,7 +116,7 @@ public interface TreeModel<T>
      *    <code>child</code> or <code>parent</code> are <code>null</code>
      *    or don't belong to this tree model
      */
-    public int getIndexOfChild(TreeNode<T> parent, TreeNode<T> child);
+    public int getIndexOfChild(Object parent, Object child);
 
 //
 //  Change Events

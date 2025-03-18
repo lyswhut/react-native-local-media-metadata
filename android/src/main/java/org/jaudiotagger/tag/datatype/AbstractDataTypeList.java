@@ -21,7 +21,6 @@ import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Represents a list of {@link Cloneable}(!!) {@link AbstractDataType}s, continuing until the end of the buffer.
@@ -51,8 +50,7 @@ public abstract class AbstractDataTypeList<T extends AbstractDataType> extends A
         super(copy);
     }
 
-    @SuppressWarnings("unchecked")
-	public List<T> getValue()
+    public List<T> getValue()
     {
         return (List<T>)super.getValue();
     }
@@ -126,10 +124,7 @@ public abstract class AbstractDataTypeList<T extends AbstractDataType> extends A
      */
     public byte[] writeByteArray()
     {
-        if(logger.isLoggable(Level.CONFIG))
-        {
-            logger.config("Writing DataTypeList " + this.getIdentifier());
-        }
+        logger.config("Writing DataTypeList " + this.getIdentifier());
         final byte[] buffer = new byte[getSize()];
         int offset = 0;
         for (final AbstractDataType data : getValue()) {

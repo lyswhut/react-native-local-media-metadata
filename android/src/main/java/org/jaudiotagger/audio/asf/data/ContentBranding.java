@@ -1,11 +1,11 @@
 package org.jaudiotagger.audio.asf.data;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.asf.util.Utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 

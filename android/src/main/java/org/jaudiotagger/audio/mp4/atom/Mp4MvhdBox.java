@@ -85,9 +85,4 @@ public class Mp4MvhdBox extends AbstractMp4Box
     {
         return (int) (this.timeLength / this.timeScale);
     }
-
-    public double getPreciseLength()
-    {
-        return this.timeLength / (double)this.timeScale;
-    }
 }

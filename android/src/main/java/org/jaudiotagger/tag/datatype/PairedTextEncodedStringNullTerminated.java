@@ -14,19 +14,20 @@ import java.util.logging.Level;
  * Represents a data type that allow multiple Strings but they should be paired as key values, i.e should be 2,4,6..
  * But keys are not unique so we don't store as a map, so could have same key pointing to two different values
  * such as two ENGINEER keys
+ *
  */
 public class PairedTextEncodedStringNullTerminated extends AbstractDataType
 {
     public PairedTextEncodedStringNullTerminated(String identifier, AbstractTagFrameBody frameBody)
     {
         super(identifier, frameBody);
-        value = new PairedTextEncodedStringNullTerminated.ValuePairs();
+        value = new ValuePairs();
     }
 
     public PairedTextEncodedStringNullTerminated(TextEncodedStringSizeTerminated object)
     {
         super(object);
-        value = new PairedTextEncodedStringNullTerminated.ValuePairs();
+        value = new ValuePairs();
     }
 
     public PairedTextEncodedStringNullTerminated(PairedTextEncodedStringNullTerminated object)
@@ -97,7 +98,7 @@ public class PairedTextEncodedStringNullTerminated extends AbstractDataType
             try
             {
                 //Read Key
-                TextEncodedStringNullTerminated key = new TextEncodedStringNullTerminated(identifier, frameBody, true);
+                TextEncodedStringNullTerminated key = new TextEncodedStringNullTerminated(identifier, frameBody);
                 key.readByteArray(arr, offset);
                 size   += key.getSize();
                 offset += key.getSize();
@@ -109,7 +110,7 @@ public class PairedTextEncodedStringNullTerminated extends AbstractDataType
                 try
                 {
                     //Read Value
-                    TextEncodedStringNullTerminated result = new TextEncodedStringNullTerminated(identifier, frameBody, true);
+                    TextEncodedStringNullTerminated result = new TextEncodedStringNullTerminated(identifier, frameBody);
                     result.readByteArray(arr, offset);
                     size   += result.getSize();
                     offset += result.getSize();

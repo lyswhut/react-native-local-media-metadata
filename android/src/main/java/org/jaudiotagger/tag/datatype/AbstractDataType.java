@@ -191,11 +191,11 @@ public abstract class AbstractDataType
         }
         else if (copyObject.value instanceof ArrayList)
         {
-            this.value = ((ArrayList<?>) copyObject.value).clone();
+            this.value = ((ArrayList) copyObject.value).clone();
         }
         else if (copyObject.value instanceof LinkedList)
         {
-            this.value = ((LinkedList<?>) copyObject.value).clone();
+            this.value = ((LinkedList) copyObject.value).clone();
         }
         else
         {

@@ -1,5 +1,6 @@
 package org.jaudiotagger.tag.datatype;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.InvalidDataTypeException;
 import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
@@ -10,7 +11,6 @@ import org.jaudiotagger.utils.EqualsUtil;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.*;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,6 +86,8 @@ public class PartOfSet extends AbstractString
      */
     public void readByteArray(byte[] arr, int offset) throws InvalidDataTypeException
     {
+        logger.finest("Reading from array from offset:" + offset);
+
         //Get the Specified Decoder
         CharsetDecoder decoder = getTextEncodingCharSet().newDecoder();
 
@@ -107,11 +109,7 @@ public class PartOfSet extends AbstractString
 
         //SetSize, important this is correct for finding the next datatype
         setSize(arr.length - offset);
-
-        if(logger.isLoggable(Level.CONFIG))
-        {
-            logger.config("Read SizeTerminatedString:" + value + " size:" + size);
-        }
+        logger.config("Read SizeTerminatedString:" + value + " size:" + size);
     }
 
     /**

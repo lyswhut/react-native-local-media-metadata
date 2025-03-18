@@ -23,6 +23,7 @@
  */
 package org.jaudiotagger.tag.id3.framebody;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.tag.InvalidTagException;
 import org.jaudiotagger.tag.datatype.DataTypes;
@@ -33,7 +34,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Abstract super class of all URL Frames

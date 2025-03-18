@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class MusicianCredits
 {
-    private static Set<String> musicianCredits = new HashSet<>();
+    private static Set<String> musicianCredits = new HashSet();
 
     static
     {

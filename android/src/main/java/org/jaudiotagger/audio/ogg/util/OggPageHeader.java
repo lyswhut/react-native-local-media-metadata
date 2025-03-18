@@ -199,8 +199,7 @@ public class OggPageHeader
             streamSerialNumber = Utils.getIntLE(b, FIELD_STREAM_SERIAL_NO_POS, 17);
             pageSequenceNumber = Utils.getIntLE(b, FIELD_PAGE_SEQUENCE_NO_POS, 21);
             checksum = Utils.getIntLE(b, FIELD_PAGE_CHECKSUM_POS, 25);
-            @SuppressWarnings("unused")
-			int pageSegments = u(b[FIELD_PAGE_SEGMENTS_POS]);
+            int pageSegments = u(b[FIELD_PAGE_SEGMENTS_POS]);
 
             this.segmentTable = new byte[b.length - OGG_PAGE_HEADER_FIXED_LENGTH];
             int packetLength = 0;

@@ -26,8 +26,6 @@ package org.jaudiotagger.tag.datatype;
 import org.jaudiotagger.tag.InvalidDataTypeException;
 import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
 
-import java.util.logging.Level;
-
 /**
  * Represents a stream of bytes, continuing until the end of the buffer. Usually used for binary data or where
  * we havent yet mapped the data to a better fitting type.
@@ -115,10 +113,7 @@ public class ByteArraySizeTerminated extends AbstractDataType
      */
     public byte[] writeByteArray()
     {
-        if(logger.isLoggable(Level.CONFIG))
-        {
-            logger.config("Writing byte array" + this.getIdentifier());
-        }
+        logger.config("Writing byte array" + this.getIdentifier());
         return (byte[]) value;
     }
 }

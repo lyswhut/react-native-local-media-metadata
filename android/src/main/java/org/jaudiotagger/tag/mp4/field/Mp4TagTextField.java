@@ -18,6 +18,7 @@
  */
 package org.jaudiotagger.tag.mp4.field;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.mp4.atom.Mp4BoxHeader;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.TagTextField;
@@ -27,7 +28,6 @@ import org.jaudiotagger.tag.mp4.atom.Mp4DataBox;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Represents a single text field

@@ -136,7 +136,7 @@ public abstract class StreamChunk extends Chunk
     /**
      * (overridden)
      *
-     * @see org.jaudiotagger.audio.asf.data.Chunk#prettyPrint(String)
+     * @see Chunk#prettyPrint(String)
      */
     @Override
     public String prettyPrint(final String prefix)

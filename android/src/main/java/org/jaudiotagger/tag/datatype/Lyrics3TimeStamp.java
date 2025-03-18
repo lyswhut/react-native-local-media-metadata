@@ -23,10 +23,9 @@
  */
 package org.jaudiotagger.tag.datatype;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.InvalidDataTypeException;
 import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
-
-import java.nio.charset.StandardCharsets;
 
 public class Lyrics3TimeStamp extends AbstractDataType
 {

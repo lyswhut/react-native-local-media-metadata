@@ -170,10 +170,12 @@ public class Mp4StcoBox extends AbstractMp4Box
             throw new CannotReadException("This file does not appear to be an audio file");
         }
         ByteBuffer mvhdBuffer = moovBuffer.slice();
+        Mp4MvhdBox mvhd = new Mp4MvhdBox(boxHeader, mvhdBuffer);
         mvhdBuffer.position(mvhdBuffer.position() + boxHeader.getDataLength());
 
         //Level 2-Searching for "trak" within "moov"
         boxHeader = Mp4BoxHeader.seekWithinLevel(mvhdBuffer, Mp4AtomIdentifier.TRAK.getFieldName());
+        int endOfFirstTrackInBuffer = mvhdBuffer.position() + boxHeader.getDataLength();
 
         if (boxHeader == null)
         {

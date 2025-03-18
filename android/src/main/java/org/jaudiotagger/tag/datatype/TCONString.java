@@ -111,8 +111,8 @@ public class TCONString extends TextEncodedStringSizeTerminated
     public String getValueAtIndex(int index)
     {
         //Split String into separate components
-        List<String> values = getValues();
-        return values.get(index);
+        List values = getValues();
+        return (String) values.get(index);
     }
 
     public static List<String> splitV23(String value)

@@ -25,8 +25,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-import static org.jaudiotagger.audio.iff.IffHeaderChunk.FORM_HEADER_LENGTH;
-import static org.jaudiotagger.audio.iff.IffHeaderChunk.logger;
+import static org.jaudiotagger.audio.iff.IffHeaderChunk.HEADER_LENGTH;
 
 /**
  * Processes the Wav Header
@@ -38,16 +37,16 @@ public class WavRIFFHeader
     public static final String RIFF_SIGNATURE = "RIFF";
     public static final String WAVE_SIGNATURE = "WAVE";
 
-    public static boolean isValidHeader(String loggingName, FileChannel fc) throws IOException, CannotReadException
+    public static boolean isValidHeader(FileChannel fc) throws IOException, CannotReadException
     {
-        if (fc.size() - fc.position() < FORM_HEADER_LENGTH)
+        if (fc.size() - fc.position() < HEADER_LENGTH)
         {
-            throw new CannotReadException(loggingName+":This is not a WAV File (<12 bytes)");
+            throw new CannotReadException("This is not a WAV File (<12 bytes)");
         }
-        ByteBuffer headerBuffer = Utils.readFileDataIntoBufferLE(fc, FORM_HEADER_LENGTH);
+        ByteBuffer headerBuffer = Utils.readFileDataIntoBufferLE(fc, HEADER_LENGTH);
         if(Utils.readFourBytesAsChars(headerBuffer).equals(RIFF_SIGNATURE))
         {
-            logger.finer(loggingName+":Header:File:Size:"+headerBuffer.getInt()); //Size
+            headerBuffer.getInt(); //Size
             if(Utils.readFourBytesAsChars(headerBuffer).equals(WAVE_SIGNATURE))
             {
                 return true;

@@ -1,5 +1,6 @@
 package org.jaudiotagger.audio.flac.metadatablock;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.InvalidFrameException;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 
@@ -45,12 +45,8 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
     public static final String IMAGE_IS_URL = "-->";
 
     private int pictureType;
-    private int mimeTypeSize;
-    private int descriptionSize;
-
-
     private String mimeType ="";
-    private String description = "";
+    private String description;
     private int width;
     private int height;
     private int colourDepth;
@@ -71,19 +67,11 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
         }
 
         //MimeType
-        mimeTypeSize = rawdata.getInt();
-        if(mimeTypeSize < 0)
-        {
-            throw new InvalidFrameException("PictureType mimeType size was invalid:" + mimeTypeSize);
-        }
+        int mimeTypeSize = rawdata.getInt();
         mimeType = getString(rawdata, mimeTypeSize, StandardCharsets.ISO_8859_1.name());
 
         //Description
-        descriptionSize = rawdata.getInt();
-        if(descriptionSize < 0)
-        {
-            throw new InvalidFrameException("PictureType descriptionSize size was invalid:" + mimeTypeSize);
-        }
+        int descriptionSize = rawdata.getInt();
         description = getString(rawdata, descriptionSize, StandardCharsets.UTF_8.name());
 
         //Image width
@@ -99,14 +87,10 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
         indexedColouredCount = rawdata.getInt();
 
         lengthOfPictureInBytes =  rawdata.getInt();
-
         //ImageData
-        if(lengthOfPictureInBytes > rawdata.remaining())
-        {
-            throw new InvalidFrameException("PictureType Size was:" + lengthOfPictureInBytes + " but remaining bytes size " +rawdata.remaining());
-        }
         imageData = new byte[lengthOfPictureInBytes];
         rawdata.get(imageData);
+
         logger.config("Read image:" + this.toString());
     }
 
@@ -127,23 +111,18 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
      *
      * @param header
      * @param fc
-     * @throws java.io.IOException
-     * @throws org.jaudiotagger.tag.InvalidFrameException
+     * @throws IOException
+     * @throws InvalidFrameException
      */
+    //TODO check for buffer underflows see http://research.eeye.com/html/advisories/published/AD20071115.html
     public MetadataBlockDataPicture(MetadataBlockHeader header, FileChannel fc ) throws IOException, InvalidFrameException
     {
-        if (header.getDataLength()==0)
-        {
-            throw new IOException("MetadataBlockDataPicture HeaderDataSize is zero");
-        }
-
         ByteBuffer rawdata = ByteBuffer.allocate(header.getDataLength());
         int bytesRead = fc.read(rawdata);
         if (bytesRead < header.getDataLength())
         {
             throw new IOException("Unable to read required number of databytes read:" + bytesRead + ":required:" + header.getDataLength());
         }
-
         rawdata.rewind();
         initFromByteBuffer(rawdata);
 
@@ -152,7 +131,6 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
 
     /**
      * Construct new MetadataPicture block
-     *
      * @param imageData
      * @param pictureType
      * @param mimeType
@@ -164,16 +142,26 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
      */
     public MetadataBlockDataPicture(byte[] imageData, int pictureType, String mimeType, String description, int width, int height, int colourDepth, int indexedColouredCount)
     {
+        //Picture Type
         this.pictureType = pictureType;
+
+        //MimeType
         if(mimeType!=null)
         {
             this.mimeType = mimeType;
         }
+
+        //Description
         this.description = description;
+
         this.width = width;
+
         this.height = height;
+
         this.colourDepth = colourDepth;
+
         this.indexedColouredCount = indexedColouredCount;
+        //ImageData
         this.imageData = imageData;
     }
 
@@ -190,9 +178,9 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Utils.getSizeBEInt32(pictureType));
-            baos.write(Utils.getSizeBEInt32(mimeType.getBytes(StandardCharsets.ISO_8859_1).length));
+            baos.write(Utils.getSizeBEInt32(mimeType.length()));
             baos.write(mimeType.getBytes(StandardCharsets.ISO_8859_1));
-            baos.write(Utils.getSizeBEInt32(description.getBytes(StandardCharsets.UTF_8).length));
+            baos.write(Utils.getSizeBEInt32(description.length()));
             baos.write(description.getBytes(StandardCharsets.UTF_8));
             baos.write(Utils.getSizeBEInt32(width));
             baos.write(Utils.getSizeBEInt32(height));
@@ -279,14 +267,8 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
 
     public String toString()
     {
-        return "\t\t" + PictureTypes.getInstanceOf().getValueForId(pictureType) + "\n"
-                + "\t\tmimeType:size:" +mimeTypeSize + ":" + mimeType + "\n"
-                + "\t\tdescription:size:" +descriptionSize + ":" + description + "\n"
-                + "\t\twidth:" + width +"\n"
-                + "\t\theight:"+ height +"\n"
-                + "\t\tcolourdepth:" + colourDepth+"\n"
-                + "\t\tindexedColourCount:" + indexedColouredCount+"\n"
-                + "\t\timage size in bytes:" + lengthOfPictureInBytes + "/" + imageData.length+"\n";
+        return PictureTypes.getInstanceOf().getValueForId(pictureType) + ":" + mimeType + ":" + description + ":" + "width:" + width + ":height:" + height + ":colourdepth:" + colourDepth + ":indexedColourCount:" + indexedColouredCount
+                + ":image size in bytes:" + lengthOfPictureInBytes + "/" + imageData.length;
     }
 
     /**
@@ -317,11 +299,11 @@ public class MetadataBlockDataPicture implements MetadataBlockData, TagField
      * order to be directly written to the file.<br>
      *
      * @return Binary data representing the current tag field.<br>
-     * @throws java.io.UnsupportedEncodingException
+     * @throws UnsupportedEncodingException
      *          Most tag data represents text. In some cases the underlying
-     *          implementation will need to convertMetadata the text data in java to
+     *          implementation will need to convert the text data in java to
      *          a specific charset encoding. In these cases an
-     *          {@link java.io.UnsupportedEncodingException} may occur.
+     *          {@link UnsupportedEncodingException} may occur.
      */
     public byte[] getRawContent() throws UnsupportedEncodingException
     {

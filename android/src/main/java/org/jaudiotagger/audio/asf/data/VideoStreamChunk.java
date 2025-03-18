@@ -100,7 +100,7 @@ public class VideoStreamChunk extends StreamChunk
     /**
      * (overridden)
      *
-     * @see org.jaudiotagger.audio.asf.data.StreamChunk#prettyPrint(String)
+     * @see StreamChunk#prettyPrint(String)
      */
     @Override
     public String prettyPrint(final String prefix)

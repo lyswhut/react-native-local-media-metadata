@@ -7,11 +7,6 @@ package org.jaudiotagger.audio.exceptions;
 public class CannotReadVideoException extends CannotReadException
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -7185020848474992115L;
-
-	/**
      * Creates an instance.
      */
     public CannotReadVideoException()

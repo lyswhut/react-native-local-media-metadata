@@ -6,40 +6,29 @@ package org.jaudiotagger.audio;
  */
 public enum SupportedFileFormat
 {
-    OGG("ogg", "Ogg"),
-    OGA("oga", "Oga"),
-    MP3("mp3", "Mp3"),
-    FLAC("flac", "Flac"),
-    MP4("mp4", "Mp4"),
-    M4A("m4a", "Mp4"),
-    M4P("m4p", "M4p"),
-    WMA("wma", "Wma"),
-    WAV("wav", "Wav"),
-    RA("ra", "Ra"),
-    RM("rm", "Rm"),
-    M4B("m4b", "Mp4"),
-    AIF("aif", "Aif"),
-    AIFF("aiff", "Aif"),
-    AIFC("aifc", "Aif Compressed"),
-    DSF("dsf", "Dsf"),
-    DFF("dff", "Dff");
+    OGG("ogg"),
+    MP3("mp3"),
+    FLAC("flac"),
+    MP4("mp4"),
+    M4A("m4a"),
+    M4P("m4p"),
+    WMA("wma"),
+    WAV("wav"),
+    RA("ra"),
+    RM("rm"),
+    M4B("m4b"),
+    AIF("aif"),
+    AIFF("aiff"),
+    AIFC("aifc"),
+    DSF("dsf");
 
-    /**
-     * File Suffix
-     */
     private String filesuffix;
-
-    /**
-     * User Friendly Name
-     */
-    private String displayName;
 
     /** Constructor for internal use by this enum.
      */
-    SupportedFileFormat(String filesuffix, String displayName)
+    SupportedFileFormat(String filesuffix)
     {
         this.filesuffix = filesuffix;
-        this.displayName = displayName;
     }
 
     /**
@@ -48,11 +37,5 @@ public enum SupportedFileFormat
     public String getFilesuffix()
     {
         return filesuffix;
-    }
-
-
-    public String getDisplayName()
-    {
-        return displayName;
     }
 }

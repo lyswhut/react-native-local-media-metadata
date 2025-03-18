@@ -30,11 +30,6 @@ package org.jaudiotagger.tag;
 public class InvalidFrameIdentifierException extends InvalidFrameException
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 6459527941265009134L;
-
-	/**
      * Creates a new InvalidFrameIdentifierException datatype.
      */
     public InvalidFrameIdentifierException()

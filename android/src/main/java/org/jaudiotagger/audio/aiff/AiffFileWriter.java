@@ -22,7 +22,7 @@ import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.generic.AudioFileWriter2;
 import org.jaudiotagger.tag.Tag;
 
-import java.nio.file.Path;
+import java.io.File;
 
 
 /**
@@ -34,13 +34,13 @@ public class AiffFileWriter extends AudioFileWriter2
     private AiffTagWriter tw = new AiffTagWriter();
 
     @Override
-    protected void writeTag(Tag tag, Path file) throws CannotWriteException
+    protected void writeTag(Tag tag, File file) throws CannotWriteException
     {
         tw.write(tag, file);
     }
 
     @Override
-    protected void deleteTag(Tag tag, Path file) throws CannotWriteException
+    protected void deleteTag(Tag tag, File file) throws CannotWriteException
     {
         tw.delete(tag, file);
     }

@@ -22,10 +22,10 @@
  */
 package org.jaudiotagger.tag.id3.valuepair;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.datatype.AbstractIntStringValuePair;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +54,7 @@ public class TextEncoding extends AbstractIntStringValuePair
 
     private static TextEncoding textEncodings;
 
-    private final Map<Integer, Charset> idToCharset = new HashMap<>();
+    private final Map<Integer, Charset> idToCharset = new HashMap<Integer, Charset>();
 
     /**
      * Get singleton for this class.

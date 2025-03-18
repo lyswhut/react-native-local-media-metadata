@@ -24,7 +24,6 @@ package org.jaudiotagger.tag.lyrics3;
 
 import org.jaudiotagger.tag.InvalidTagException;
 import org.jaudiotagger.tag.TagOptionSingleton;
-import org.jaudiotagger.tag.datatype.AbstractDataType;
 import org.jaudiotagger.tag.datatype.ID3v2LyricLine;
 import org.jaudiotagger.tag.datatype.Lyrics3Line;
 import org.jaudiotagger.tag.datatype.Lyrics3TimeStamp;
@@ -177,39 +176,39 @@ public class FieldFrameBodyLYR extends AbstractLyrics3v2FieldFrameBody
     /**
      * @param sync
      */
-	public void addLyric(FrameBodySYLT sync) {
-		// SYLT frames are made of individual lines
-		Iterator<? extends AbstractDataType> iterator = sync.iterator();
-		HashMap<String, Lyrics3Line> lineMap = new HashMap<String, Lyrics3Line>();
+    public void addLyric(FrameBodySYLT sync)
+    {
+        // SYLT frames are made of individual lines
+        Iterator<ID3v2LyricLine> iterator = sync.iterator();
+        Lyrics3Line newLine;
+        ID3v2LyricLine currentLine;
+        Lyrics3TimeStamp timeStamp;
+        HashMap<String, Lyrics3Line> lineMap = new HashMap<String, Lyrics3Line>();
 
-		while (iterator.hasNext()) 
-		{
-			AbstractDataType element = iterator.next();
-			if (element instanceof ID3v2LyricLine) 
-			{
-				ID3v2LyricLine currentLine = (ID3v2LyricLine) element;
+        while (iterator.hasNext())
+        {
+            currentLine = iterator.next();
 
-				// createField copy to use in new tag
-				currentLine = new ID3v2LyricLine(currentLine);
-				Lyrics3TimeStamp timeStamp = new Lyrics3TimeStamp("Time Stamp", this);
-				timeStamp.setTimeStamp(currentLine.getTimeStamp(), (byte) sync.getTimeStampFormat());
+            // createField copy to use in new tag
+            currentLine = new ID3v2LyricLine(currentLine);
+            timeStamp = new Lyrics3TimeStamp("Time Stamp", this);
+            timeStamp.setTimeStamp(currentLine.getTimeStamp(), (byte) sync.getTimeStampFormat());
 
-				Lyrics3Line newLine;
-				if (lineMap.containsKey(currentLine.getText())) 
-				{
-					newLine = lineMap.get(currentLine.getText());
-					newLine.addTimeStamp(timeStamp);
-				} else 
-				{
-					newLine = new Lyrics3Line("Lyric Line", this);
-					newLine.setLyric(currentLine);
-					newLine.setTimeStamp(timeStamp);
-					lineMap.put(currentLine.getText(), newLine);
-					lines.add(newLine);
-				}
-			}
-		}
-	}
+            if (lineMap.containsKey(currentLine.getText()))
+            {
+                newLine = lineMap.get(currentLine.getText());
+                newLine.addTimeStamp(timeStamp);
+            }
+            else
+            {
+                newLine = new Lyrics3Line("Lyric Line", this);
+                newLine.setLyric(currentLine);
+                newLine.setTimeStamp(timeStamp);
+                lineMap.put(currentLine.getText(), newLine);
+                lines.add(newLine);
+            }
+        }
+    }
 
     /**
      * @param unsync

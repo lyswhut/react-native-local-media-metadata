@@ -6,12 +6,7 @@ package org.jaudiotagger.audio.exceptions;
  */
 public class NullBoxIdException extends RuntimeException
 {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 7160724085873888124L;
-
-	public NullBoxIdException(String message)
+    public NullBoxIdException(String message)
     {
         super(message);
     }

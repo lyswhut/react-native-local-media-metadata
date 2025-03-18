@@ -19,7 +19,6 @@
 package org.jaudiotagger.audio.asf;
 
 import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.SupportedFileFormat;
 import org.jaudiotagger.audio.asf.data.AsfHeader;
 import org.jaudiotagger.audio.asf.data.AudioStreamChunk;
 import org.jaudiotagger.audio.asf.data.MetadataContainer;
@@ -122,7 +121,6 @@ public class AsfFileReader extends AudioFileReader
         }
         info.setBitRate(header.getAudioStreamChunk().getKbps());
         info.setChannelNumber((int) header.getAudioStreamChunk().getChannelCount());
-        info.setFormat(SupportedFileFormat.WMA.getDisplayName());
         info.setEncodingType("ASF (audio): " + header.getAudioStreamChunk().getCodecDescription());
         info.setLossless(header.getAudioStreamChunk().getCompressionFormat() == AudioStreamChunk.WMA_LOSSLESS);
         info.setPreciseLength(header.getFileHeader().getPreciseDuration());
@@ -135,7 +133,7 @@ public class AsfFileReader extends AudioFileReader
     /**
      * (overridden)
      *
-     * @see org.jaudiotagger.audio.generic.AudioFileReader#getEncodingInfo(java.io.RandomAccessFile)
+     * @see org.jaudiotagger.audio.generic.AudioFileReader#getEncodingInfo(RandomAccessFile)
      */
     @Override
     protected GenericAudioHeader getEncodingInfo(final RandomAccessFile raf) throws CannotReadException, IOException
@@ -183,7 +181,7 @@ public class AsfFileReader extends AudioFileReader
     /**
      * (overridden)
      *
-     * @see org.jaudiotagger.audio.generic.AudioFileReader#getTag(java.io.RandomAccessFile)
+     * @see org.jaudiotagger.audio.generic.AudioFileReader#getTag(RandomAccessFile)
      */
     @Override
     protected AsfTag getTag(final RandomAccessFile raf) throws CannotReadException, IOException
@@ -228,15 +226,7 @@ public class AsfFileReader extends AudioFileReader
     {
         if (!f.canRead())
         {
-            if (!f.exists())
-            {
-                logger.severe("Unable to find:" + f.getPath());
-                throw new FileNotFoundException(ErrorMessage.UNABLE_TO_FIND_FILE.getMsg(f.getPath()));
-            }
-            else
-            {
-                throw new CannotReadException(ErrorMessage.GENERAL_READ_FAILED_DO_NOT_HAVE_PERMISSION_TO_READ_FILE.getMsg(f.getAbsolutePath()));
-            }
+            throw new CannotReadException(ErrorMessage.GENERAL_READ_FAILED_DO_NOT_HAVE_PERMISSION_TO_READ_FILE.getMsg(f.getAbsolutePath()));
         }
         InputStream stream = null;
         try

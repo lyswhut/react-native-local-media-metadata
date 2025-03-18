@@ -87,7 +87,7 @@ public abstract class AbstractTag extends AbstractTagItem
     /**
      * @return
      */
-    abstract public Iterator<? extends Object> iterator();
+    abstract public Iterator iterator();
 }
 
 

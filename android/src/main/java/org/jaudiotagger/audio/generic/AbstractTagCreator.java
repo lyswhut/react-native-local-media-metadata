@@ -36,18 +36,18 @@ public abstract class AbstractTagCreator
      * @return
      * @throws UnsupportedEncodingException
      */
-    public ByteBuffer convertMetadata(Tag tag) throws UnsupportedEncodingException
+    public ByteBuffer convert(Tag tag) throws UnsupportedEncodingException
     {
-        return convertMetadata(tag, false);
+        return convert(tag, 0);
     }
 
     /**
      * Convert tagdata to rawdata ready for writing to file
      *
      * @param tag
-     * @param isLastBlock
+     * @param padding TODO is this padding or additional padding
      * @return
      * @throws UnsupportedEncodingException
      */
-    public abstract ByteBuffer convertMetadata(Tag tag, boolean isLastBlock) throws UnsupportedEncodingException;
+    public abstract ByteBuffer convert(Tag tag, int padding) throws UnsupportedEncodingException;
 }

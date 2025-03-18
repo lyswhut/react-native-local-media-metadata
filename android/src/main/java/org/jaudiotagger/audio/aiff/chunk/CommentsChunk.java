@@ -1,5 +1,6 @@
 package org.jaudiotagger.audio.aiff.chunk;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.audio.aiff.AiffAudioHeader;
 import org.jaudiotagger.audio.aiff.AiffUtil;
 import org.jaudiotagger.audio.generic.Utils;
@@ -8,7 +9,6 @@ import org.jaudiotagger.audio.iff.ChunkHeader;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
@@ -49,6 +49,10 @@ import java.util.Date;
  */
 public class CommentsChunk extends Chunk
 {
+    private static final int TIMESTAMP_LENGTH = 4;
+    private static final int MARKERID_LENGTH = 2;
+    private static final int COUNT_LENGTH = 2;
+
     private AiffAudioHeader aiffHeader;
 
     /**
@@ -77,20 +81,13 @@ public class CommentsChunk extends Chunk
         {
             final long timestamp  = Utils.u(chunkData.getInt());
             final Date jTimestamp = AiffUtil.timestampToDate(timestamp);
-            @SuppressWarnings("unused")
-			final int marker      = Utils.u(chunkData.getShort());
+            final int marker      = Utils.u(chunkData.getShort());
             final int count       = Utils.u(chunkData.getShort());
             // Append a timestamp to the comment
             final String text = Utils.getString(chunkData, 0, count, StandardCharsets.ISO_8859_1) + " " + AiffUtil.formatDate(jTimestamp);
-            if (count % 2 != 0)
-            {
-                //#300
-                //if count is odd, text is padded with an extra byte that we need to consume
-                //but possibly the extra byte is missing so allow for that
-                if(chunkData.position()< chunkData.limit())
-                {
-                    chunkData.get();
-                }
+            if (count % 2 != 0) {
+                // if count is odd, text is padded with an extra byte that we need to consume
+                chunkData.get();
             }
             aiffHeader.addComment(text);
         }

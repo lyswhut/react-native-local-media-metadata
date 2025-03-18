@@ -9,11 +9,6 @@ package org.jaudiotagger.tag;
 public class FieldDataInvalidException extends TagException
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 3073420523534394699L;
-
-	/**
      * Creates a new KeyNotFoundException datatype.
      */
     public FieldDataInvalidException()

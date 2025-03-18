@@ -33,17 +33,13 @@ import java.util.EventObject;
  * @author Ray Ryan
  * @author Scott Violet
  */
-public class TreeModelEvent<T> extends EventObject {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1135112176859241636L;
-	/** Path to the parent of the nodes that have changed. */
-    protected TreePath<T>	path;
+public class TreeModelEvent extends EventObject {
+    /** Path to the parent of the nodes that have changed. */
+    protected TreePath	path;
     /** Indices identifying the position of where the children were. */
     protected int[]	childIndices;
     /** Children that have been removed. */
-    protected TreeNode<T>[]  children;
+    protected Object[]  children;
 
     /**
      * Used to create an event when nodes have been changed, inserted, or
@@ -112,10 +108,10 @@ public class TreeModelEvent<T> extends EventObject {
      *                 changed objects
      * @see TreePath
      */
-    public TreeModelEvent(Object source, TreeNode<T>[] path, int[] childIndices,
-    		TreeNode<T>[] children)
+    public TreeModelEvent(Object source, Object[] path, int[] childIndices,
+			  Object[] children)
     {
-	this(source, new TreePath<>(path), childIndices, children);
+	this(source, new TreePath(path), childIndices, children);
     }
 
     /**
@@ -137,8 +133,8 @@ public class TreeModelEvent<T> extends EventObject {
      *
      * @see #TreeModelEvent(Object,Object[],int[],Object[])
      */
-    public TreeModelEvent(Object source, TreePath<T> path, int[] childIndices,
-    		TreeNode<T>[] children)
+    public TreeModelEvent(Object source, TreePath path, int[] childIndices,
+			  Object[] children)
     {
 	super(source);
 	this.path = path;
@@ -168,9 +164,9 @@ public class TreeModelEvent<T> extends EventObject {
      *               is the object stored at the changed node
      * @see TreePath
      */
-    public TreeModelEvent(Object source, TreeNode<T>[] path)
+    public TreeModelEvent(Object source, Object[] path)
     {
-	this(source, new TreePath<>(path));
+	this(source, new TreePath(path));
     }
 
     /**
@@ -190,7 +186,7 @@ public class TreeModelEvent<T> extends EventObject {
      *
      * @see #TreeModelEvent(Object,Object[])
      */
-    public TreeModelEvent(Object source, TreePath<T> path)
+    public TreeModelEvent(Object source, TreePath path)
     {
 	super(source);
 	this.path = path;
@@ -212,7 +208,7 @@ public class TreeModelEvent<T> extends EventObject {
      * @return the TreePath used in identifying the changed nodes.
      * @see TreePath#getLastPathComponent
      */
-    public TreePath<T> getTreePath() { return path; }
+    public TreePath getTreePath() { return path; }
 
     /**
      * Convenience method to get the array of objects from the TreePath
@@ -222,7 +218,7 @@ public class TreeModelEvent<T> extends EventObject {
      *         stored at the root and the last object is the one
      *         stored at the node identified by the path
      */
-    public TreeNode<T>[] getPath() {
+    public Object[] getPath() {
 	if(path != null)
 	    return path.getPath();
 	return null;
@@ -239,11 +235,10 @@ public class TreeModelEvent<T> extends EventObject {
      * @see #getPath
      * @see #getChildIndices
      */
-    public TreeNode<T>[] getChildren() {
+    public Object[] getChildren() {
 	if(children != null) {
 	    int            cCount = children.length;
-	    @SuppressWarnings("unchecked")
-		TreeNode<T>[]       retChildren = new TreeNode[cCount];
+	    Object[]       retChildren = new Object[cCount];
 
 	    System.arraycopy(children, 0, retChildren, 0, cCount);
 	    return retChildren;

@@ -1,28 +1,26 @@
 /**
- * @author : Paul Taylor
- * <p>
- * Version @version:$Id$
- * <p>
- * MusicTag Copyright (C)2003,2004
- * <p>
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public  License as published by the Free Software Foundation; either version 2.1 of the License,
- * or (at your option) any later version.
- * <p>
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not,
- * you can get a copy from http://www.opensource.org/licenses/lgpl-license.php or write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *  @author : Paul Taylor
+ *
+ *  Version @version:$Id$
+ *
+ *  MusicTag Copyright (C)2003,2004
+ *
+ *  This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+ *  General Public  License as published by the Free Software Foundation; either version 2.1 of the License,
+ *  or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+ *  you can get a copy from http://www.opensource.org/licenses/lgpl-license.php or write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 package org.jaudiotagger.audio.mp3;
 
 import org.jaudiotagger.audio.AudioHeader;
-import org.jaudiotagger.audio.SupportedFileFormat;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.generic.Utils;
 import org.jaudiotagger.logging.ErrorMessage;
 import org.jaudiotagger.logging.Hex;
 
@@ -38,8 +36,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.jaudiotagger.audio.generic.Utils.BITS_IN_BYTE_MULTIPLIER;
 
 /**
  * Represents the audio header of an MP3 File
@@ -68,26 +64,25 @@ public class MP3AudioHeader implements AudioHeader
     protected XingFrame mp3XingFrame;
     protected VbriFrame mp3VbriFrame;
 
-    private Long audioDataStartPosition;
-    private Long audioDataEndPosition;
+    private Long    audioDataStartPosition;
+    private Long    audioDataEndPosition;
 
-    private long    fileSize;
-    private long    startByte;
-    private double  timePerFrame;
-    private double  trackLength;
-    private long    numberOfFrames;
-    private long    numberOfFramesEstimate;
-    private long    bitrate;
-
-    /**
-     * Encoder retrieved from frame/Xing header
-     */
-    private String  encoder = "";
+    private long fileSize;
+    private long startByte;
+    private double timePerFrame;
+    private double trackLength;
+    private long numberOfFrames;
+    private long numberOfFramesEstimate;
+    private long bitrate;
+    private String encoder = "";
 
     private static final SimpleDateFormat timeInFormat = new SimpleDateFormat("ss", Locale.UK);
-    private static final SimpleDateFormat timeOutFormat = new SimpleDateFormat("mm:ss", Locale.UK);
-    private static final SimpleDateFormat timeOutOverAnHourFormat = new SimpleDateFormat("kk:mm:ss", Locale.UK);
-    private static final char   isVbrIdentifier = '~';
+    private static final SimpleDateFormat timeOutFormat = new SimpleDateFormat("mm:ss",Locale.UK);
+    private static final SimpleDateFormat timeOutOverAnHourFormat = new SimpleDateFormat("kk:mm:ss",Locale.UK);
+    private static final char isVbrIdentifier = '~';
+    private static final int CONVERT_TO_KILOBITS = 1000;
+    private static final String TYPE_MP3 = "mp3";
+    private static final int CONVERTS_BYTE_TO_BITS = 8;
 
     //Logger
     public static Logger logger = Logger.getLogger("org.jaudiotagger.audio.mp3");
@@ -215,7 +210,7 @@ public class MP3AudioHeader implements AudioHeader
                         syncFound = true;
                         //if(2==1) use this line when you want to test getting the next frame without using xing
 
-                        if ((header = XingFrame.isXingFrame(bb, mp3FrameHeader)) != null)
+                        if ((header = XingFrame.isXingFrame(bb, mp3FrameHeader))!=null)
                         {
                             if (MP3AudioHeader.logger.isLoggable(Level.FINEST))
                             {
@@ -233,7 +228,7 @@ public class MP3AudioHeader implements AudioHeader
                             }
                             break;
                         }
-                        else if ((header = VbriFrame.isVbriFrame(bb, mp3FrameHeader)) != null)
+                        else if ((header = VbriFrame.isVbriFrame(bb, mp3FrameHeader))!=null)
                         {
                             if (MP3AudioHeader.logger.isLoggable(Level.FINEST))
                             {
@@ -337,7 +332,7 @@ public class MP3AudioHeader implements AudioHeader
      * @param bb
      * @param fc
      * @return true if frame is valid
-     * @throws java.io.IOException
+     * @throws IOException
      */
     private boolean isNextFrameValid(File seekFile, long filePointerCount, ByteBuffer bb, FileChannel fc) throws IOException
     {
@@ -469,7 +464,6 @@ public class MP3AudioHeader implements AudioHeader
     {
         return numberOfFrames;
     }
-
     /**
      * @return The number of frames within the Audio File, calculated by dividing the filesize by
      *         the number of frames, this may not be the most accurate method available.
@@ -533,7 +527,7 @@ public class MP3AudioHeader implements AudioHeader
 
     public int getTrackLength()
     {
-        return (int) Math.round(getPreciseTrackLength());
+        return (int) getPreciseTrackLength();
     }
 
     /**
@@ -546,21 +540,21 @@ public class MP3AudioHeader implements AudioHeader
         try
         {
             final long lengthInSecs = getTrackLength();
-            synchronized (timeInFormat)
+            synchronized(timeInFormat)
             {
                 timeIn = timeInFormat.parse(String.valueOf(lengthInSecs));
             }
 
             if (lengthInSecs < NO_SECONDS_IN_HOUR)
             {
-                synchronized (timeOutFormat)
+                synchronized(timeOutFormat)
                 {
                     return timeOutFormat.format(timeIn);
                 }
             }
             else
             {
-                synchronized (timeOutOverAnHourFormat)
+                synchronized(timeOutOverAnHourFormat)
                 {
                     return timeOutOverAnHourFormat.format(timeIn);
                 }
@@ -568,17 +562,17 @@ public class MP3AudioHeader implements AudioHeader
         }
         catch (ParseException pe)
         {
-            logger.warning("Unable to parse:" + getPreciseTrackLength() + " failed with ParseException:" + pe.getMessage());
+            logger.warning("Unable to parse:"+getPreciseTrackLength() +" failed with ParseException:"+pe.getMessage());
             return "";
         }
     }
 
     /**
-     * @return the audio encoding
+     * @return the audio file type
      */
     public String getEncodingType()
     {
-        return mp3FrameHeader.getVersionAsString() + " " + mp3FrameHeader.getLayerAsString();
+        return TYPE_MP3;
     }
 
     /**
@@ -591,22 +585,22 @@ public class MP3AudioHeader implements AudioHeader
         {
             if (mp3XingFrame.isAudioSizeEnabled() && mp3XingFrame.getAudioSize() > 0)
             {
-                bitrate = (long) ((mp3XingFrame.getAudioSize() * BITS_IN_BYTE_MULTIPLIER) / (timePerFrame * getNumberOfFrames() * Utils.KILOBYTE_MULTIPLIER));
+                bitrate = (long) ((mp3XingFrame.getAudioSize() * CONVERTS_BYTE_TO_BITS) / (timePerFrame * getNumberOfFrames() * CONVERT_TO_KILOBITS));
             }
             else
             {
-                bitrate = (long) (((fileSize - startByte) * BITS_IN_BYTE_MULTIPLIER) / (timePerFrame * getNumberOfFrames() * Utils.KILOBYTE_MULTIPLIER));
+                bitrate = (long) (((fileSize - startByte) * CONVERTS_BYTE_TO_BITS) / (timePerFrame * getNumberOfFrames() * CONVERT_TO_KILOBITS));
             }
         }
         else if (mp3VbriFrame != null)
         {
             if (mp3VbriFrame.getAudioSize() > 0)
             {
-                bitrate = (long) ((mp3VbriFrame.getAudioSize() * BITS_IN_BYTE_MULTIPLIER) / (timePerFrame * getNumberOfFrames() * Utils.KILOBYTE_MULTIPLIER));
+                bitrate = (long) ((mp3VbriFrame.getAudioSize() * CONVERTS_BYTE_TO_BITS) / (timePerFrame * getNumberOfFrames() * CONVERT_TO_KILOBITS));
             }
             else
             {
-                bitrate = (long) (((fileSize - startByte) * BITS_IN_BYTE_MULTIPLIER) / (timePerFrame * getNumberOfFrames() *  Utils.KILOBYTE_MULTIPLIER));
+                bitrate = (long) (((fileSize - startByte) * CONVERTS_BYTE_TO_BITS) / (timePerFrame * getNumberOfFrames() * CONVERT_TO_KILOBITS));
             }
         }
         else
@@ -666,14 +660,14 @@ public class MP3AudioHeader implements AudioHeader
     {
         return mp3FrameHeader.getSamplingRate();
     }
-
+    
     /**
      * @return the number of bits per sample
      */
     public int getBitsPerSample()
     {
-        //TODO: can it really be different in such an MP3 ? I think not.
-        return 16;
+    	//TODO: can it really be different in such an MP3 ? I think not.
+    	return 16;
     }
 
     /**
@@ -705,7 +699,7 @@ public class MP3AudioHeader implements AudioHeader
      */
     public String getFormat()
     {
-        return SupportedFileFormat.MP3.getDisplayName();
+        return mp3FrameHeader.getVersionAsString() + " " + mp3FrameHeader.getLayerAsString();
     }
 
     /**
@@ -797,46 +791,42 @@ public class MP3AudioHeader implements AudioHeader
      */
     public String toString()
     {
-        StringBuilder out = new StringBuilder();
-        out.append("Audio Header content:\n");
-        out.append("\tfileSize:" + fileSize + "\n"
-                + "\tencoder:" + encoder + "\n"
-                + "\tencoderType:" + getEncodingType() + "\n"
-                + "\tformat:" + getFormat() + "\n"
-                + "\tstartByte:" + Hex.asHex(startByte) + "\n"
-                + "\tnumberOfFrames:" + numberOfFrames + "\n"
-                + "\tnumberOfFramesEst:" + numberOfFramesEstimate + "\n"
-                + "\ttimePerFrame:" + timePerFrame + "\n"
-                + "\tbitrate:" + bitrate + "\n"
-                + "\ttrackLength:" + getTrackLengthAsString() + "\n");
+        String s = "fileSize:" + fileSize
+                + " encoder:" + encoder
+                + " startByte:" + Hex.asHex(startByte)
+                + " numberOfFrames:" + numberOfFrames
+                + " numberOfFramesEst:" + numberOfFramesEstimate
+                + " timePerFrame:" + timePerFrame
+                + " bitrate:" + bitrate
+                + " trackLength:" + getTrackLengthAsString();
 
         if (this.mp3FrameHeader != null)
         {
-            out.append(mp3FrameHeader.toString());
+            s += mp3FrameHeader.toString();
         }
         else
         {
-            out.append("MPEG Frame Header:false");
+            s +=" mpegframeheader:false";
         }
 
         if (this.mp3XingFrame != null)
         {
-            out.append(mp3XingFrame.toString());
+            s += mp3XingFrame.toString();
         }
         else
         {
-            out.append("Xing Frame:false");
+            s +=" mp3XingFrame:false";
         }
 
         if (this.mp3VbriFrame != null)
         {
-            out.append(mp3VbriFrame.toString());
+            s +=mp3VbriFrame.toString();
         }
         else
         {
-            out.append("VBRI Frame:false");
+            s +=" mp3VbriFrame:false";
         }
-        return out.toString();
+        return s;
     }
 
     /**

@@ -10,11 +10,8 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.logging.Level;
 
 /**
@@ -33,32 +30,23 @@ public abstract class AudioFileReader2 extends AudioFileReader
    */
     public AudioFile read(File f) throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException
     {
-        Path path = f.toPath();
         if(logger.isLoggable(Level.CONFIG))
         {
-            logger.config(ErrorMessage.GENERAL_READ.getMsg(path));
+            logger.config(ErrorMessage.GENERAL_READ.getMsg(f.getPath()));
         }
 
-        if (!Files.isReadable(path))
+        if (!f.canRead())
         {
-            if(!Files.exists(path))
-            {
-                throw new FileNotFoundException(ErrorMessage.UNABLE_TO_FIND_FILE.getMsg(path));
-            }
-            else
-            {
-                logger.warning(Permissions.displayPermissions(path));
-                throw new NoReadPermissionsException(ErrorMessage.GENERAL_READ_FAILED_DO_NOT_HAVE_PERMISSION_TO_READ_FILE.getMsg(path));
-            }
+            throw new NoReadPermissionsException(ErrorMessage.GENERAL_READ_FAILED_DO_NOT_HAVE_PERMISSION_TO_READ_FILE.getMsg(f.getPath()));
         }
 
         if (f.length() <= MINIMUM_SIZE_FOR_VALID_AUDIO_FILE)
         {
-            throw new CannotReadException(ErrorMessage.GENERAL_READ_FAILED_FILE_TOO_SMALL.getMsg(path));
+            throw new CannotReadException(ErrorMessage.GENERAL_READ_FAILED_FILE_TOO_SMALL.getMsg(f.getPath()));
         }
 
-        GenericAudioHeader info = getEncodingInfo(path);
-        Tag tag = getTag(path);
+        GenericAudioHeader info = getEncodingInfo(f);
+        Tag tag = getTag(f);
         return new AudioFile(f, info, tag);
     }
 
@@ -66,12 +54,12 @@ public abstract class AudioFileReader2 extends AudioFileReader
      *
      * Read Encoding Information
      *
-     * @param path
+     * @param file
      * @return
      * @throws CannotReadException
      * @throws IOException
      */
-    protected abstract GenericAudioHeader getEncodingInfo(Path path) throws CannotReadException, IOException;
+    protected abstract GenericAudioHeader getEncodingInfo(File file) throws CannotReadException, IOException;
 
     protected GenericAudioHeader getEncodingInfo(RandomAccessFile raf) throws CannotReadException, IOException
     {
@@ -81,12 +69,12 @@ public abstract class AudioFileReader2 extends AudioFileReader
     /**
      * Read tag Information
      *
-     * @param path
+     * @param file
      * @return
      * @throws CannotReadException
      * @throws IOException
      */
-    protected abstract Tag getTag(Path path) throws CannotReadException, IOException;
+    protected abstract Tag getTag(File file) throws CannotReadException, IOException;
 
     protected Tag getTag(RandomAccessFile file) throws CannotReadException, IOException
     {

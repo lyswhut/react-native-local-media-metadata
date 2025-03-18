@@ -1,9 +1,5 @@
 Fork From: https://github.com/hexise/jaudiotagger-android
 
-- base jaudiotagger 3 https://bitbucket.org/ijabz/jaudiotagger/src/f1a46309efe9c47bee963ae1e295595c7628bce4/
-
----
-
 Jaudiotagger for Android
 ======================
 This is Jaudiotagger library for Android. Jaudiotagger is an Audio Tagging library.

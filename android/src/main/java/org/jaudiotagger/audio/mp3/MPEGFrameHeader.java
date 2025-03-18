@@ -882,24 +882,7 @@ public class MPEGFrameHeader
      */
     public String toString()
     {
-        return "MPEG Frame Header:\n"
-                + "\tframe length:" + getFrameLength() +"\n"
-                + "\tversion:" + versionAsString  +"\n"
-                + "\tlayer:" + layerAsString  +"\n"
-                + "\tchannelMode:" + channelModeAsString +"\n"
-                + "\tnoOfSamples:" + getNoOfSamples() +"\n"
-                + "\tsamplingRate:" + samplingRate  +"\n"
-                + "\tisPadding:" + isPadding  +"\n"
-                + "\tisProtected:" + isProtected  +"\n"
-                + "\tisPrivate:" + isPrivate  +"\n"
-                + "\tisCopyrighted:" + isCopyrighted +"\n"
-                + "\tisOriginal:" + isCopyrighted +"\n"
-                + "\tisVariableBitRate" + this.isVariableBitRate() +"\n"
-                + "\theader as binary:" +"\n"
-                + "\t" + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_1]) + " "
-                + "\t" + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_2]) + " "
-                + "\t" + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_3]) + " "
-                + "\t" + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_4]) +"\n";
+        return " mpeg frameheader:" + " frame length:" + getFrameLength() + " version:" + versionAsString + " layer:" + layerAsString + " channelMode:" + channelModeAsString + " noOfSamples:" + getNoOfSamples() + " samplingRate:" + samplingRate + " isPadding:" + isPadding + " isProtected:" + isProtected + " isPrivate:" + isPrivate + " isCopyrighted:" + isCopyrighted + " isOriginal:" + isCopyrighted + " isVariableBitRate" + this.isVariableBitRate() + " header as binary:" + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_1]) + " " + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_2]) + " " + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_3]) + " " + AbstractTagDisplayFormatter.displayAsBinary(mpegBytes[BYTE_4]);
     }
 }
 

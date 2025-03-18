@@ -19,7 +19,6 @@
  */
 package org.jaudiotagger.audio.ogg.util;
 
-import org.jaudiotagger.audio.SupportedFileFormat;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.generic.GenericAudioHeader;
 import org.jaudiotagger.audio.generic.Utils;
@@ -122,7 +121,6 @@ public class OggInfoReader
         info.setChannelNumber(vorbisIdentificationHeader.getChannelNumber());
         info.setSamplingRate(vorbisIdentificationHeader.getSamplingRate());
         info.setEncodingType(vorbisIdentificationHeader.getEncodingType());
-        info.setFormat(SupportedFileFormat.OGG.getDisplayName());
 
         //According to Wikipedia Vorbis Page, Vorbis only works on 16bits 44khz 
         info.setBitsPerSample(16);

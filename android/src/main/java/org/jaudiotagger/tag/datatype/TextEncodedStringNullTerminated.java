@@ -1,5 +1,6 @@
 package org.jaudiotagger.tag.datatype;
 
+import org.jaudiotagger.StandardCharsets;
 import org.jaudiotagger.tag.InvalidDataTypeException;
 import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jaudiotagger.tag.id3.AbstractTagFrameBody;
@@ -8,7 +9,6 @@ import org.jaudiotagger.tag.id3.valuepair.TextEncoding;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.*;
-import java.util.logging.Level;
 
 /**
  * Represents a String whose size is determined by finding of a null character at the end of the String.
@@ -18,19 +18,15 @@ import java.util.logging.Level;
  */
 public class TextEncodedStringNullTerminated extends AbstractString
 {
-
-
     /**
      * Creates a new TextEncodedStringNullTerminated datatype.
      *
-     * @param identifier                             identifies the frame type
+     * @param identifier identifies the frame type
      * @param frameBody
-     * @param isAllowReadMetadataWithOverrideCharset
      */
-    public TextEncodedStringNullTerminated(String identifier, AbstractTagFrameBody frameBody, boolean isAllowReadMetadataWithOverrideCharset)
+    public TextEncodedStringNullTerminated(String identifier, AbstractTagFrameBody frameBody)
     {
         super(identifier, frameBody);
-        this.isAllowReadMetadataWithOverrideCharset=isAllowReadMetadataWithOverrideCharset;
     }
 
     /**
@@ -73,11 +69,11 @@ public class TextEncodedStringNullTerminated extends AbstractString
         }
         int bufferSize;
 
+        logger.finer("Reading from array starting from offset:" + offset);
         int size;
 
         //Get the Specified Decoder
         final Charset charset = getTextEncodingCharSet();
-
 
 
         //We only want to load up to null terminator, data after this is part of different
@@ -101,6 +97,8 @@ public class TextEncodedStringNullTerminated extends AbstractString
                     buffer.mark();
                     buffer.reset();
                     endPosition = buffer.position() - 1;
+                    logger.finest("Null terminator found starting at:" + endPosition);
+
                     isNullTerminatorFound = true;
                     break;
                 }
@@ -115,6 +113,7 @@ public class TextEncodedStringNullTerminated extends AbstractString
                             buffer.mark();
                             buffer.reset();
                             endPosition = buffer.position() - 2;
+                            logger.finest("UTF16:Null terminator found starting  at:" + endPosition);
                             isNullTerminatorFound = true;
                             break;
                         }
@@ -129,6 +128,8 @@ public class TextEncodedStringNullTerminated extends AbstractString
                         buffer.mark();
                         buffer.reset();
                         endPosition = buffer.position() - 1;
+                        logger.warning("UTF16:Should be two null terminator marks but only found one starting at:" + endPosition);
+
                         isNullTerminatorFound = true;
                         break;
                     }
@@ -152,6 +153,9 @@ public class TextEncodedStringNullTerminated extends AbstractString
             throw new InvalidDataTypeException("Unable to find null terminated string");
         }
 
+
+        logger.finest("End Position is:" + endPosition + "Offset:" + offset);
+
         //Set Size so offset is ready for next field (includes the null terminator)
         size = endPosition - offset;
         size++;
@@ -165,11 +169,7 @@ public class TextEncodedStringNullTerminated extends AbstractString
         //catch and then set value to empty string. (We don't read the null terminator
         //because we dont want to display this)
         bufferSize = endPosition - offset;
-
-        if(logger.isLoggable(Level.FINEST))
-        {
-            logger.finest("Text size is:" + bufferSize);
-        }
+        logger.finest("Text size is:" + bufferSize);
         if (bufferSize == 0)
         {
             value = "";
@@ -191,10 +191,7 @@ public class TextEncodedStringNullTerminated extends AbstractString
             value = outBuffer.toString();
         }
         //Set Size so offset is ready for next field (includes the null terminator)
-        if(logger.isLoggable(Level.CONFIG))
-        {
-            logger.config("Read NullTerminatedString:" + value + " size inc terminator:" + size);
-        }
+        logger.config("Read NullTerminatedString:" + value + " size inc terminator:" + size);
     }
 
     /**

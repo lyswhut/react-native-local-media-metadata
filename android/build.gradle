@@ -85,7 +85,7 @@ dependencies {
 
   // https://github.com/albfernandez/juniversalchardet
   implementation 'com.github.albfernandez:juniversalchardet:2.5.0'
-  implementation "androidx.documentfile:documentfile:1.0.1"
-  implementation "androidx.media3:media3-exoplayer:1.5.1"
+  implementation "androidx.documentfile:documentfile:1.1.0"
+  implementation "androidx.media3:media3-exoplayer:1.8.0"
 }
 
